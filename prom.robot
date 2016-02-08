@@ -1,9 +1,11 @@
 *** Settings ***
-Library  Selenium2Screenshots
-Library  String
-Library  DateTime
-Library  Selenium2Library
-Library  Collections
+Library   Selenium2Screenshots
+Library   String
+Library   DateTime
+Library   Selenium2Library
+Library   Collections
+Library   prom_service.py
+
 
 
 *** Variables ***

@@ -7,23 +7,22 @@ Library   Collections
 Library   prom_service.py
 
 
-
 *** Variables ***
-${sign_in}                                                      xpath=//a[contains(@data-afip-url, 'tab_login_cabinet')]
-${login_sign_in}                                                xpath=//div[@data-extend='LoginForm']//input[@id='phone_email']
-${password_sign_in}                                             xpath=//div[@data-extend='LoginForm']//input[@id='password']
+${sign_in}                                                      xpath=//a[contains(@class, 'qa_entrance_btn')]
+${login_sign_in}                                                id=phone_email
+${password_sign_in}                                             id=password
 ${locator.title}                                                xpath=//h1
-${locator.description}                                          xpath=(//p[@class='h-mv-10'])[1]
+${locator.description}                                          xpath=//p[contains(@class, 'qa_descr')]
 ${locator.minimalStep.amount}                                   xpath=//dd[contains(@class, 'qa_min_budget')]
 ${locator.value.amount}                                         xpath=//dd[contains(@class, 'qa_budget_pdv')]
-${locator.tenderId}                                             xpath=//dd[contains(@class, 'tender-uid')]
+${locator.tenderId}                                             xpath=//dd[contains(@class, 'tender-tuid')]
 ${locator.procuringEntity.name}                                 xpath=//dd[contains(@class, 'qa_procuring_entity')]
 ${locator.enquiryPeriod.startDate}                              xpath=//dd[contains(@class, 'qa_date_period_clarifications')]
 ${locator.enquiryPeriod.endDate}                                xpath=//dd[contains(@class, 'qa_date_period_clarifications')]
 ${locator.tenderPeriod.startDate}                               xpath=//dd[contains(@class, 'qa_date_submission_of_proposals')]
 ${locator.tenderPeriod.endDate}                                 xpath=//dd[contains(@class, 'qa_date_submission_of_proposals')]
 ${locator.items[0].quantity}                                    xpath=//td[contains(@class, 'qa_quantity')]/p
-${locator.items[0].description}                                 xpath=//td[contains(@class, 'qa_item_name')]/p
+${locator.items[0].description}                                 xpath=//td[contains(@class, 'qa_item_name')]
 ${locator.items[0].deliveryLocation.latitude}                   xpath=//dd[contains(@class, 'qa_place_delivery')]
 ${locator.items[0].deliveryLocation.longitude}                  xpath=//dd[contains(@class, 'qa_place_delivery')]
 ${locator.items[0].unit.code}                                   xpath=//td[contains(@class, 'qa_quantity')]/p
@@ -42,17 +41,17 @@ ${locator.items[0].additionalClassifications[0].id}             xpath=//dd[conta
 ${locator.items[0].additionalClassifications[0].description}    xpath=//dd[contains(@class, 'qa_dkpp_classifier')]
 
 
-
 *** Keywords ***
 Підготувати дані для оголошення тендера
-  ${INITIAL_TENDER_DATA}=  prepare_test_tender_data
-  [return]   ${INITIAL_TENDER_DATA}
+  [Arguments]  ${tender_data}
+  ${tender_data}=  procuringEntity_name_prom  ${tender_data}
+  [return]   ${tender_data}
 
 Підготувати клієнт для користувача
   [Arguments]  @{ARGUMENTS}
   [Documentation]  Відкрити брaвзер, створити обєкт api wrapper, тощо
   ...      ${ARGUMENTS[0]} ==  username
-  Open Browser   ${BROKERS['${USERS.users['${username}'].broker}'].url}   ${USERS.users['${username}'].browser}   alias=${ARGUMENTS[0]}
+  Open Browser   ${USERS.users['${ARGUMENTS[0]}'].homepage}   ${USERS.users['${username}'].browser}   alias=${ARGUMENTS[0]}
   Set Window Size       @{USERS.users['${ARGUMENTS[0]}'].size}
   Set Window Position   @{USERS.users['${ARGUMENTS[0]}'].position}
   Run Keyword If   '${username}' != 'Prom_Viewer'   Login
@@ -72,14 +71,14 @@ Login
   ...      ${ARGUMENTS[0]} ==  username
   ...      ${ARGUMENTS[1]} ==  tender_data
 
+
 ### Создание тендера
-    ${INITIAL_TENDER_DATA}=  procuringEntity_name_prom   ${INITIAL_TENDER_DATA}
-    ${title}=                Get From Dictionary         ${INITIAL_TENDER_DATA.data}   title
-    ${description}=          Get From Dictionary         ${INITIAL_TENDER_DATA.data}   description
-    ${items}=                Get From Dictionary         ${INITIAL_TENDER_DATA.data}   items
+    ${title}=                Get From Dictionary         ${ARGUMENTS[1].data}   title
+    ${description}=          Get From Dictionary         ${ARGUMENTS[1].data}   description
+    ${items}=                Get From Dictionary         ${ARGUMENTS[1].data}   items
     ${item0}=                Get From List               ${items}          0
     ${descr_lot}=            Get From Dictionary         ${item0}                        description
-    ${budget}=               Get From Dictionary         ${INITIAL_TENDER_DATA.data.value}         amount
+    ${budget}=               Get From Dictionary         ${ARGUMENTS[1].data.value}         amount
     ${unit}=                 Get From Dictionary         ${items[0].unit}                name
     ${cpv_id}=               Get From Dictionary         ${items[0].classification}      id
     ${dkpp_id}=              Get From Dictionary         ${items[0].additionalClassifications[0]}      id
@@ -90,7 +89,7 @@ Login
     ${latitude}=             Get From Dictionary         ${items[0].deliveryLocation}    latitude
     ${longitude}=            Get From Dictionary         ${items[0].deliveryLocation}    longitude
     ${quantity}=             Get From Dictionary         ${items[0]}                     quantity
-    ${step_rate}=            Get From Dictionary         ${INITIAL_TENDER_DATA.data.minimalStep}   amount
+    ${step_rate}=            Get From Dictionary         ${ARGUMENTS[1].data.minimalStep}   amount
     ${dates}=                get_all_prom_dates
     ${end_period_adjustments}=      Get From Dictionary         ${dates}        EndPeriod
     ${start_receive_offers}=        Get From Dictionary         ${dates}        StartDate
@@ -134,8 +133,8 @@ Login
     Click Element     xpath=//li[contains(@data-value, 'Киевская')]
     Input text        id=state_purchases_items-0-delivery_locality          ${locality}
     Input text        id=state_purchases_items-0-delivery_street_address    ${streetAddress}
-    Input text        id=state_purchases_items-0-delivery_latitude          ${latitude.split(u'° ')[0]}
-    Input text        id=state_purchases_items-0-delivery_longitude         ${longitude.split(u'° ')[0]}
+    Input text        id=state_purchases_items-0-delivery_latitude          ${latitude}
+    Input text        id=state_purchases_items-0-delivery_longitude         ${longitude}
     Input text        id=amount             ${budget}
     Input text      id=dt_enquiry           ${end_period_adjustments}
     Sleep   1
@@ -153,13 +152,13 @@ Login
     input text      id=step                 ${step_rate}
     Click Button    id=submit_button
     Sleep   1
-    Wait Until Page Does Not Contain      ...   1000
+    Wait Until Page Does Not Contain     очікування…      1000
     Reload Page
 
-    ${tender_id}=     Get Text        xpath=//p[@id='qa_state_purchase_id']
-    ${id}=            Remove String     ${tender_id}      ID:
-    log to console      ${id}
-    [return]    ${id}
+    ${tender_id}=     Get Text        xpath=//p[@id='qa_state_purchase_ua_id']
+    ${TENDER}=            Remove String     ${tender_id}      TenderID:
+    log to console      ${TENDER}
+    [return]    ${TENDER}
 
 
 Завантажити документ
@@ -167,9 +166,9 @@ Login
   [Documentation]
   ...      ${ARGUMENTS[0]} ==  username
   ...      ${ARGUMENTS[1]} ==  ${filepath}
-  ...      ${ARGUMENTS[2]} ==  ${id}
+  ...      ${ARGUMENTS[2]} ==  ${TENDER}
 
-  Go to   ${USERS.users['${username}'].homepage}
+  Go to   ${USERS.users['${username}'].default_page}
   Input Text      id=search       ${ARGUMENTS[2]}
   Click Button    xpath=//button[@type='submit']
   Sleep   2
@@ -179,8 +178,7 @@ Login
   Sleep   1
   Choose File     xpath=//input[contains(@class, 'qa_state_offer_add_field')]   ${filepath}
   Sleep   2
-  Reload Page
-  Click Button    id=submit_button
+  Click Button     id=submit_button
   Sleep   3
   Capture Page Screenshot
 
@@ -189,9 +187,8 @@ Login
   [Arguments]  @{ARGUMENTS}
   [Documentation]
   ...      ${ARGUMENTS[0]} ==  username
-  ...      ${ARGUMENTS[1]} ==  ${id}
-
-  Go to   ${BROKERS['${USERS.users['${username}'].broker}'].url}
+  ...      ${ARGUMENTS[1]} ==  tender_uaid
+  Go to   ${USERS.users['${username}'].homepage}
   Input Text      id=search_text_id   ${ARGUMENTS[1]}
   Click Button    id=search_submit
   Sleep  2
@@ -201,7 +198,6 @@ Login
   Sleep  1
   Click Element   id=show_lot_info-0
   Capture Page Screenshot
-
 
 #Задати питання
 #  [Arguments]  @{ARGUMENTS}
@@ -226,15 +222,12 @@ Login
 #  Capture Page Screenshot
 
 
-
-
 ### Проверка информации с тендера
 Отримати інформацію із тендера
   [Arguments]  @{ARGUMENTS}
   [Documentation]
   ...      ${ARGUMENTS[0]} ==  username
   ...      ${ARGUMENTS[1]} ==  fieldname
-
   ${return_value}=  run keyword  Отримати інформацію про ${ARGUMENTS[1]}
   [return]  ${return_value}
 
@@ -260,14 +253,15 @@ Login
 Отримати інформацію про minimalStep.amount
   ${return_value}=   Отримати тест із поля і показати на сторінці   minimalStep.amount
   ${return_value}=    Remove String      ${return_value}     грн.
-  ${return_value}=    Convert To Number   ${return_value.replace(' ', '')}
-  [return]  ${return_value}
+  ${return_value}=    convert to string    ${return_value.replace(' ', '')}
+  [return]   ${return_value}
 
 #Внести зміни в тендер
 #  [Arguments]  @{ARGUMENTS}
 #  [Documentation]
 #  ...      ${ARGUMENTS[0]} ==  username
 #  ...      ${ARGUMENTS[1]} ==  id
+
 #  ...      ${ARGUMENTS[2]} ==  fieldname
 #  ...      ${ARGUMENTS[3]} ==  fieldvalue
 #
@@ -300,8 +294,8 @@ Login
 
 Отримати інформацію про items[0].unit.name
   ${return_value}=   Отримати тест із поля і показати на сторінці   items[0].unit.name
-  ${return_value}=   Convert To String     ${return_value.split(' ')[1]}
-  ${return_value}=   convert_prom_string_to_common_string     ${return_value}
+  ${return_value}=   convert to string     ${return_value.split(' ')[1]}
+  ${return_value}=   convert_prom_string_to_common_string    ${return_value}
   [return]   ${return_value}
 
 Отримати інформацію про tenderId
@@ -310,15 +304,17 @@ Login
 
 Отримати інформацію про procuringEntity.name
   ${return_value}=   Отримати тест із поля і показати на сторінці   procuringEntity.name
-  [return]  ${return_value}
+  Fail   Пока не понятно как вернуть сулчайное название
 
 Отримати інформацію про items[0].deliveryLocation.latitude
   ${return_value}=   Отримати тест із поля і показати на сторінці   items[0].deliveryLocation.latitude
-  [return]  ${return_value.split(' ')[1] + u'° N'}
+  ${return_value}=   convert to number   ${return_value.split(' ')[1]}
+  [return]  ${return_value}
 
 Отримати інформацію про items[0].deliveryLocation.longitude
   ${return_value}=   Отримати тест із поля і показати на сторінці   items[0].deliveryLocation.longitude
-  [return]  ${return_value.split(' ')[0] + u'° E'}
+  ${return_value}=   convert to number    ${return_value.split(' ')[0]}
+  [return]  ${return_value}
 
 Отримати інформацію про tenderPeriod.startDate
   ${return_value}=    Отримати тест із поля і показати на сторінці  tenderPeriod.startDate
@@ -336,7 +332,7 @@ Login
 
 Отримати інформацію про enquiryPeriod.endDate
   ${return_value}=   Отримати тест із поля і показати на сторінці  enquiryPeriod.endDate
-  ${return_value}=    convert_date_to_prom_tender    ${return_value}
+#  ${return_value}=    convert_date_to_prom_tender    ${return_value}
   [return]  ${return_value}
 
 Отримати інформацію про items[0].description
@@ -371,8 +367,7 @@ Login
 
 Отримати інформацію про items[0].deliveryAddress.countryName
   ${return_value}=   Отримати тест із поля і показати на сторінці  items[0].deliveryAddress.countryName
-  ${return_value}=   Convert To String     ${return_value.split(', ')[0]}
-  ${return_value}=  convert_prom_string_to_common_string    ${return_value}
+  ${return_value}=   convert_prom_string_to_common_string    ${return_value.split(', ')[0]}
   [return]   ${return_value}
 
 Отримати інформацію про items[0].deliveryAddress.postalCode
@@ -381,8 +376,7 @@ Login
 
 Отримати інформацію про items[0].deliveryAddress.region
   ${return_value}=   Отримати тест із поля і показати на сторінці  items[0].deliveryAddress.region
-  ${return_value}=   Convert To String     ${return_value.split(', ')[2]}
-  ${return_value}=   convert_prom_string_to_common_string   ${return_value}
+  ${return_value}=   convert_prom_string_to_common_string     ${return_value.split(', ')[2]}
   [return]   ${return_value}
 
 Отримати інформацію про items[0].deliveryAddress.locality

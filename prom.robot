@@ -43,6 +43,9 @@ ${locator.items[0].additionalClassifications[0].description}    xpath=//dd[conta
 
 
 *** Keywords ***
+Підготувати дані для оголошення тендера
+${INITIAL_TENDER_DATA}=  procuringEntity_name_prom   ${INITIAL_TENDER_DATA}
+
 Підготувати клієнт для користувача
   [Arguments]  @{ARGUMENTS}
   [Documentation]  Відкрити брaвзер, створити обєкт api wrapper, тощо

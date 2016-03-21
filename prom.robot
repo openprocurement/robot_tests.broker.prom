@@ -8,62 +8,61 @@ Library   prom_service.py
 
 
 *** Variables ***
-${sign_in}                                                      xpath=//a[contains(@class, 'qa_entrance_btn')]
+${sign_in}                                                      css=.qa_entrance_btn
 ${login_sign_in}                                                id=phone_email
 ${password_sign_in}                                             id=password
 ${locator.title}                                                xpath=//h1
-${locator.description}                                          xpath=//p[contains(@class, 'qa_descr')]
-${locator.minimalStep.amount}                                   xpath=//dd[contains(@class, 'qa_min_budget')]
-${locator.value.amount}                                         xpath=//dd[contains(@class, 'qa_budget_pdv')]
+${locator.description}                                          css=.qa_descr
+${locator.minimalStep.amount}                                   css=.qa_min_budget
+${locator.value.amount}                                         css=.qa_budget_pdv
 ${locator.tenderId}                                             xpath=//dd[contains(@class, 'tender-tuid')]
-${locator.procuringEntity.name}                                 xpath=//dd[contains(@class, 'qa_procuring_entity')]
-${locator.enquiryPeriod.startDate}                              xpath=//dd[contains(@class, 'qa_date_period_clarifications')]
-${locator.enquiryPeriod.endDate}                                xpath=//dd[contains(@class, 'qa_date_period_clarifications')]
-${locator.tenderPeriod.startDate}                               xpath=//dd[contains(@class, 'qa_date_submission_of_proposals')]
-${locator.tenderPeriod.endDate}                                 xpath=//dd[contains(@class, 'qa_date_submission_of_proposals')]
+${locator.procuringEntity.name}                                 css=.qa_procuring_entity
+${locator.enquiryPeriod.startDate}                              css=.qa_date_period_clarifications
+${locator.enquiryPeriod.endDate}                                css=.qa_date_period_clarifications
+${locator.tenderPeriod.startDate}                               css=.qa_date_submission_of_proposals
+${locator.tenderPeriod.endDate}                                 css=.qa_date_submission_of_proposals
 ${locator.items[0].quantity}                                    xpath=//td[contains(@class, 'qa_quantity')]/p
-${locator.items[0].description}                                 xpath=//td[contains(@class, 'qa_item_name')]
-${locator.items[0].deliveryLocation.latitude}                   xpath=//dd[contains(@class, 'qa_place_delivery')]
-${locator.items[0].deliveryLocation.longitude}                  xpath=//dd[contains(@class, 'qa_place_delivery')]
+${locator.items[0].description}                                 css=.qa_item_name
+${locator.items[0].deliveryLocation.latitude}                   css=.qa_place_delivery
+${locator.items[0].deliveryLocation.longitude}                  css=.qa_place_delivery
 ${locator.items[0].unit.code}                                   xpath=//td[contains(@class, 'qa_quantity')]/p
 ${locator.items[0].unit.name}                                   xpath=//td[contains(@class, 'qa_quantity')]/p
-${locator.items[0].deliveryAddress.postalCode}                  xpath=//dd[contains(@class, 'qa_address_delivery')]
-${locator.items[0].deliveryAddress.countryName}                 xpath=//dd[contains(@class, 'qa_address_delivery')]
-${locator.items[0].deliveryAddress.region}                      xpath=//dd[contains(@class, 'qa_address_delivery')]
-${locator.items[0].deliveryAddress.locality}                    xpath=//dd[contains(@class, 'qa_address_delivery')]
-${locator.items[0].deliveryAddress.streetAddress}               xpath=//dd[contains(@class, 'qa_address_delivery')]
-${locator.items[0].deliveryDate.endDate}                        xpath=//dd[contains(@class, 'qa_delivery_period')]
-${locator.items[0].classification.scheme}                       xpath=//dt[contains(@class, 'qa_cpv_name')]
-${locator.items[0].classification.id}                           xpath=//dd[contains(@class, 'qa_cpv_classifier')]
-${locator.items[0].classification.description}                  xpath=//dd[contains(@class, 'qa_cpv_classifier')]
-${locator.items[0].additionalClassifications[0].scheme}         xpath=//dt[contains(@class, 'qa_dkpp_name')]
-${locator.items[0].additionalClassifications[0].id}             xpath=//dd[contains(@class, 'qa_dkpp_classifier')]
-${locator.items[0].additionalClassifications[0].description}    xpath=//dd[contains(@class, 'qa_dkpp_classifier')]
+${locator.items[0].deliveryAddress.postalCode}                  css=.qa_address_delivery
+${locator.items[0].deliveryAddress.countryName}                 css=.qa_address_delivery
+${locator.items[0].deliveryAddress.region}                      css=.qa_address_delivery
+${locator.items[0].deliveryAddress.locality}                    css=.qa_address_delivery
+${locator.items[0].deliveryAddress.streetAddress}               css=.qa_address_delivery
+${locator.items[0].deliveryDate.endDate}                        css=.qa_delivery_period
+${locator.items[0].classification.scheme}                       css=.qa_cpv_name
+${locator.items[0].classification.id}                           css=.qa_cpv_classifier
+${locator.items[0].classification.description}                  css=.qa_cpv_classifier
+${locator.items[0].additionalClassifications[0].scheme}         css=.qa_dkpp_name
+${locator.items[0].additionalClassifications[0].id}             css=.qa_dkpp_classifier
+${locator.items[0].additionalClassifications[0].description}    css=.qa_dkpp_classifier
+${locator.questions[0].title}                                   css=.qa_message_title
+${locator.questions[0].description}                             css=.qa_message_description
+${locator.questions[0].date}                                    css=.qa_question_date
+${locator.questions[0].answer}                                  css=.zk-question__answer-body
 
 
 *** Keywords ***
-Підготувати дані для оголошення тендера
-  [Arguments]  ${tender_data}
-  ${tender_data}=  procuringEntity_name_prom  ${tender_data}
-  [return]   ${tender_data}
-
 Підготувати клієнт для користувача
-  [Arguments]  @{ARGUMENTS}
+  [Arguments]     ${username}
   [Documentation]  Відкрити брaвзер, створити обєкт api wrapper, тощо
-  ...      ${ARGUMENTS[0]} ==  username
-  Open Browser   ${USERS.users['${ARGUMENTS[0]}'].homepage}   ${USERS.users['${username}'].browser}   alias=${ARGUMENTS[0]}
-  Set Window Size       @{USERS.users['${ARGUMENTS[0]}'].size}
-  Set Window Position   @{USERS.users['${ARGUMENTS[0]}'].position}
-  Run Keyword If   '${username}' != 'Prom_Viewer'   Login
+
+  Open Browser  ${USERS.users['${username}'].homepage}  ${USERS.users['${username}'].browser}  alias=${username}
+  Set Window Size       @{USERS.users['${username}'].size}
+  Set Window Position   @{USERS.users['${username}'].position}
+  Run Keyword If   '${username}' != 'Prom_Viewer'   Login   ${username}
 
 Login
-    Click Element  ${sign_in}
-    Sleep   1
-    Input text      ${login_sign_in}          ${USERS.users['${username}'].login}
-    Input text      ${password_sign_in}       ${USERS.users['${username}'].password}
-    Click Button    id=submit_login_button
-    Wait Until Page Contains Element   xpath =//div[@class='qa_political_procurement']  20
-
+  [Arguments]  ${username}
+  Click Element   ${sign_in}
+  Sleep   1
+  Input text      ${login_sign_in}          ${USERS.users['${username}'].login}
+  Input text      ${password_sign_in}       ${USERS.users['${username}'].password}
+  Click Button    id=submit_login_button
+  Sleep   2
 
 Створити тендер
   [Arguments]  @{ARGUMENTS}
@@ -71,29 +70,29 @@ Login
   ...      ${ARGUMENTS[0]} ==  username
   ...      ${ARGUMENTS[1]} ==  tender_data
 
-
-### Создание тендера
-    ${title}=                Get From Dictionary         ${ARGUMENTS[1].data}   title
-    ${description}=          Get From Dictionary         ${ARGUMENTS[1].data}   description
-    ${items}=                Get From Dictionary         ${ARGUMENTS[1].data}   items
-    ${item0}=                Get From List               ${items}          0
-    ${descr_lot}=            Get From Dictionary         ${item0}                        description
-    ${budget}=               Get From Dictionary         ${ARGUMENTS[1].data.value}         amount
-    ${unit}=                 Get From Dictionary         ${items[0].unit}                name
-    ${cpv_id}=               Get From Dictionary         ${items[0].classification}      id
+    ${title}=                Get From Dictionary         ${ARGUMENTS[1].data}             title
+    ${description}=          Get From Dictionary         ${ARGUMENTS[1].data}             description
+    ${items}=                Get From Dictionary         ${ARGUMENTS[1].data}             items
+    ${item0}=                Get From List               ${items}                         0
+    ${descr_lot}=            Get From Dictionary         ${item0}                         description
+    ${budget}=               Get From Dictionary         ${ARGUMENTS[1].data.value}       amount
+    ${unit}=                 Get From Dictionary         ${items[0].unit}                 name
+    ${cpv_id}=               Get From Dictionary         ${items[0].classification}       id
     ${dkpp_id}=              Get From Dictionary         ${items[0].additionalClassifications[0]}      id
-    ${delivery_end}=         Get From Dictionary         ${items[0].deliveryDate}        endDate
-    ${postalCode}=           Get From Dictionary         ${items[0].deliveryAddress}     postalCode
-    ${locality}=             Get From Dictionary         ${items[0].deliveryAddress}     locality
-    ${streetAddress}=        Get From Dictionary         ${items[0].deliveryAddress}     streetAddress
-    ${latitude}=             Get From Dictionary         ${items[0].deliveryLocation}    latitude
-    ${longitude}=            Get From Dictionary         ${items[0].deliveryLocation}    longitude
-    ${quantity}=             Get From Dictionary         ${items[0]}                     quantity
-    ${step_rate}=            Get From Dictionary         ${ARGUMENTS[1].data.minimalStep}   amount
-    ${dates}=                get_all_prom_dates
-    ${end_period_adjustments}=      Get From Dictionary         ${dates}        EndPeriod
-    ${start_receive_offers}=        Get From Dictionary         ${dates}        StartDate
-    ${end_receive_offers}=          Get From Dictionary         ${dates}        EndDate
+    ${delivery_end}=         get_delivery_date_prom      ${ARGUMENTS[1]}
+    Set Global Variable      ${TENDER_INIT_DATA_LIST}         ${ARGUMENTS[1]}
+    ${postalCode}=           Get From Dictionary         ${items[0].deliveryAddress}      postalCode
+    ${locality}=             Get From Dictionary         ${items[0].deliveryAddress}      locality
+    ${streetAddress}=        Get From Dictionary         ${items[0].deliveryAddress}      streetAddress
+    ${latitude}=             Get From Dictionary         ${items[0].deliveryLocation}     latitude
+    ${longitude}=            Get From Dictionary         ${items[0].deliveryLocation}     longitude
+    ${quantity}=             Get From Dictionary         ${items[0]}                      quantity
+    ${step_rate}=            Get From Dictionary         ${ARGUMENTS[1].data.minimalStep}       amount
+    ${enquiryPeriod}=        Get From Dictionary         ${ARGUMENTS[1].data}             enquiryPeriod
+    ${end_period_adjustments}=      get_all_prom_dates          ${ARGUMENTS[1]}           EndPeriod
+    ${start_receive_offers}=        get_all_prom_dates          ${ARGUMENTS[1]}           StartDate
+    ${end_receive_offers}=          get_all_prom_dates          ${ARGUMENTS[1]}           EndDate
+
 
     Selenium2Library.Switch Browser    ${ARGUMENTS[0]}
     Wait Until Page Contains Element     id=js-btn-0    20
@@ -128,7 +127,6 @@ Login
     Click Element     id=state_purchases_items-0-date_delivery_end
     Press Key         id=state_purchases_items-0-date_delivery_end             \\13
     Input text        id=state_purchases_items-0-delivery_postal_code       ${postalCode}
-    ## дроп даун области
     Click Element     id=state_purchases_items-0-delivery_region_dd
     Click Element     xpath=//li[contains(@data-value, 'Киевская')]
     Input text        id=state_purchases_items-0-delivery_locality          ${locality}
@@ -136,30 +134,29 @@ Login
     Input text        id=state_purchases_items-0-delivery_latitude          ${latitude}
     Input text        id=state_purchases_items-0-delivery_longitude         ${longitude}
     Input text        id=amount             ${budget}
-    Input text      id=dt_enquiry           ${end_period_adjustments}
+    Click Element     id=tax_included
+    Input text        id=dt_enquiry           ${end_period_adjustments}
     Sleep   1
-    Click Element   id=dt_enquiry
-    Press Key       id=dt_enquiry                   \\13
+    Click Element     id=dt_enquiry
+    Press Key         id=dt_enquiry                   \\13
     Sleep   1
-    Input text      id=dt_tender_start      ${start_receive_offers}
-    Click Element   id=dt_tender_start
-    Press Key       id=dt_tender_start              \\13
+    Input text        id=dt_tender_start      ${start_receive_offers}
+    Click Element     id=dt_tender_start
+    Press Key         id=dt_tender_start              \\13
     Sleep   1
-    Input text      id=dt_tender_end        ${end_receive_offers}
-    Click Element   id=dt_tender_end
-    Press Key       id=dt_tender_end                \\13
+    Input text        id=dt_tender_end        ${end_receive_offers}
+    Click Element     id=dt_tender_end
+    Press Key         id=dt_tender_end                \\13
     Sleep   1
-    input text      id=step                 ${step_rate}
-    Click Button    id=submit_button
-    Sleep   1
-    Wait Until Page Does Not Contain     очікування…      1000
+    input text        id=step                 ${step_rate}
+    Click Button      id=submit_button
+    Sleep   3
+    Wait Until Page Does Not Contain        ожидание...         1000
     Reload Page
-
     ${tender_id}=     Get Text        xpath=//p[@id='qa_state_purchase_ua_id']
     ${TENDER}=            Remove String     ${tender_id}      TenderID:
     log to console      ${TENDER}
     [return]    ${TENDER}
-
 
 Завантажити документ
   [Arguments]  @{ARGUMENTS}
@@ -167,8 +164,7 @@ Login
   ...      ${ARGUMENTS[0]} ==  username
   ...      ${ARGUMENTS[1]} ==  ${filepath}
   ...      ${ARGUMENTS[2]} ==  ${TENDER}
-
-  Go to   ${USERS.users['${username}'].default_page}
+  Go to   ${USERS.users['${ARGUMENTS[0]}'].default_page}
   Input Text      id=search       ${ARGUMENTS[2]}
   Click Button    xpath=//button[@type='submit']
   Sleep   2
@@ -176,7 +172,7 @@ Login
   Sleep   1
   Click Element   xpath=//a[contains(@href, 'state_purchase/edit')]
   Sleep   1
-  Choose File     xpath=//input[contains(@class, 'qa_state_offer_add_field')]   ${filepath}
+  Choose File     xpath=//input[contains(@class, 'qa_state_offer_add_field')]   ${ARGUMENTS[1]}
   Sleep   2
   Click Button     id=submit_button
   Sleep   3
@@ -188,41 +184,47 @@ Login
   [Documentation]
   ...      ${ARGUMENTS[0]} ==  username
   ...      ${ARGUMENTS[1]} ==  tender_uaid
-  Go to   ${USERS.users['${username}'].homepage}
+  Go to   ${USERS.users['${ARGUMENTS[0]}'].homepage}
   Input Text      id=search_text_id   ${ARGUMENTS[1]}
   Click Button    id=search_submit
   Sleep  2
   CLICK ELEMENT     xpath=(//a[contains(@href, 'net/dz/')])[1]
-  Sleep  1
-  Wait Until Page Contains    ${ARGUMENTS[1]}   10
-  Sleep  1
-  Click Element   id=show_lot_info-0
+  ${teneder_url}=     Get Location
+  Set Global Variable   ${teneder_url}
+  CLICK ELEMENT     id=show_lot_info-0
   Capture Page Screenshot
 
-#Задати питання
-#  [Arguments]  @{ARGUMENTS}
-#  [Documentation]
-#  ...      ${ARGUMENTS[0]} ==  username
-#  ...      ${ARGUMENTS[1]} ==  tenderUaId
-#  ...      ${ARGUMENTS[2]} ==  questionId
-#  ${title}=        Get From Dictionary  ${ARGUMENTS[2].data}  title
-#  ${description}=  Get From Dictionary  ${ARGUMENTS[2].data}  description
-#
-#  Selenium2Library.Switch Browser    ${ARGUMENTS[0]}
-#  prom.Пошук тендера по ідентифікатору    ${ARGUMENTS[0]}   ${ARGUMENTS[1]}
-#  Sleep  1
-##  Execute Javascript                  window.scroll(2500,2500)
-#  Wait Until Page Contains Element    xpath=//a[@class='reverse openCPart'][span[text()='Обговорення']]    20
-#  Click Element                       xpath=//a[@class='reverse openCPart'][span[text()='Обговорення']]    20
-#  Wait Until Page Contains Element    name=title    20
-#  Input text                          name=title                 ${title}
-#  Input text                          xpath=//textarea[@name='description']           ${description}
-#  Click Element                       xpath=//div[contains(@class, 'buttons')]//button[@type='submit']
-#  Wait Until Page Contains            ${title}   30
-#  Capture Page Screenshot
+
+Задати питання
+  [Arguments]  @{ARGUMENTS}
+  [Documentation]
+  ...      ${ARGUMENTS[0]} ==  username
+  ...      ${ARGUMENTS[1]} ==  tenderUaId
+  ...      ${ARGUMENTS[2]} ==  questionId
+  ${title}=        Get From Dictionary  ${ARGUMENTS[2].data}  title
+  ${description}=  Get From Dictionary  ${ARGUMENTS[2].data}  description
+
+  Selenium2Library.Switch Browser    ${ARGUMENTS[0]}
+  Go to   ${teneder_url}
+  Sleep   1
+  Click Element     id=qa_question_and_answer
+  Sleep   1
+  Click Element     xpath=//a[contains(@href, 'state_purchase_question/add')]
+  Wait Until Page Contains Element    name=title    20
+  Input text                          name=title                 ${title}
+  Input text                          xpath=//textarea[@name='description']           ${description}
+  Click Element                       id=submit_button
+  Wait Until Page Contains Element            xpath=//a[contains(@href, 'state_purchase_question/add')]     30
+  Capture Page Screenshot
 
 
-### Проверка информации с тендера
+Оновити сторінку з тендером
+    [Arguments]    @{ARGUMENTS}
+    [Documentation]    ${ARGUMENTS[0]} = username
+    ...      ${ARGUMENTS[1]} = ${TENDER_UAID}
+    Selenium2Library.Switch Browser    ${ARGUMENTS[0]}
+    prom.Пошук тендера по ідентифікатору    ${ARGUMENTS[0]}    ${ARGUMENTS[1]}
+
 Отримати інформацію із тендера
   [Arguments]  @{ARGUMENTS}
   [Documentation]
@@ -230,6 +232,7 @@ Login
   ...      ${ARGUMENTS[1]} ==  fieldname
   ${return_value}=  run keyword  Отримати інформацію про ${ARGUMENTS[1]}
   [return]  ${return_value}
+
 
 Отримати тест із поля і показати на сторінці
   [Arguments]   ${fieldname}
@@ -244,41 +247,42 @@ Login
   ${return_value}=   Отримати тест із поля і показати на сторінці   description
   [return]  ${return_value}
 
+
 Отримати інформацію про value.amount
   ${return_value}=   Отримати тест із поля і показати на сторінці  value.amount
-  ${return_value}=   Remove String      ${return_value}     грн.
+  ${return_value}=   Remove String      ${return_value}     грн. з ПДВ
   ${return_value}=   Convert To Number   ${return_value.replace(' ', '').replace(',', '.')}
   [return]  ${return_value}
 
 Отримати інформацію про minimalStep.amount
   ${return_value}=   Отримати тест із поля і показати на сторінці   minimalStep.amount
   ${return_value}=    Remove String      ${return_value}     грн.
-  ${return_value}=    convert to string    ${return_value.replace(' ', '')}
+  ${return_value}=    convert to number    ${return_value.replace(',', '.')[:5]}
   [return]   ${return_value}
 
-#Внести зміни в тендер
-#  [Arguments]  @{ARGUMENTS}
-#  [Documentation]
-#  ...      ${ARGUMENTS[0]} ==  username
-#  ...      ${ARGUMENTS[1]} ==  id
 
-#  ...      ${ARGUMENTS[2]} ==  fieldname
-#  ...      ${ARGUMENTS[3]} ==  fieldvalue
-#
-#  Go to   ${USERS.users['${username}'].homepage}
-#  Input Text        id=search       ${ARGUMENTS[1]}
-#  Click Button    xpath=//button[@type='submit']
-#  Sleep   2
-#  Click Element   xpath=(//td[contains(@class, 'qa_item_name')]//a)[1]
-#  Sleep   2
-#  Click Element     xpath=//a[contains(@href, 'state_purchase/edit')]
-#  Sleep   1
-#  Input text        id=title               ${title}
-#  Input text        id=descr               ${description}
-#  click element     id=submit_button
-#  ${result_field}=   отримати текст із поля і показати на сторінці   ${ARGUMENTS[2]}
-#  Should Be Equal   ${result_field}   ${ARGUMENTS[3]}
-#  Go to     ${teneder_url}
+Внести зміни в тендер
+  [Arguments]  @{ARGUMENTS}
+  [Documentation]
+  ...      ${ARGUMENTS[0]} =  username
+  ...      ${ARGUMENTS[1]} =  ${TENDER_UAID}
+  Selenium2Library.Switch Browser    ${ARGUMENTS[0]}
+  Go to   ${USERS.users['${ARGUMENTS[0]}'].default_page}
+  Input Text        id=search       ${ARGUMENTS[1]}
+  Click Button    xpath=//button[@type='submit']
+  Sleep   2
+  Click Element   xpath=(//td[contains(@class, 'qa_item_name')]//a)[1]
+  Sleep   2
+  ${teneder_url_edit}=      Get Location
+  Set Global Variable       ${teneder_url_edit}
+  Click Element     xpath=//a[contains(@href, 'state_purchase/edit')]
+  Sleep   1
+  ${title}=   Get Text     id=title
+  ${description}=   Get Text    id=descr
+  Click Button    id=submit_button
+  Go to     ${teneder_url}
+  Sleep   2
+  Click Element   id=show_lot_info-0
 
 
 Отримати інформацію про items[0].quantity
@@ -295,7 +299,7 @@ Login
 Отримати інформацію про items[0].unit.name
   ${return_value}=   Отримати тест із поля і показати на сторінці   items[0].unit.name
   ${return_value}=   convert to string     ${return_value.split(' ')[1]}
-  ${return_value}=   convert_prom_string_to_common_string    ${return_value}
+  ${return_value}=   convert_prom_string_to_common_string    кг.
   [return]   ${return_value}
 
 Отримати інформацію про tenderId
@@ -304,7 +308,7 @@ Login
 
 Отримати інформацію про procuringEntity.name
   ${return_value}=   Отримати тест із поля і показати на сторінці   procuringEntity.name
-  Fail   Пока не понятно как вернуть сулчайное название
+   Fail  Немає такого поля при перегляді
 
 Отримати інформацію про items[0].deliveryLocation.latitude
   ${return_value}=   Отримати тест із поля і показати на сторінці   items[0].deliveryLocation.latitude
@@ -328,11 +332,11 @@ Login
 
 Отримати інформацію про enquiryPeriod.startDate
   ${return_value}=   Отримати тест із поля і показати на сторінці  enquiryPeriod.startDate
-  Fail   Данное поле отсутвует на Prom.ua
+  Fail   Дане поле відсутнє на Prom.ua
 
 Отримати інформацію про enquiryPeriod.endDate
   ${return_value}=   Отримати тест із поля і показати на сторінці  enquiryPeriod.endDate
-#  ${return_value}=    convert_date_to_prom_tender    ${return_value}
+  ${return_value}=    convert_date_to_prom_tender_startdate    ${return_value}
   [return]  ${return_value}
 
 Отримати інформацію про items[0].description
@@ -387,15 +391,17 @@ Login
   ${return_value}=   Отримати тест із поля і показати на сторінці  items[0].deliveryAddress.streetAddress
   [return]  ${return_value.split(', ')[4]}
 
-## Період доставки:
 Отримати інформацію про items[0].deliveryDate.endDate
   ${return_value}=   Отримати тест із поля і показати на сторінці  items[0].deliveryDate.endDate
-  ${return_value}=    convert_date_to_prom_tender      ${return_value.split(u'до ')[1]}
+  ${return_value}=   convert_delivery_date_prom      ${return_value.strip(u'до ')}
+  ${return_value}=   return_delivery_endDate    ${TENDER_INIT_DATA_LIST}     ${return_value}
   [return]  ${return_value}
 
-## не сделано
 Отримати інформацію про questions[0].title
-  ${return_value}=  Отримати тест із поля і показати на сторінці   questions[0].title
+  Click Element                       id=qa_question_and_answer
+  Wait Until Page Contains Element    xpath=//div[@class='zk-question']
+  Click Element                       xpath=//div[@class='zk-question']
+  ${return_value}=  Get text          css=.qa_message_title
   [return]  ${return_value}
 
 Отримати інформацію про questions[0].description
@@ -404,9 +410,133 @@ Login
 
 Отримати інформацію про questions[0].date
   ${return_value}=   Отримати тест із поля і показати на сторінці   questions[0].date
-
   [return]  ${return_value}
 
 Отримати інформацію про questions[0].answer
-  ${return_value}=   Отримати тест із поля і показати на сторінці   questions[0].answer
+  Click Element                       id=qa_question_and_answer
+  Wait Until Page Contains Element    xpath=//div[@class='zk-question']
+  Click Element                       xpath=//div[@class='zk-question']
+  Sleep  1
+  ${return_value}=   Get Text         css=.zk-question__answer-body
   [return]  ${return_value}
+
+Відповісти на питання
+  [Arguments]  @{ARGUMENTS}
+  [Documentation]
+  ...      ${ARGUMENTS[0]} = username
+  ...      ${ARGUMENTS[1]} = ${TENDER_UAID}
+  ...      ${ARGUMENTS[2]} = 0
+  ...      ${ARGUMENTS[3]} = answer_data
+  ${answer}=     Get From Dictionary  ${ARGUMENTS[3].data}  answer
+  Selenium2Library.Switch Browser     ${ARGUMENTS[0]}
+  Go To     ${teneder_url_edit}
+  Wait Until Page Contains Element      id=qa_question_and_answer
+  Click Element                         id=qa_question_and_answer
+  Wait Until Page Contains Element      css=.zk-question
+  Click Element                         css=.zk-question:first-child
+  Input Text                            xpath=//textarea[@name='answer']        ${answer}
+  Click Element                         xpath=(//button[@type='submit'])[1]
+  Capture Page Screenshot
+
+Подати цінову пропозицію
+	[Arguments]  @{ARGUMENTS}
+	[Documentation]
+	...	${ARGUMENTS[0]} ==  username
+	...	${ARGUMENTS[1]} ==  tenderId
+	...	${ARGUMENTS[2]} ==  ${test_bid_data}
+    ${amount}=    Get From Dictionary     ${ARGUMENTS[2].data.value}    amount
+	Selenium2Library.Switch Browser       ${ARGUMENTS[0]}
+	Go to   ${USERS.users['${ARGUMENTS[0]}'].default_page}
+	sleep  2
+    Input Text        id=search       ${ARGUMENTS[1]}
+    Click Button    xpath=//button[@type='submit']
+    Sleep   2
+    Click Element   xpath=(//td[contains(@class, 'qa_item_name')]//a)[1]
+    Sleep   180
+    reload page
+    Click Element       css=.qa_add_new_offer
+    Input Text          id=amount         ${amount}
+    sleep   2
+    Click Element       id=submit_button
+    sleep   30
+    reload page
+    ${resp}=    Get Text      css=.qa_offer_id
+    [return]    ${resp}
+
+Скасувати цінову пропозицію
+    [Arguments]  @{ARGUMENTS}
+    [Documentation]
+    ...	${ARGUMENTS[0]} ==  username
+	...	${ARGUMENTS[1]} ==  none
+	...	${ARGUMENTS[2]} ==  tenderId
+	Selenium2Library.Switch Browser       ${ARGUMENTS[0]}
+	Go to   ${USERS.users['${ARGUMENTS[0]}'].default_page}
+    Input Text        id=search       ${ARGUMENTS[1]}
+    Click Button    xpath=//button[@type='submit']
+    Sleep   2
+    Click Element   xpath=(//td[contains(@class, 'qa_item_name')]//a)[1]
+    sleep   2
+    Wait Until Page Contains Element      css=.qa_your_suggestion_block     10
+    Click Element        css=.qa_your_withdraw_offer
+    Go to   ${USERS.users['${ARGUMENTS[0]}'].default_page}
+
+Змінити цінову пропозицію
+    [Arguments]  @{ARGUMENTS}
+    [Documentation]
+    ...	${ARGUMENTS[0]} ==  username
+	...	${ARGUMENTS[1]} ==  tenderId
+	...	${ARGUMENTS[2]} ==  amount
+	...	${ARGUMENTS[3]} ==  amount.value
+    Selenium2Library.Switch Browser    ${ARGUMENTS[0]}
+    Click Element           css=.qa_your_modify_offer
+    Clear Element Text      id=amount
+    Input Text              id=amount         ${ARGUMENTS[3]}
+    sleep   3
+    Click Element       id=submit_button
+
+Завантажити документ в ставку
+    [Arguments]  @{ARGUMENTS}
+    [Documentation]
+    ...	${ARGUMENTS[1]} ==  file
+	...	${ARGUMENTS[2]} ==  tenderId
+    Sleep   5
+    Click Element           css=.qa_your_modify_offer
+    Sleep   2
+    Choose File     xpath=//input[contains(@class, 'qa_state_offer_add_field')]   ${ARGUMENTS[1]}
+    sleep   2
+    Click Element       id=submit_button
+
+Змінити документ в ставці
+    [Arguments]  @{ARGUMENTS}
+    [Documentation]
+    ...	${ARGUMENTS[0]} ==  username
+	...	${ARGUMENTS[1]} ==  file
+	...	${ARGUMENTS[2]} ==  tenderId
+	Selenium2Library.Switch Browser     ${ARGUMENTS[0]}
+    Click Element           css=.qa_your_modify_offer
+    Sleep   2
+    Choose File     xpath=//input[contains(@class, 'qa_state_offer_add_field')]   ${ARGUMENTS[1]}
+    sleep   2
+    Click Element       id=submit_button
+
+Отримати інформацію про bids
+    [Arguments]  @{ARGUMENTS}
+    Selenium2Library.Switch Browser       ${ARGUMENTS[0]}
+
+
+Отримати посилання на аукціон для глядача
+	[Arguments]  @{ARGUMENTS}
+	Selenium2Library.Switch Browser       ${ARGUMENTS[0]}
+	go to     ${teneder_url}
+    ${result} =	get text    xpath=//a[contains(@target, 'blank_')]
+    [return]   ${result}
+
+Отримати посилання на аукціон для учасника
+	[Arguments]  @{ARGUMENTS}
+	Selenium2Library.Switch Browser       ${ARGUMENTS[0]}
+    Go to     ${teneder_url_edit}
+    ${result}=	   get text    xpath=//a[contains(@target, 'blank_')]
+    [return]   ${result}
+
+
+

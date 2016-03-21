@@ -9,4 +9,7 @@ setup(name=pkg_name,
       author='',
       author_email='',
       url='https://github.com/openprocurement/{}'.format(pkg_name),
+      packages=[pkg_name],
+      package_dir={pkg_name: '.'},
+      package_data={pkg_name: ['*.robot']}
       )

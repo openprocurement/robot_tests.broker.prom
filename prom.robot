@@ -24,6 +24,7 @@ ${locator.tenderPeriod.endDate}                                 css=.qa_date_sub
 ${locator.items[0].quantity}                                    xpath=//td[contains(@class, 'qa_quantity')]/p
 ${locator.items[0].description}                                 css=.qa_item_name
 ${locator.items[0].deliveryLocation.latitude}                   css=.qa_place_delivery
+${locator.items[0].deliveryLocation.latitude}                   id=state_purchases_items-0-delivery_latitude
 ${locator.items[0].deliveryLocation.longitude}                  css=.qa_place_delivery
 ${locator.items[0].unit.code}                                   xpath=//td[contains(@class, 'qa_quantity')]/p
 ${locator.items[0].unit.name}                                   xpath=//td[contains(@class, 'qa_quantity')]/p
@@ -33,9 +34,9 @@ ${locator.items[0].deliveryAddress.region}                      css=.qa_address_
 ${locator.items[0].deliveryAddress.locality}                    css=.qa_address_delivery
 ${locator.items[0].deliveryAddress.streetAddress}               css=.qa_address_delivery
 ${locator.items[0].deliveryDate.endDate}                        css=.qa_delivery_period
-${locator.items[0].classification.scheme}                       css=.qa_cpv_name
-${locator.items[0].classification.id}                           css=.qa_cpv_classifier
-${locator.items[0].classification.description}                  css=.qa_cpv_classifier
+${locator.items[0].classification.scheme}                       css=.qa_cav_name
+${locator.items[0].classification.id}                           css=.qa_cav_classifier
+${locator.items[0].classification.description}                  css=.qa_cav_classifier
 ${locator.items[0].additionalClassifications[0].scheme}         css=.qa_dkpp_name
 ${locator.items[0].additionalClassifications[0].id}             css=.qa_dkpp_classifier
 ${locator.items[0].additionalClassifications[0].description}    css=.qa_dkpp_classifier
@@ -58,6 +59,7 @@ Login
   [Arguments]  @{ARGUMENTS}
   Click Element   ${sign_in}
   Sleep   1
+  Clear Element Text   id=phone_email
   Input text      ${login_sign_in}          ${USERS.users['${ARGUMENTS[0]}'].login}
   Input text      ${password_sign_in}       ${USERS.users['${ARGUMENTS[0]}'].password}
   Click Button    id=submit_login_button
@@ -78,8 +80,7 @@ Login
     ${currency}=                            Get From Dictionary         ${ARGUMENTS[1].data.value}       currency
     ${valueAddedTaxIncluded}=               Get From Dictionary         ${ARGUMENTS[1].data.value}       valueAddedTaxIncluded
     ${unit}=                 Get From Dictionary         ${items[0].unit}                 name
-    ${cpv_id}=               Get From Dictionary         ${items[0].classification}       id
-    ${dkpp_id}=              Get From Dictionary         ${items[0].additionalClassifications[0]}      id
+    ${cav_id}=               Get From Dictionary         ${items[0].classification}       id
     ${delivery_end}=         get_delivery_date_prom      ${ARGUMENTS[1]}
     Set Global Variable      ${TENDER_INIT_DATA_LIST}         ${ARGUMENTS[1]}
     ${postalCode}=           Get From Dictionary         ${items[0].deliveryAddress}      postalCode
@@ -96,8 +97,10 @@ Login
 
 
     Selenium2Library.Switch Browser    ${ARGUMENTS[0]}
-    Wait Until Page Contains Element     id=js-btn-0    20
-    Click Element                        id=js-btn-0
+    Wait Until Page Contains Element     xpath=//a[contains(@href,'/cabinet/purchases/state_auction/list')]    20
+    Click Element                        xpath=//a[contains(@href,'/cabinet/purchases/state_auction/list')]
+    Wait Until Page Contains Element     xpath=//a[contains(@href,'/cabinet/purchases/state_auction/add')]     20
+    Click Element                        xpath=//a[contains(@href,'/cabinet/purchases/state_auction/add')]
     Wait Until Page Contains Element     id=title       20
     Input text                           id=title               ${title}
     Input text                           id=descr               ${description}
@@ -105,35 +108,27 @@ Login
     Input text        id=state_purchases_items-0-quantity       ${quantity}
     Click Element     id=state_purchases_items-0-unit_id_dd
     Click Element     xpath=//li[@data-value='1']
-    ## Cpv
-    Click Element     xpath=//div[contains(@class, 'qa_cpv_button')]
-    Wait Until Page Contains Element    xpath=//div[contains(@class, 'qa_cpv_popup')]//input[contains(@data-url, 'classifier_type=cpv')]    20
-    Input text        xpath=//div[contains(@class, 'qa_cpv_popup')]//input[contains(@data-url, 'classifier_type=cpv')]    ${cpv_id}
-    Click Element     xpath=//div[contains(@class, 'qa_cpv_popup')]//input[contains(@data-url, 'classifier_type=cpv')]
-    Press Key         xpath=//div[contains(@class, 'qa_cpv_popup')]//input[contains(@data-url, 'classifier_type=cpv')]             \\13
-    Wait Until Page Contains Element      xpath=//input[contains(@data-label, '44617100-9')]      20
-    Click Element     xpath=//input[contains(@data-label, '44617100-9')]
-    Click Element     xpath=//div[contains(@class, 'qa_cpv_popup')]//a[contains(@class, 'classifiers-submit')]
-    ## dkkp
-    Wait Until Page Contains Element   xpath=//div[contains(@class, 'qa_dkpp_button')]      20
-    Click Element     xpath=//div[contains(@class, 'qa_dkpp_button')]
-    Wait Until Page Contains Element    xpath=//div[contains(@class, 'qa_dkpp_popup')]//input[contains(@data-url, 'classifier_type=dkpp')]    20
-    Input text        xpath=//div[contains(@class, 'qa_dkpp_popup')]//input[contains(@data-url, 'classifier_type=dkpp')]    ${dkpp_id}
-    Click Element     xpath=//div[contains(@class, 'qa_dkpp_popup')]//input[contains(@data-url, 'classifier_type=dkpp')]
-    Press Key         xpath=//div[contains(@class, 'qa_dkpp_popup')]//input[contains(@data-url, 'classifier_type=dkpp')]             \\13
-    Wait Until Page Contains Element      id=classifier_id-1228     20
-    Click Element     id=classifier_id-1228
-    Click Element     xpath=//div[contains(@class, 'qa_dkpp_popup')]//a[contains(@class, 'classifiers-submit')]
-    Input text        id=state_purchases_items-0-date_delivery_end          ${delivery_end}
-    Click Element     id=state_purchases_items-0-date_delivery_end
-    Press Key         id=state_purchases_items-0-date_delivery_end             \\13
+     ## cav
+    Click Element     xpath=//div[contains(@class, 'qa_cav_button')]
+    Wait Until Page Contains Element    xpath=//div[contains(@class, 'qa_cav_popup')]//input[contains(@data-url, 'classifier_type=cav')]    20
+    Click Element     xpath=//div[contains(@class, 'qa_cav_popup')]//input[contains(@data-url, 'classifier_type=cav')]
+    Input text        xpath=//div[contains(@class, 'qa_cav_popup')]//input[contains(@data-url, 'classifier_type=cav')]    ${cav_id}
+    Wait Until Page Contains Element      xpath=//div[contains(@class, 'qa_cav_popup')]//input[contains(@data-label, '66113000-5')]      20
+    Press Key         xpath=//div[contains(@class, 'qa_cav_popup')]//input[contains(@data-label, '66113000-5')]            \\13
+    Click Element     xpath=//div[contains(@class, 'qa_cav_popup')]//input[contains(@data-label, '66113000-5')]
+    Sleep    5
+    Click Element     xpath=//div[contains(@class, 'qa_cav_popup')]//a[contains(@data-target, 'inputs-container')]
+    Sleep    5
     Input text        id=state_purchases_items-0-delivery_postal_code       ${postalCode}
     Click Element     id=state_purchases_items-0-delivery_region_dd
     Click Element     xpath=//li[contains(@data-value, 'Киевская')]
     Input text        id=state_purchases_items-0-delivery_locality          ${locality}
     Input text        id=state_purchases_items-0-delivery_street_address    ${streetAddress}
+    ${latitude}=   Convert To String     ${latitude}
     Input text        id=state_purchases_items-0-delivery_latitude          ${latitude}
+    ${longitude}=   Convert To String     ${longitude}
     Input text        id=state_purchases_items-0-delivery_longitude         ${longitude}
+    ${budget}=   Convert To String     ${budget}
     Input text        id=amount             ${budget}
     Click Element     id=tax_included
     Input text        id=dt_enquiry           ${end_period_adjustments}
@@ -149,12 +144,13 @@ Login
     Click Element     id=dt_tender_end
     Press Key         id=dt_tender_end                \\13
     Sleep   1
+    ${step_rate}=   Convert To String     ${step_rate}
     input text        id=step                 ${step_rate}
     Click Button      id=submit_button
     Sleep   3
     Wait Until Page Does Not Contain        ожидание...         1000
     Reload Page
-    ${tender_id}=     Get Text        xpath=//p[@id='qa_state_purchase_ua_id']
+    ${tender_id}=     Get Text        xpath=//h1[@class='h-mb-20']
     ${TENDER}=            Remove String     ${tender_id}      TenderID:
     log to console      ${TENDER}
     [return]    ${TENDER}
@@ -166,12 +162,14 @@ Login
   ...      ${ARGUMENTS[1]} ==  ${filepath}
   ...      ${ARGUMENTS[2]} ==  ${TENDER}
   Go to   ${USERS.users['${ARGUMENTS[0]}'].default_page}
-  Input Text      id=search       ${ARGUMENTS[2]}
-  Click Button    xpath=//button[@type='submit']
   Sleep   2
+  Input Text      id=search       ${ARGUMENTS[2]}
+  Sleep   3
+  Click Button    xpath=//button[@type='submit']
+  Sleep   3
   Click Element   xpath=(//td[contains(@class, 'qa_item_name')]//a)[1]
   Sleep   1
-  Click Element   xpath=//a[contains(@href, 'state_purchase/edit')]
+  Click Element   xpath=//span[@class='b-button__text']
   Sleep   1
   Choose File     xpath=//input[contains(@class, 'qa_state_offer_add_field')]   ${ARGUMENTS[1]}
   Sleep   2
@@ -184,15 +182,18 @@ Login
   [Documentation]
   ...      ${ARGUMENTS[0]} ==  username
   ...      ${ARGUMENTS[1]} ==  tender_uaid
-  Go to   ${USERS.users['${ARGUMENTS[0]}'].homepage}
-  Input Text      id=search_text_id   ${ARGUMENTS[1]}
-  Click Button    id=search_submit
   Sleep  2
-  CLICK ELEMENT     xpath=(//a[contains(@href, 'net/dz/')])[1]
-  sleep  2
-  CLICK ELEMENT     id=show_lot_info-0
+  Go to   ${USERS.users['${ARGUMENTS[0]}'].homepage}
+  Press Key   xpath=//a[contains(@href, '/auctions')]       \\13
+  Sleep  2
+  Input Text      id=search_text_id   ${ARGUMENTS[1]}
+  Sleep  2
+  Press Key       id=search_submit       \\13
+  Click Element    id=search_submit
+  Sleep  2
+  CLICK Element     xpath=(//a[contains(@href, '/auctions')])[1]
+  Sleep  3
   Capture Page Screenshot
-
 
 Задати питання
   [Arguments]  @{ARGUMENTS}
@@ -204,11 +205,13 @@ Login
   ${description}=  Get From Dictionary  ${ARGUMENTS[2].data}  description
 
   Selenium2Library.Switch Browser    ${ARGUMENTS[0]}
-  Go to   ${USERS.users['${ARGUMENTS[0]}'].homepage}
+  Go to   ${USERS.users['${ARGUMENTS[0]}'].home_page}
+  Press Key   xpath=//a[contains(@href, '/auctions')]       \\13
   Input Text      id=search_text_id   ${ARGUMENTS[1]}
   Click Button    id=search_submit
   Sleep  2
-  CLICK ELEMENT     xpath=(//a[contains(@href, 'net/dz/')])[1]
+  Sleep  2
+  CLICK ELEMENT     xpath=(//a[contains(@href, '/auctions')])[1]
   Sleep   1
   Click Element     id=qa_question_and_answer
   Sleep   1

@@ -55,7 +55,7 @@ def convert_prom_string_to_common_string(string):
         u"Картонки": u"Картонні коробки",
         u"Період уточнень": u"active.enquiries",
         u"Прийом пропозицій": u"active.tendering",
-        u"Аукціон ": u"active.auction",
+        u"Аукціон": u"active.auction",
     }.get(string, string)
 
 
@@ -64,4 +64,3 @@ def adapt_procuringEntity(tender_data):
     tender_data['data']['procuringEntity']['address']['countryName'] = u"Украина"
     tender_data['data']['items'][0]['unit']['name'] = u"килограммы"
     return tender_data
-

@@ -200,7 +200,7 @@ Login
   Sleep  2
   Click Element    id=search_submit
   Sleep  2
-  CLICK Element     xpath=(//a[contains(@href, '/auctions')])[1]
+  CLICK Element     xpath=(//a[contains(@class, 'qa_auctions_item')])[1]
   Sleep  3
   Click Element   id=show_lot_info-0
 
@@ -218,7 +218,7 @@ Login
   Click Button    id=search_submit
   Sleep  2
   Sleep  2
-  CLICK ELEMENT     xpath=(//a[contains(@href, '/auctions')])[1]
+  CLICK ELEMENT     xpath=(//a[contains(@class, 'qa_auctions_item')])[1]
   Sleep   1
   Click Element     id=qa_question_and_answer
   Sleep   15
@@ -546,7 +546,7 @@ Login
     Input Text      id=search_text_id   ${ARGUMENTS[1]}
     Click Button    id=search_submit
     Sleep  2
-    CLICK ELEMENT     xpath=(//a[contains(@href, 'net/dz/')])[1]
+    CLICK ELEMENT     xpath=(//a[contains(@class, 'qa_auctions_item')])[1]
     reload page
     ${result} =    get text    xpath=//a[contains(@target, 'blank_')]
     [Return]   ${result}
@@ -558,7 +558,7 @@ Login
     Input Text        id=search       ${ARGUMENTS[1]}
     Click Button    xpath=//button[@type='submit']
     Sleep   2
-    CLICK Element     xpath=(//a[contains(@href, 'state_auction/view')])[1]
+    CLICK Element     xpath=(//a[contains(@class, ' qa_procurement_name_in_list')])[1]
     Sleep   120
     reload page
     ${result}=       get text    xpath=//a[contains(@target, 'blank_')]

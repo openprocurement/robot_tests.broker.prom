@@ -45,7 +45,6 @@ def convert_date_to_prom_tender_enddate(isodate):
     return second_iso
 
 
-
 def convert_prom_string_to_common_string(string):
     return {
         u"кілограми": u"кілограм",
@@ -66,7 +65,8 @@ def adapt_procuringEntity(tender_data):
 
 
 def adapt_item(tender_data):
-    tender_data['data']['items'][0]['unit']['name'] = u"килограммы"
+    if tender_data['data']['items'][0]['unit']['name'] == u"кг":
+        tender_data['data']['items'][0]['unit']['name'] = u"килограммы"
     return tender_data
 
 

@@ -12,7 +12,7 @@ ${sign_in}                                                      css=.qa_entrance
 ${login_sign_in}                                                id=phone_email
 ${password_sign_in}                                             id=password
 ${locator.title}                                                css=.qa_title
-${locator.status}                                               xpath=//td[contains(@class, 'zk-status')]
+${locator.status}                                               xpath=//div[contains(@class, 'zk-status')][@title]
 ${locator.description}                                          css=.qa_descr
 ${locator.minimalStep.amount}                                   css=.qa_min_budget
 ${locator.value.amount}                                         css=.qa_budget_pdv
@@ -119,7 +119,7 @@ Login
     Input text        id=state_purchases_items-0-quantity       ${quantity}
     Click Element     id=state_purchases_items-0-unit_id_dd
     Click Element     xpath=//li[@data-value='1']
-     ## cav
+    # cav
     Click Element     xpath=//div[contains(@class, 'qa_cav_button')]
     Wait Until Page Contains Element    xpath=//div[contains(@class, 'qa_cav_popup')]//input[contains(@data-url, 'classifier_type=cav')]    20
     Click Element     xpath=//div[contains(@class, 'qa_cav_popup')]//input[contains(@data-url, 'classifier_type=cav')]
@@ -161,7 +161,7 @@ Login
     Sleep   3
     Wait Until Page Does Not Contain        очікування...         1000
     Reload Page
-    ${tender_id}=     Get Text        xpath=//p[@class='tender-tuid']
+    ${tender_id}=     Get Text        css=.qa_inform [class*='tender-tuid']
     ${TENDER}=            Remove String     ${tender_id}      Ідентифікатор аукціону:
     log to console      ${TENDER}
     [Return]    ${TENDER}
@@ -178,9 +178,9 @@ Login
   Sleep   3
   Click Button    xpath=//button[@type='submit']
   Sleep   3
-  Click Element   xpath=(//td[contains(@class, 'qa_item_name')]//a)[1]
+  Click Element   css=[class*='qa_procurement_name_in_list']
   Sleep   1
-  Click Element   xpath=//span[@class='b-button__text']
+  Click Element   css=[href*='state_auction/edit/']
   Sleep   1
   Choose File     xpath=//input[contains(@class, 'qa_state_offer_add_field')]   ${ARGUMENTS[1]}
   Sleep   2
@@ -194,15 +194,15 @@ Login
   ...      ${ARGUMENTS[0]} ==  username
   ...      ${ARGUMENTS[1]} ==  tender_uaid
   Go to   ${USERS.users['${ARGUMENTS[0]}'].homepage}
-  Sleep  20
+  Sleep  40
   Input Text      id=search_text_id   ${ARGUMENTS[1]}
   log to console    ${ARGUMENTS[1]}
   Sleep  2
   Click Element    id=search_submit
-  Sleep  2
+  Sleep  5
   CLICK Element     xpath=(//a[contains(@class, 'qa_auctions_item')])[1]
-  Sleep  3
-  Click Element   id=show_lot_info-0
+  Sleep  1
+
 
 Задати питання
   [Arguments]  @{ARGUMENTS}
@@ -443,13 +443,13 @@ Login
   Go to   ${USERS.users['${ARGUMENTS[0]}'].default_page}
   Input Text        id=search       ${ARGUMENTS[1]}
   Click Button    xpath=//button[@type='submit']
-  Sleep   2
+  Sleep   60
   Click Element   xpath=(//td[contains(@class, 'qa_item_name')]//a)[1]
   Sleep   2
-  Wait Until Page Contains Element      xpath=//a[@class='b-tabs__link']
-  Click Element                         xpath=//a[@class='b-tabs__link']
-  Wait Until Page Contains Element      css=.zk-question
-  Click Element                         css=.zk-question
+  Wait Until Page Contains Element      css=[href*='state_auction_question/list']
+  Click Element                         css=[href*='state_auction_question/list']
+  Wait Until Page Contains Element      css=.qa_message_title
+  Click Element                         css=.qa_message_title
   Input Text                            xpath=//textarea[@name='answer']        ${answer}
   Click Element                         xpath=(//button[@type='submit'])[1]
 
@@ -469,7 +469,7 @@ Login
     Click Element   xpath=(//td[contains(@class, 'qa_item_name')]//a)[1]
     Sleep   180
     reload page
-    Click Element       xpath=//a[contains(@class, 'zk-button_theme_green')]
+    Click Element       css=.qa_button_create_offer
     Input Text          id=amount         ${amount}
     sleep   2
     Click Element       id=submit_button
@@ -563,4 +563,3 @@ Login
     reload page
     ${result}=       get text    xpath=//a[contains(@target, 'blank_')]
     [Return]   ${result}
-

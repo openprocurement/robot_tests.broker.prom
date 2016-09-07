@@ -67,6 +67,8 @@ def adapt_procuringEntity(tender_data):
 def adapt_item(tender_data):
     if tender_data['data']['items'][0]['unit']['name'] == u"кг":
         tender_data['data']['items'][0]['unit']['name'] = u"килограммы"
+    elif tender_data['data']['items'][0]['unit']['name'] == u"кілограми":
+        tender_data['data']['items'][0]['unit']['name'] = u"килограммы"
     return tender_data
 
 
@@ -76,4 +78,3 @@ def adapt_test_mode(tender_data):
     except KeyError:
         pass
     return tender_data
-

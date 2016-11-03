@@ -1,80 +1,82 @@
 # -*- coding: utf-8 -*-
+import pytz
 import dateutil.parser
+
 from datetime import datetime
 
 
 def get_all_prom_dates(initial_tender_data, key):
-    tender_period = initial_tender_data.data.tenderPeriod
+    tender_period = initial_tender_data.data.auctionPeriod
     start_dt = dateutil.parser.parse(tender_period['startDate'])
-    end_dt = dateutil.parser.parse(tender_period['endDate'])
     data = {
-        'EndPeriod': start_dt.strftime("%d.%m.%Y %H:%M"),
         'StartDate': start_dt.strftime("%d.%m.%Y %H:%M"),
-        'EndDate': end_dt.strftime("%d.%m.%Y %H:%M"),
     }
     return data.get(key, '')
 
 
-def get_delivery_date_prom(initial_tender_data):
-    delivery_end_date = initial_tender_data.data['items'][0]['deliveryDate']['endDate']
-    endDate = dateutil.parser.parse(delivery_end_date)
-    return endDate.strftime("%d.%m.%Y")
+def convert_date_prom(date):
+    date_obj = datetime.strptime(date, "%d.%m.%y %H:%M")
+    time_zone = pytz.timezone('Europe/Kiev')
+    localized_date = time_zone.localize(date_obj)
+    return localized_date.strftime("%Y-%m-%d %H:%M:%S.%f%z")
 
 
-def return_delivery_endDate(initial_tender_data, input_date):
-    init_delivery_end_date = initial_tender_data.data['items'][0]['deliveryDate']['endDate']
-    if input_date in init_delivery_end_date:
-        return init_delivery_end_date
-    else:
-        return input_date
+def convert_date_to_prom_tender_startdate(date):
+    first_date = date.split(' - ')[0]
+    date_obj = datetime.strptime(first_date, "%d.%m.%y %H:%M")
+    time_zone = pytz.timezone('Europe/Kiev')
+    localized_date = time_zone.localize(date_obj)
+    return localized_date.strftime("%Y-%m-%d %H:%M:%S.%f%z")
 
 
-def convert_date_prom(isodate):
-    return datetime.strptime(isodate, "%d.%m.%y %H:%M").isoformat()
-
-
-def convert_date_to_prom_tender_startdate(isodate):
-    first_date = isodate.split(' - ')[0]
-    first_iso = datetime.strptime(first_date, "%d.%m.%y %H:%M").isoformat()
-    return first_iso
-
-
-def convert_date_to_prom_tender_enddate(isodate):
-    second_date = isodate.split(' - ')[1]
-    second_iso = datetime.strptime(second_date, "%d.%m.%y %H:%M").isoformat()
-    return second_iso
+def convert_date_to_prom_tender_enddate(date):
+    second_date = date.split(' - ')[1]
+    date_obj = datetime.strptime(second_date, "%d.%m.%y %H:%M")
+    time_zone = pytz.timezone('Europe/Kiev')
+    localized_date = time_zone.localize(date_obj)
+    return localized_date.strftime("%Y-%m-%d %H:%M:%S.%f%z")
 
 
 def convert_prom_string_to_common_string(string):
     return {
-        u"кілограми": u"кілограм",
-        u"кг.": u"кілограми",
         u"грн.": u"UAH",
+        u"шт.": u"штуки",
+        u"кв.м.": u"метри квадратні",
+        u"метры квадратные": u"метри квадратні",
         u" з ПДВ": True,
-        u"Картонки": u"Картонні коробки",
+        u"Класифікатор:": u"CAV",
         u"Період уточнень": u"active.enquiries",
         u"Прийом пропозицій": u"active.tendering",
         u"Аукціон": u"active.auction",
+        u"Кваліфікація": u"active.qualification",
+    }.get(string, string)
+
+
+def convert_prom_code_to_common_string(string):
+    return {
+        u"кв.м.": u"MTK",
+        u"послуга": u"E48",
+        u"послуги": u"E48",
+        u"шт.": u"H87",
     }.get(string, string)
 
 
 def adapt_procuringEntity(tender_data):
-    tender_data['data']['procuringEntity']['name'] = u'ДП "autotest"'
+    tender_data['data']['procuringEntity']['name'] = u'ТОВ "ЭТУ КОМПАНИЮ НЕ ТРОГАТЬ"'
     tender_data['data']['procuringEntity']['address']['countryName'] = u"Украина"
     return tender_data
 
 
-def adapt_item(tender_data):
-    if tender_data['data']['items'][0]['unit']['name'] == u"кг":
-        tender_data['data']['items'][0]['unit']['name'] = u"килограммы"
-    elif tender_data['data']['items'][0]['unit']['name'] == u"кілограми":
-        tender_data['data']['items'][0]['unit']['name'] = u"килограммы"
-    return tender_data
+my_dict = {
+    u"послуга": u"услуга",
+    u"послуги": u"услуга",
+    u"метри квадратні": u"метры квадратные",
+}
 
 
-def adapt_test_mode(tender_data):
-    try:
-        del tender_data['data']['mode']
-    except KeyError:
-        pass
+def adapt_item(tender_data, role_name):
+    if role_name != 'viewer':
+        if 'unit' in tender_data['data']['items'][0]:
+            for i in tender_data['data']['items']:
+                i['unit']['name'] = my_dict[i['unit']['name']]
     return tender_data

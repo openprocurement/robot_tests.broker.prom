@@ -272,15 +272,19 @@ Login
   [Return]   ${return_value}
 
 Внести зміни в тендер
-  [Arguments]  ${username}  ${tender_uaid}  ${fieldname}  ${fieldvalue}
-  ${tender}=  prom.Пошук тендера по ідентифікатору  ${username}  ${tender_uaid}
-  Set_To_Object  ${tender.data}   ${fieldname}   ${fieldvalue}
-  ${procurementMethodType}=  Get From Object  ${tender.data}  procurementMethodType
-  Run Keyword If  '${procurementMethodType}' == 'aboveThresholdUA' or '${procurementMethodType}' == 'aboveThresholdEU'
-  ...      Remove From Dictionary  ${tender.data}  enquiryPeriod
-  ${tender}=  set_access_key  ${tender}  ${USERS.users['${username}'].access_token}
-  ${tender}=  Call Method  ${USERS.users['${username}'].client}  patch_tender  ${tender}
-  Set_To_Object   ${USERS.users['${username}'].tender_data}   ${fieldname}   ${fieldvalue}
+  [Arguments]  @{ARGUMENTS}
+  [Documentation]
+  ...      ${ARGUMENTS[0]} =  ${username}
+  ...      ${ARGUMENTS[1]} =  ${TENDER_UAID}
+  Selenium2Library.Switch Browser    ${ARGUMENTS[0]}
+  prom.Пошук тендера по ідентифікатору  ${ARGUMENTS[0]}  ${ARGUMENTS[1]}
+  Sleep   2
+  Click Element     xpath=//a[contains(@href, 'state_auction/edit')]
+  Sleep   1
+  ${title}=   Get Text     id=title
+  ${description}=   Get Text    id=descr
+  Click Button    id=submit_button
+  Sleep   2
 
 Отримати інформацію про items[0].quantity
   ${return_value}=    Отримати тест із поля і показати на сторінці   items[0].quantity

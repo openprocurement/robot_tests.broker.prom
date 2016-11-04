@@ -23,12 +23,18 @@ def convert_date_prom(date):
 
 def convert_date_to_prom_tender_startdate(date):
     first_date = date.split(' - ')[0]
-    convert_date_prom(first_date)
+    date_obj = datetime.strptime(first_date, "%d.%m.%y %H:%M")
+    time_zone = pytz.timezone('Europe/Kiev')
+    localized_date = time_zone.localize(date_obj)
+    return localized_date.strftime("%Y-%m-%d %H:%M:%S.%f%z")
 
 
 def convert_date_to_prom_tender_enddate(date):
     second_date = date.split(' - ')[1]
-    convert_date_prom(second_date)
+    date_obj = datetime.strptime(second_date, "%d.%m.%y %H:%M")
+    time_zone = pytz.timezone('Europe/Kiev')
+    localized_date = time_zone.localize(date_obj)
+    return localized_date.strftime("%Y-%m-%d %H:%M:%S.%f%z")
 
 
 def convert_prom_string_to_common_string(string):

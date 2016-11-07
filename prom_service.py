@@ -49,6 +49,7 @@ def convert_prom_string_to_common_string(string):
         u"Прийом пропозицій": u"active.tendering",
         u"Аукціон": u"active.auction",
         u"Кваліфікація": u"active.qualification",
+        u"Скасована": u"active",
     }.get(string, string)
 
 

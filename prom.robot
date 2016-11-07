@@ -16,7 +16,8 @@ ${locator.status}                                               css=.qa_auction_
 ${locator.description}                                          css=.qa_auction_lot_descr
 ${locator.minimalStep.amount}                                   css=.qa_bid_step
 ${locator.minimalStep}                                          css=.qa_quantity
-${locator.value.amount}                                         css=.qa_bid
+${locator.value.amount}                                         css=.qa_amount_block .qa_buget
+${locator.value.pdv}                                            css=.qa_amount_block .qa_pdv
 ${locator.tenderId}                                             css=.qa_ua_ea_id
 ${locator.procuringEntity.name}                                 css=.qa_merchant_name
 ${locator.auctionPeriod.startDate}                              css=.qa_date_time_auction
@@ -43,6 +44,8 @@ ${locator.questions[0].date}                                    css=.qa_question
 ${locator.questions[0].answer}                                  css=.zk-question__answer-body
 ${locator.bids}                                                 css=.qa_offer_price
 ${locator.dgf}                                                  css=.qa_auction_descr
+${locator.cancellations[0].status}                              css=.qa_auction_status
+${locator.cancellations[0].reason}                              css=.qa_auction_cancel_reason
 
 *** Keywords ***
 Підготувати клієнт для користувача
@@ -256,7 +259,6 @@ Login
 
 Отримати інформацію про value.amount
   ${return_value}=    Отримати тест із поля і показати на сторінці  value.amount
-  ${return_value}=    Remove String      ${return_value}     грн. з ПДВ
   ${return_value}=    Convert To Number   ${return_value.replace(' ','').replace(',','.')}
   [Return]  ${return_value}
 
@@ -312,8 +314,8 @@ Login
   [Return]  ${return_value}
 
 Отримати інформацію про value.valueAddedTaxIncluded
-  ${return_value}=   Отримати тест із поля і показати на сторінці  value.amount
-  ${return_value}=   Convert To String     ${return_value.split('.')[1]}
+  ${return_value}=   Отримати тест із поля і показати на сторінці  value.pdv
+  ${return_value}=   Remove String     ${return_value}    грн
   ${return_value}=   convert_prom_string_to_common_string      ${return_value}
   [Return]   ${return_value}
 
@@ -428,6 +430,20 @@ Login
 Отримати інформацію про bids
     ${bids}=    Отримати текст із поля і показати на сторінці   bids
     [Return]  ${bids}
+
+
+Отримати інформацію про cancellations[0].status
+    ${return_value}=    Отримати тест із поля і показати на сторінці   cancellations[0].status
+    ${return_value}=   convert_prom_string_to_common_string      ${return_value}
+    [Return]  ${return_value}
+
+
+Отримати інформацію про cancellations[0].reason
+    ${return_value}=    Отримати тест із поля і показати на сторінці   cancellations[0].reason
+    ${return_value}=   convert_prom_string_to_common_string      ${return_value}
+    [Return]  ${return_value}
+
+
 
 
 Відповісти на питання
@@ -648,3 +664,25 @@ Login
     Click Element       xpath=//button[contains(@data-afip-url, 'state_award/sign_contract')]
     sleep    10
     Click Element       id=submit_button
+
+Скасувати закупівлю
+    [Arguments]  @{ARGUMENTS}
+    prom.Пошук тендера по ідентифікатору  ${ARGUMENTS[0]}  ${ARGUMENTS[1]}
+    Wait Until Page Contains Element      xpath=//a[contains(@href, 'state_auction/cancel')]    30
+    Click Element      xpath=//a[contains(@href, 'state_auction/cancel')]
+    Wait Until Page Contains Element      css=.qa_state_offer_add_field    30
+    Choose File         css=.qa_state_offer_add_field       ${ARGUMENTS[3]}
+    input text          id=reason               ${ARGUMENTS[2]}
+    Click Element       id=submit_button
+    Wait Until Keyword Succeeds     30      100          Run Keywords
+    ...   Reload Page
+    ...   AND     Wait Until Element Is Visible       xpath=//span[contains(@data-href, 'state_auction/confirm_cancellation')]
+    Click Element               xpath=//span[contains(@data-href, 'state_auction/confirm_cancellation')]
+
+
+Отримати інформацію із документа
+    [Arguments]  ${username}  ${tender_uaid}  ${doc_id}  ${field}
+    prom.Пошук тендера по ідентифікатору   ${username}   ${tender_uaid}
+    Run Keyword If   '${field}' == 'description'   Fail    ***** Опис документу скасування закупівлі не виводиться на Zakupki.dz-test *****
+    ${doc_name}=   Get Text     xpath=//div[contains(@class, 'file-name')]//a
+    [Return]   ${doc_name}

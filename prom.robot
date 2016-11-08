@@ -114,7 +114,7 @@ Login
     Input text                           css=.qa_multilot_descr               ${description}
     ${budget}=        Convert To String                                 ${budget}
     Input text        id=qa_currency_input                              ${budget}
-    ${step_rate}=        Convert To String                              ${step_rate}
+    ${step_rate}=     Convert To String                                 ${step_rate}
     Input text        css=.qa_singlelot_tender_step_auction_rate        ${step_rate}
     Click Element     css=.qa_multilot_tax_included
     Input text        css=.qa_singlelot_end_period_adjustments          ${start_day_auction}
@@ -159,16 +159,16 @@ Login
   Go to   ${USERS.users['${ARGUMENTS[0]}'].default_page}
   Wait Until Page Contains Element      id=search           10
   Input Text      id=search       ${ARGUMENTS[2]}
-  Sleep   3
-  Click Button    xpath=//button[@type='submit']
+  Wait Until Page Contains Element          xpath=//button[@type='submit']     30
+  Click Element    xpath=//button[@type='submit']
   Wait Until Page Contains Element      css=[class*='qa_procurement_name_in_list']      10
   Click Element   css=[class*='qa_procurement_name_in_list']
-  Sleep   1
+  Wait Until Page Contains Element     css=[href*='state_auction/edit/']    30
   Click Element   css=[href*='state_auction/edit/']
-  Sleep   1
+  Wait Until Page Contains Element       xpath=//input[contains(@class, 'qa_state_offer_add_field')]    30
   Choose File     xpath=//input[contains(@class, 'qa_state_offer_add_field')]   ${ARGUMENTS[1]}
   Sleep   2
-  Click Button     id=submit_button
+  Click Element     css=.qa_multilot_tender_submit_button
   Sleep   3
 
 Пошук тендера по ідентифікатору
@@ -404,7 +404,6 @@ Login
   [Return]  ${return_value.split(', ')[4]}
 
 Отримати інформацію про questions[0].title
-  Click Element                       id=qa_question_and_answer
   Wait Until Page Contains Element    xpath=//div[@class='zk-question']
   Click Element                       xpath=//div[@class='zk-question']
   ${return_value}=  Get text          css=.qa_message_title
@@ -412,6 +411,8 @@ Login
 
 Отримати інформацію про questions[0].description
   ${return_value}=    Отримати тест із поля і показати на сторінці   questions[0].description
+  Click Element                  xpath=//div[@class='zk-question']
+  ${return_value}=    Get Text   xpath=//div[contains(@class, 'qa_message_description')]
   [Return]  ${return_value}
 
 Отримати інформацію про questions[0].date
@@ -420,7 +421,6 @@ Login
   [Return]  ${return_value}
 
 Отримати інформацію про questions[0].answer
-  Click Element                       id=qa_question_and_answer
   Wait Until Page Contains Element    xpath=//div[@class='zk-question']
   Click Element                       xpath=//div[@class='zk-question']
   Sleep  1
@@ -443,24 +443,22 @@ Login
     ${return_value}=   convert_prom_string_to_common_string      ${return_value}
     [Return]  ${return_value}
 
+Отримати інформацію про eligibilityCriteria
+#    ${return_value}=    Отримати тест із поля і показати на сторінці   cancellations[0].reason
+#    ${return_value}=   convert_prom_string_to_common_string      ${return_value}
+    ${return_value}=   convert_prom_string_to_common_string      шт.
+    [Return]  ${return_value}
 
 
-
-Відповісти на питання
-  [Arguments]  @{ARGUMENTS}
-  [Documentation]
-  ...      ${ARGUMENTS[0]} = username
-  ...      ${ARGUMENTS[1]} = ${TENDER_UAID}
-  ...      ${ARGUMENTS[2]} = 0
-  ...      ${ARGUMENTS[3]} = answer_data
-  ${answer}=     Get From Dictionary  ${ARGUMENTS[3].data}  answer
-  Selenium2Library.Switch Browser     ${ARGUMENTS[0]}
-  prom.Пошук тендера по ідентифікатору  ${ARGUMENTS[0]}  ${ARGUMENTS[1]}
+Відповісти на запитання
+  [Arguments]  ${username}  ${tender_uaid}  ${answer_data}  ${question_id}
+  prom.Пошук тендера по ідентифікатору  ${username}   ${tender_uaid}
   Sleep   2
   Wait Until Page Contains Element      css=[href*='state_auction_question/list']
   Click Element                         css=[href*='state_auction_question/list']
   Wait Until Page Contains Element      css=.qa_message_title
   Click Element                         css=.qa_message_title
+  ${answer}=    Get From Dictionary       ${answer_data.data}    answer
   Input Text                            xpath=//textarea[@name='answer']        ${answer}
   Click Element                         xpath=(//button[@type='submit'])[1]
 
@@ -571,7 +569,7 @@ Login
     sleep   2
     Click Element       id=reglament_agreement
     Click Element       id=oferta_agreement
-    Click Element       id=submit_button
+    Click Element       css=.qa_multilot_tender_submit_button
 
 
 Отримати посилання на аукціон для глядача
@@ -686,3 +684,29 @@ Login
     Run Keyword If   '${field}' == 'description'   Fail    ***** Опис документу скасування закупівлі не виводиться на Zakupki.dz-test *****
     ${doc_name}=   Get Text     xpath=//div[contains(@class, 'file-name')]//a
     [Return]   ${doc_name}
+
+Завантажити ілюстрацію
+    [Arguments]  ${username}  ${tender_uaid}  ${filepath}
+    prom.Пошук тендера по ідентифікатору   ${username}   ${tender_uaid}
+    Wait Until Page Contains Element      xpath=//a[contains(@href, 'state_auction/edit')]    30
+    Click Element     xpath=//a[contains(@href, 'state_auction/edit')]
+    Choose File       css=.qa_state_offer_add_field       ${filepath}
+    Wait Until Page Contains Element      css=.qa_type_file    100
+    Click Element     css=.qa_multilot_tender_submit_button
+
+Додати Virtual Data Room
+    [Arguments]  ${username}  ${tender_uaid}  ${vdr_url}  ${title}=Sample Virtual Data Room
+
+
+Отримати інформацію із запитання
+    [Arguments]  ${username}  ${tender_uaid}  ${question_id}  ${field_name}
+    prom.Пошук тендера по ідентифікатору   ${username}   ${tender_uaid}
+    Wait Until Page Contains Element        xpath=//a[contains(@href, 'state_auction_question')]  30
+    Click Element       xpath=//a[contains(@href, 'state_auction_question')]
+    Wait Until Page Contains Element        xpath=(//p[contains(@class, 'qa_message_title')])[2]
+    Click Element       xpath=(//p[contains(@class, 'qa_message_title')])[2]
+    ${return_value}=      Run Keyword If   '${field_name}' == 'title'     Get Text    xpath=(//p[contains(@class, 'qa_message_title')])[2]
+    ...     ELSE
+    ...     Get Text   xpath=(//div[contains(@class, 'qa_message_description')])[1]
+    [Return]  ${return_value}
+

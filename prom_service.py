@@ -52,7 +52,16 @@ def convert_prom_string_to_common_string(string):
         u"Скасована": u"cancelled",
         u"Аукціон не відбувся": u"unsuccessful",
         u"Завершена": u"complete",
+        u"Подписанный": u"Done",
     }.get(string, string)
+
+
+def convert_cancellations_status(string):
+    return {
+        u"Скасована": u"active",
+    }.get(string, string)
+
+
 
 
 def convert_prom_code_to_common_string(string):
@@ -84,3 +93,10 @@ def adapt_item(tender_data, role_name):
             for i in tender_data['data']['items']:
                 i['unit']['name'] = my_dict[i['unit']['name']]
     return tender_data
+
+
+def adapt_qualified(tender_data, username):
+    if username == 'Prom_Provider':
+        if tender_data['data'].get('qualified'):
+            return True
+    return False

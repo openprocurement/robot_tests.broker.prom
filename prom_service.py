@@ -52,7 +52,7 @@ def convert_prom_string_to_common_string(string):
         u"Скасована": u"cancelled",
         u"Аукціон не відбувся": u"unsuccessful",
         u"Завершена": u"complete",
-        u"Подписанный": u"Done",
+        u"Подписанный": u"active",
     }.get(string, string)
 
 
@@ -97,6 +97,6 @@ def adapt_item(tender_data, role_name):
 
 def adapt_qualified(tender_data, username):
     if username == 'Prom_Provider':
-        if tender_data['data'].get('qualified'):
+        if 'qualified' in tender_data['data']:
             return True
     return False

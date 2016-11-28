@@ -46,6 +46,7 @@ ${locator.bids}                                                 css=.qa_offer_pr
 ${locator.dgf}                                                  css=.qa_auction_descr
 ${locator.cancellations[0].status}                              css=.qa_auction_status
 ${locator.cancellations[0].reason}                              css=.qa_auction_cancel_reason
+${locator.contracts[-1].status}                                 css=.qa_auction_status
 
 *** Keywords ***
 Підготувати клієнт для користувача
@@ -463,7 +464,7 @@ Login
     [Return]  ${return_value}
 
 Отримати інформацію про contracts[-1].status
-    ${return_value}=    Отримати тест із поля і показати на сторінці
+    ${return_value}=    Отримати тест із поля і показати на сторінці    contracts[-1].status
     ${return_value}=   convert_prom_string_to_common_string      Подписанный
     [Return]  ${return_value}
 
@@ -492,7 +493,7 @@ Login
     ...    ${ARGUMENTS[0]} ==  username
     ...    ${ARGUMENTS[1]} ==  tender_uaid
     ...    ${ARGUMENTS[2]} ==  test_bid_data
-    ${status}=    adapt_qualified   ${ARGUMENTS[2]}   ${ARGUMENTS[0]}
+    ${status}=    adapt_qualified   ${ARGUMENTS[2]}    ${ARGUMENTS[0]}
     RUN KEYWORD IF  '${status}' == 'True'      [Return]    Fail
     ${amount}=    Get From Dictionary     ${ARGUMENTS[2].data.value}    amount
     prom.Пошук тендера по ідентифікатору   ${ARGUMENTS[0]}   ${ARGUMENTS[1]}
@@ -659,7 +660,7 @@ Login
     [Arguments]  ${username}  ${tender_uaid}  ${doc_id}  ${field}
     prom.Пошук тендера по ідентифікатору   ${username}   ${tender_uaid}
     Run Keyword If   '${field}' == 'description'   Fail    ***** Опис документу скасування закупівлі не виводиться на Zakupki.dz-test *****
-    ${doc_name}=   Get Text     xpath=//div[contains(@class, 'file-name')]//a
+    ${doc_name}=   Get Text     xpath=//div[contains(@class, 'file-name')]//a[contains(text(), '${doc_id}')]
     [Return]   ${doc_name}
 
 Завантажити ілюстрацію
@@ -694,6 +695,7 @@ Login
 Отримати документ
     [Arguments]  ${username}  ${tender_uaid}  ${doc_id}
     Fail    ***** Опис документу не виводиться на Zakupki.dz-test *****
+
 
 Задати запитання на тендер
     [Arguments]  ${username}  ${tender_uaid}  ${question}
@@ -736,8 +738,16 @@ Login
 Отримати кількість документів в ставці
     [Arguments]  ${username}  ${tender_uaid}  ${bid_index}
     prom.Пошук тендера по ідентифікатору  ${username}  ${tender_uaid}
-    ${result}=   Get matching xpath count    xpath=//a[contains(@class, 'tooltip-url')]
+    Wait Until Page Contains Element     xpath=//a[contains(@href, 'print/protocol')]
+    ${bid_doc_number}=   Get Matching Xpath Count   xpath=//a[contains(@href, 'print/protocol')]
+    [Return]  ${bid_doc_number}
 
+Отримати дані із документу пропозиції
+    [Arguments]  ${username}  ${tender_uaid}  ${bid_index}  ${document_index}  ${field}
+    prom.Пошук тендера по ідентифікатору  ${username}  ${tender_uaid}
+    ${status}=   Run Keyword And Return Status    Element Should Be Visible    xpath=//a[contains(@href, 'print/protocol')]
+    ${result}=   Set Variable If   ${status}    auctionProtocol     noDocument
+    [Return]   ${result}
 
 
 Скасування рішення кваліфікаційної комісії
@@ -745,20 +755,10 @@ Login
     prom.Пошук тендера по ідентифікатору  ${username}  ${tender_uaid}
     Wait Until Keyword Succeeds     30      150          Run Keywords
     ...   Reload Page
-    ...   AND     Wait Until Element Is Visible      css=[data-afip-url*='state_award/unsuccessful']
-    Click Element     css=[data-afip-url*='state_award/unsuccessful']
-    ${file_path}=   create_fake_doc
-    Choose File       css=.qa_state_offer_add_field       ${file_path}
-    Wait Until Page Contains Element      css=.qa_type_file    100
+    ...   AND     Wait Until Element Is Visible      css=[data-afip-url*='state_award/award_cancel']
+    Click Element     css=[data-afip-url*='state_award/award_cancel']
     Click Element     id=submit_button
-
-
-Завантажити документ рішення кваліфікаційної комісії
-    [Arguments]  ${username}  ${document}  ${tender_uaid}  ${award_num}
-    prom.Пошук тендера по ідентифікатору  ${username}  ${tender_uaid}
-    log to console  ${document}
-    log to console  ${award_num}
-
+    Sleep  10
 
 Дискваліфікувати постачальника
     [Documentation]
@@ -766,4 +766,31 @@ Login
     ...      [Description] Find tender using uaid, create data dict with unsuccessful status and call patch_award
     ...      [Return] Reply of API
     [Arguments]  ${username}  ${tender_uaid}  ${award_num}  ${description}
+    Reload Page
+
+Завантажити документ рішення кваліфікаційної комісії
+    [Arguments]  ${username}  ${document}  ${tender_uaid}  ${award_num}
+     Wait Until Keyword Succeeds     30      150          Run Keywords
+    ...   Reload Page
+    ...   AND     Wait Until Element Is Visible      css=[data-afip-url*='state_award/unsuccessful']
+    Click Element     css=[data-afip-url*='state_award/unsuccessful']
+    Click Element     id=submit_button
+    Sleep     10
+
+Завантажити протокол аукціону
+    [Arguments]  ${username}  ${tender_uaid}  ${filepath}  ${award_index}
     prom.Пошук тендера по ідентифікатору  ${username}  ${tender_uaid}
+    Wait Until Keyword Succeeds     30      150          Run Keywords
+    ...   Reload Page
+    ...   AND     Wait Until Element Is Visible      css=[href*='state_offer_auction/edit_files']
+    Click Element     css=[href*='state_offer_auction/edit_files']
+    Sleep  2
+    Choose File         css=.qa_state_offer_add_field       ${filepath}
+    Sleep  5
+    Click Element       xpath=(//td[contains(@class, 'qa_type_file')])[2]
+    Sleep  2
+    Click Element       xpath=(//span[text()='Протокол'])[2]
+    Sleep  2
+    Click Element       id=submit_button
+    Sleep     300
+

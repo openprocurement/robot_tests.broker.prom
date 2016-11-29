@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import pytz
 import dateutil.parser
+import urllib
 
 from datetime import datetime
 
@@ -100,3 +101,7 @@ def adapt_qualified(tender_data, username):
         if 'qualified' in tender_data['data']:
             return True
     return False
+
+
+def download_file(url, file_name, output_dir):
+    urllib.urlretrieve(url, ('{}/{}'.format(output_dir, file_name)))

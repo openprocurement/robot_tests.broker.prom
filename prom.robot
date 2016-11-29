@@ -681,6 +681,7 @@ Login
     [Arguments]  ${username}  ${tender_uaid}  ${vdr_url}  ${title}=Sample Virtual Data Room
     Wait Until Page Contains Element      xpath=//a[contains(@href, 'state_auction/edit')]    30
     Click Element     xpath=//a[contains(@href, 'state_auction/edit')]
+    Input text         css=.qa_vdr          ${vdr_url}
     Sleep  3
     Click Element     css=.qa_multilot_tender_submit_button
 

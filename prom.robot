@@ -168,9 +168,9 @@ Login
   Click Element   css=[href*='state_auction/edit/']
   Wait Until Page Contains Element       xpath=//input[contains(@class, 'qa_state_offer_add_field')]    30
   Choose File     xpath=//input[contains(@class, 'qa_state_offer_add_field')]   ${ARGUMENTS[1]}
-  Sleep   2
+  Sleep   5
   Click Element     css=.qa_multilot_tender_submit_button
-  Sleep   3
+  Sleep   5
 
 Пошук тендера по ідентифікатору
   [Arguments]  @{ARGUMENTS}
@@ -669,7 +669,12 @@ Login
     Wait Until Page Contains Element      xpath=//a[contains(@href, 'state_auction/edit')]    30
     Click Element     xpath=//a[contains(@href, 'state_auction/edit')]
     Choose File       css=.qa_state_offer_add_field       ${filepath}
-    Wait Until Page Contains Element      css=.qa_type_file    100
+    Wait Until Page Contains Element      xpath=(//td[contains(@class, 'qa_type_file')]//div)[2]
+    Sleep  5
+    Click Element       xpath=(//td[contains(@class, 'qa_type_file')]//div)[2]
+    Sleep  3
+    Click Element       xpath=(//span[text()='Ілюстрація'])[2]
+    Sleep  3
     Click Element     css=.qa_multilot_tender_submit_button
 
 Додати Virtual Data Room
@@ -694,7 +699,13 @@ Login
 
 Отримати документ
     [Arguments]  ${username}  ${tender_uaid}  ${doc_id}
-    Fail    ***** Опис документу не виводиться на Zakupki.dz-test *****
+    prom.Пошук тендера по ідентифікатору   ${username}   ${tender_uaid}
+    Click Element   xpath=//a[contains(text(), '${doc_id}')]
+    sleep   3
+    ${file_name}=   Get Element Attribute    xpath=//a[contains(text(), '${doc_id}')]@id
+    ${url}=   Get Element Attribute    xpath=//div[contains(@id, '${file_name}')]//a@href
+    download_file   ${url}  ${file_name.split('/')[-1]}  ${OUTPUT_DIR}
+    [return]  ${file_name.split('/')[-1]}
 
 
 Задати запитання на тендер

@@ -679,7 +679,10 @@ Login
 
 Додати Virtual Data Room
     [Arguments]  ${username}  ${tender_uaid}  ${vdr_url}  ${title}=Sample Virtual Data Room
-    Fail    ***** Virtual Data Room не редактируется на Zakupki.dz-test *****
+    Wait Until Page Contains Element      xpath=//a[contains(@href, 'state_auction/edit')]    30
+    Click Element     xpath=//a[contains(@href, 'state_auction/edit')]
+    Sleep  3
+    Click Element     css=.qa_multilot_tender_submit_button
 
 Отримати інформацію із запитання
     [Arguments]  ${username}  ${tender_uaid}  ${question_id}  ${field_name}
@@ -741,6 +744,9 @@ Login
     Wait Until Page Contains Element        xpath=//input[contains(@class, 'qa_state_offer_add_field')]   30
     Choose File         xpath=//input[contains(@class, 'qa_state_offer_add_field')]   ${filepath}
     Sleep   3
+    Click Element       xpath=//td[contains(@class, 'qa_type_file')]//div
+    Sleep  2
+    Click Element       xpath=//span[text()='Фінансова ліцензія']
     Click Element       id=reglament_agreement
     Click Element       id=oferta_agreement
     Click Element       id=submit_button

@@ -805,10 +805,12 @@ Login
     Sleep  2
     Choose File         css=.qa_state_offer_add_field       ${filepath}
     Sleep  5
-    Click Element       xpath=(//td[contains(@class, 'qa_type_file')])[2]
-    Sleep  2
-    Click Element       xpath=(//span[text()='Протокол'])[2]
+    ${status}=  Run Keyword And Return Status    Element Should Be Visible   xpath=(//td[contains(@class, 'qa_type_file')])[1]
+    Run Keyword If   '${status}' == 'False'   Click Element   xpath=(//td[contains(@class, 'qa_type_file')])[1]
+    ...    ELSE         Click Element   xpath=(//td[contains(@class, 'qa_type_file')])[2]
+    Sleep  3
+    Run Keyword If   '${status}' == 'False'   Click Element   xpath=(//span[text()='Протокол'])[1]
+    ...    ELSE         Click Element   xpath=(//span[text()='Протокол'])[2]
     Sleep  2
     Click Element       id=submit_button
-    Sleep     300
-
+    Sleep  3

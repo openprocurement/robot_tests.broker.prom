@@ -807,10 +807,10 @@ Login
     Sleep  5
     ${status}=  Run Keyword And Return Status    Element Should Be Visible   xpath=(//td[contains(@class, 'qa_type_file')])[1]
     Run Keyword If   '${status}' == 'False'   Click Element   xpath=(//td[contains(@class, 'qa_type_file')])[1]
-    ...    ELSE         Click Element   xpath=(//td[contains(@class, 'qa_type_file')])[2]
+    ...    ELSE         Click Element   xpath=(//td[contains(@class, 'qa_type_file')]//div)[last()]
     Sleep  3
     Run Keyword If   '${status}' == 'False'   Click Element   xpath=(//span[text()='Протокол'])[1]
-    ...    ELSE         Click Element   xpath=(//span[text()='Протокол'])[2]
+    ...    ELSE         Click Element   xpath=(//span[text()='Протокол'])[last()]
     Sleep  2
     Click Element       id=submit_button
-    Sleep  3
+    Sleep  5

@@ -101,7 +101,7 @@ Login
     ${step_rate}=                           Get From Dictionary         ${tender_data.data.minimalStep}        amount
     ${start_day_auction}=                   get_all_prom_dates          ${tender_data}                         StartDate
 
-    Selenium2Library.Switch Browser      ${username}
+    Switch Browser      ${username}
     Wait Until Page Contains Element     xpath=//a[contains(@href,'/cabinet/purchases/state_auction/list')]    20
     Click Element                        xpath=//a[contains(@href,'/cabinet/purchases/state_auction/list')]
     Wait Until Page Contains Element     xpath=//a[contains(@href,'/cabinet/purchases/state_auction/add')]     20
@@ -182,13 +182,12 @@ Login
 Пошук тендера по ідентифікатору
     [Arguments]   ${username}   ${tender_uaid}
     Go to   ${USERS.users['${username}'].default_page}
-    Wait Until Page Contains Element      id=search           10
-    Sleep  10
+    Wait Until Page Contains Element      id=search           20
     Input Text        id=search     ${tender_uaid}
     log to console    ${tender_uaid}
     Sleep  2
     Click Element     id=js-cabinet_search_form button
-    Wait Until Page Contains Element      xpath=(//a[contains(@class, 'qa_procurement_name_in_list')])[1]         10
+    Wait Until Page Contains Element      xpath=(//a[contains(@class, 'qa_procurement_name_in_list')])[1]         20
     Click Element     xpath=(//a[contains(@class, 'qa_procurement_name_in_list')])[1]
     Sleep  1
 
@@ -229,7 +228,7 @@ Login
 
 Оновити сторінку з тендером
     [Arguments]   ${username}   ${tender_uaid}
-    Selenium2Library.Switch Browser    ${username}
+    Switch Browser    ${username}
     prom.Пошук тендера по ідентифікатору    ${username}    ${tender_uaid}
 
 Отримати інформацію із предмету
@@ -242,7 +241,7 @@ Login
 
 Отримати інформацію із тендера
     [Arguments]   ${username}   ${tender_uaid}   ${field_name}
-    ${return_value}=  run keyword  Отримати інформацію про ${field_name}
+    ${return_value}=  Run Keyword  Отримати інформацію про ${field_name}
     [Return]  ${return_value}
 
 Отримати тест із поля і показати на сторінці
@@ -290,7 +289,7 @@ Login
     [Documentation]
     ...      ${ARGUMENTS[0]} =  username
     ...      ${ARGUMENTS[1]} =  tender_uaid
-    Selenium2Library.Switch Browser    ${ARGUMENTS[0]}
+    Switch Browser    ${ARGUMENTS[0]}
     prom.Пошук тендера по ідентифікатору  ${ARGUMENTS[0]}  ${ARGUMENTS[1]}
     Sleep   2
     Click Element     xpath=//a[contains(@href, 'state_auction/edit')]
@@ -461,7 +460,7 @@ Login
     ...    ${ARGUMENTS[0]} ==  username
     ...    ${ARGUMENTS[1]} ==  none
     ...    ${ARGUMENTS[2]} ==  tender_uaid
-    Selenium2Library.Switch Browser       ${ARGUMENTS[0]}
+    Switch Browser       ${ARGUMENTS[0]}
     Go to   ${USERS.users['${ARGUMENTS[0]}'].default_page}
     Sleep  10
     Input Text        id=search     ${ARGUMENTS[1]}
@@ -625,7 +624,6 @@ Login
     Click Element     xpath=//a[contains(@href, 'state_auction/edit')]
     Wait Until Page Contains Element     css=.qa_dgf_public_asset_certificate    30
     Input Text        css=.qa_dgf_public_asset_certificate    ${certificate_url}
-    Sleep  1
     Sleep  3
     Click Element     css=.qa_multilot_tender_submit_button
 

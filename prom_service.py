@@ -22,6 +22,16 @@ def convert_date_prom(date):
     return localized_date.strftime("%Y-%m-%d %H:%M:%S.%f%z")
 
 
+def convert_dgf_date_prom(date_str):
+    date_obj = datetime.strptime(date_str, "%Y-%m-%d")
+    return date_obj.strftime("%d.%m.%Y")
+
+
+def revert_dgf_date_prom(date_str):
+    date_obj = datetime.strptime(date_str, "%d.%m.%Y")
+    return date_obj.strftime("%Y-%m-%d")
+
+
 def convert_date_to_prom_tender_startdate(date):
     first_date = date.split(' - ')[0]
     date_obj = datetime.strptime(first_date, "%d.%m.%y %H:%M")
@@ -54,6 +64,8 @@ def convert_prom_string_to_common_string(string):
         u"Аукціон не відбувся": u"unsuccessful",
         u"Завершена": u"complete",
         u"Подписанный": u"active",
+        u"Впервые": u"Лот виставляється вперше",
+        u"Повторно": u"Лот виставляється повторно",
     }.get(string, string)
 
 
@@ -63,6 +75,11 @@ def convert_cancellations_status(string):
     }.get(string, string)
 
 
+def convert_procurement_method_type(string):
+    return {
+        u"МАЙНО": u"dgfOtherAssets",
+        u"ФІНАНСОВІ АКТИВИ": u"dgfFinancialAssets",
+    }.get(string, string)
 
 
 def convert_prom_code_to_common_string(string):
@@ -71,6 +88,30 @@ def convert_prom_code_to_common_string(string):
         u"послуга": u"E48",
         u"послуги": u"E48",
         u"шт.": u"H87",
+        u"Класифікатор:": u"CAV",
+    }.get(string, string)
+
+
+def convert_document_type(string):
+    return {
+        u"x_nda": u"Договір NDA",
+        u"tenderNotice": u"Паспорт торгів",
+        u"x_presentation": u"Презентація",
+        u"technicalSpecifications": u"Публічний паспорт активу",
+    }.get(string, string)
+
+
+def revert_document_type(string):
+    return {
+        u"Договір NDA": u"x_nda",
+        u"Паспорт торгів": u"tenderNotice",
+        u"Презентація": u"x_presentation",
+        u"Публічний паспорт активу": u"technicalSpecifications",
+        u"Місце та форма прийому заяв на участь в аукціоні та банківські "
+        u"реквізити для зарахування гарантійних внесків": u"x_dgfPlatformLegalDetails",
+        u"Sample Virtual Data Room": u"virtualDataRoom",
+        u"Public Asset Certificate": u"x_dgfAssetFamiliarization",
+        u"—": u"None",
     }.get(string, string)
 
 
@@ -92,7 +133,7 @@ def adapt_item(tender_data, role_name):
     if role_name != 'viewer':
         if 'unit' in tender_data['data']['items'][0]:
             for i in tender_data['data']['items']:
-                i['unit']['name'] = my_dict[i['unit']['name']]
+                i['unit']['name'] = my_dict.get(i['unit']['name'], i['unit']['name'])
     return tender_data
 
 
@@ -105,3 +146,5 @@ def adapt_qualified(tender_data, username):
 
 def download_file(url, file_name, output_dir):
     urllib.urlretrieve(url, ('{}/{}'.format(output_dir, file_name)))
+
+

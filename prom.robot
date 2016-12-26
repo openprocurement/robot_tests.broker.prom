@@ -580,9 +580,14 @@ Login
     Click Element      xpath=//a[contains(@href, 'state_auction/cancel')]
     Wait Until Page Contains Element      css=.qa_state_offer_add_field    30
     Choose File         css=.qa_state_offer_add_field       ${ARGUMENTS[3]}
-    Input Text          id=reason               ${ARGUMENTS[2]}
+    Sleep   1
+    Click Element       xpath=//div[@id='reason_dd']
+    Sleep   1
+    Click Element       xpath=//ul[@id='reason_dd_ul']//li[contains(text(), "${ARGUMENTS[2]}")]
+    log to console   ${ARGUMENTS[2]}
+    Sleep   2
     Click Element       id=submit_button
-    Wait Until Keyword Succeeds     30      150          Run Keywords
+    Wait Until Keyword Succeeds     30      30          Run Keywords
     ...   Reload Page
     ...   AND     Wait Until Element Is Visible       xpath=//span[contains(@data-href, 'state_auction/confirm_cancellation')]
     Click Element               xpath=//span[contains(@data-href, 'state_auction/confirm_cancellation')]

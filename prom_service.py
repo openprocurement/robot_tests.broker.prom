@@ -62,6 +62,7 @@ def convert_prom_string_to_common_string(string):
         u"Кваліфікація": u"active.qualification",
         u"Скасована": u"cancelled",
         u"Аукціон не відбувся": u"unsuccessful",
+        u"Аукцион не состоялся": u"unsuccessful",
         u"Завершена": u"complete",
         u"Подписанный": u"active",
         u"Впервые": u"Лот виставляється вперше",
@@ -118,22 +119,6 @@ def revert_document_type(string):
 def adapt_procuringEntity(tender_data):
     tender_data['data']['procuringEntity']['name'] = u'ТОВ "ЭТУ КОМПАНИЮ НЕ ТРОГАТЬ"'
     tender_data['data']['procuringEntity']['address']['countryName'] = u"Украина"
-    return tender_data
-
-
-my_dict = {
-    u"послуга": u"услуга",
-    u"послуги": u"услуга",
-    u"штуки": u"штуки",
-    u"метри квадратні": u"метры квадратные",
-}
-
-
-def adapt_item(tender_data, role_name):
-    if role_name != 'viewer':
-        if 'unit' in tender_data['data']['items'][0]:
-            for i in tender_data['data']['items']:
-                i['unit']['name'] = my_dict.get(i['unit']['name'], i['unit']['name'])
     return tender_data
 
 

@@ -721,7 +721,7 @@ Login
     Wait Until Page Contains Element        xpath=//input[contains(@class, 'qa_state_offer_add_field')]   30
     Choose File         xpath=//input[contains(@class, 'qa_state_offer_add_field')]   ${filepath}
     Sleep   3
-    Click Element       xpath=(//div[contains(@class, 'qa_type_file')]//div)[last()]
+    Click Element       xpath=(//div[contains(@class, 'qa_type_file')]//div[1])[last()]
     Sleep  2
     Click Element       xpath=//span[text()='Фінансова ліцензія']
     Click Element       id=reglament_agreement

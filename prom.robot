@@ -63,7 +63,6 @@ ${locator.tenderAttempts}                                       css=.qa_auction_
 Підготувати дані для оголошення тендера
     [Arguments]  ${username}   ${tender_data}    ${role_name}
     ${tender_data}=    adapt_procuringEntity   ${tender_data}
-    ${tender_data}=    adapt_item   ${tender_data}  ${role_name}
     [Return]  ${tender_data}
 
 Підготувати дані для оголошення тендера користувачем
@@ -142,6 +141,8 @@ Login
     Wait Until Page Does Not Contain        очікування...         1000
     Reload Page
     ${TENDER}=     Get Text        css=.qa_ua_ea_id
+    ${access_token}=    Get Variable Value    ${TENDER.access.token}
+    Set To Dictionary   ${USERS.users['${username}']}    access_token=${access_token}
     log to console      ${TENDER}
     [Return]    ${TENDER}
 
@@ -584,7 +585,6 @@ Login
     Click Element       xpath=//div[@id='reason_dd']
     Sleep   1
     Click Element       xpath=//ul[@id='reason_dd_ul']//li[contains(text(), "${ARGUMENTS[2]}")]
-    log to console   ${ARGUMENTS[2]}
     Sleep   2
     Click Element       id=submit_button
     Wait Until Keyword Succeeds     30      30          Run Keywords

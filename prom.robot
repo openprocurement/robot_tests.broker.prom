@@ -451,7 +451,7 @@ Login
     ${value}=   Get Value     id=amount
     ${value}=   convert to string      ${value.split('.')[0]}
     ${value}=   Convert To Number      ${value}
-    Click Element        xpath=//td//a[contains(@href, 'state_auction/view')]
+    Click Element        css=.qa_cancel_offer
     [Return]    ${value}
 
 Скасувати цінову пропозицію

@@ -160,9 +160,7 @@ Login
     Input Text        xpath=(//input[contains(@class, 'qa_multilot_tender_descr_product')])[last()]          ${descr_lot}
     Input Text        xpath=(//input[contains(@class, 'qa_multilot_tender_quantity_product')])[last()]       ${quantity}
     Click Element     xpath=(//div[contains(@class, 'qa_multilot_tender_drop_down_product')])[last()]
-    Run Keyword If    '${unit}' in ['метри квадратні', 'метры квадратные']   Click Element   xpath=(//div[contains(@class, 'qa_multilot_tender_drop_down_product')])[last()]//li[text()='метры квадратные']
-    ...    ELSE IF    '${unit}' == 'штуки'     Click Element   xpath=(//div[contains(@class, 'qa_multilot_tender_drop_down_product')])[last()]//li[text()='штуки']
-    ...    ELSE       Click Element   xpath=(//div[contains(@class, 'qa_multilot_tender_drop_down_product')])[last()]//li[text()='послуга']
+    Click Element   xpath=(//div[contains(@class, 'qa_multilot_tender_drop_down_product')])[last()]//li[text()='${unit}']
     Click Element     xpath=(//a[contains(@class, 'qa_multilot_tender_cav_classifier')])[last()]
     Wait Until Page Contains Element    css=.qa_search_input    20
     Click Element     css=.qa_search_input

@@ -26,7 +26,7 @@ ${locator.enquiryPeriod.endDate}                                css=.qa_date_per
 ${locator.tenderPeriod.startDate}                               css=.qa_date_submission_of_proposals
 ${locator.tenderPeriod.endDate}                                 css=.qa_date_submission_of_proposals
 ${locator.items.quantity}                                       //span[@class='qa_quantity']
-${locator.items.description}                                    //div[@class='qa_item_short_descr']
+${locator.items.description}                                    //div[contains(@class, 'qa_item_short_descr')]
 ${locator.items.unit.code}                                      //span[@class='qa_item_unit']
 ${locator.items.unit.name}                                      //span[@class='qa_item_unit']
 ${locator.items.deliveryAddress.postalCode}                     //td[contains(@class, 'qa_address_delivery')]
@@ -50,6 +50,8 @@ ${locator.cancellations[0].reason}                              css=.qa_auction_
 ${locator.contracts[-1].status}                                 css=.qa_auction_status
 ${locator.procurementMethodType}                                css=.qa_purchase_procedure
 ${locator.tenderAttempts}                                       css=.qa_auction_tender_attempts
+${locator.awards[0].status}                                     xpath=(//td[contains(@class, 'qa_status_award')])[1]
+${locator.awards[1].status}                                     xpath=(//td[contains(@class, 'qa_status_award')])[last()]
 
 *** Keywords ***
 Підготувати клієнт для користувача
@@ -167,8 +169,8 @@ Login
     Input Text        css=.qa_search_input    ${cav_id}
     Press Key         css=.qa_search_input         \\13
     Sleep    1
-    Click Element     css=.qa_dkpp_classifier_block .b-checkbox__input
-    Click Element     css=.qa_submit_dkpp_block
+    Click Element     css=.qa_classifier_popup .b-checkbox__input
+    Click Element     css=.qa_submit
     Sleep    1
     Click Element     xpath=(//div[contains(@class, 'qa_multilot_tender_drop_down_region')])[last()]
     Sleep    2
@@ -196,9 +198,9 @@ Login
     Click Element   css=[href*='state_auction/edit/']
     Wait Until Page Contains Element      xpath=(//input[contains(@class, 'qa_state_offer_add_field')])[1]
     Choose File       xpath=(//input[contains(@class, 'qa_state_offer_add_field')])[1]       ${filepath}
-    Wait Until Page Contains Element      xpath=(//td[contains(@class, 'qa_type_file')]//div)[last()]
+    Wait Until Page Contains Element      xpath=(//div[contains(@class, 'qa_type_file')])[last()]
     Sleep  3
-    Click Element     xpath=(//td[contains(@class, 'qa_type_file')]//div)[last()]
+    Click Element     xpath=(//div[contains(@class, 'qa_type_file')])[last()]
     Sleep  3
     Click Element     xpath=(//span[text()='Паспорт торгів'])[last()]
     Sleep  3
@@ -405,6 +407,15 @@ Login
     ${return_value}=   convert_prom_string_to_common_string    ${return_value}
     [Return]  ${return_value}
 
+Отримати інформацію про awards[0].status
+    ${return_value}=    Отримати тест із поля і показати на сторінці   awards[0].status
+    [Return]   ${return_value}
+
+Отримати інформацію про awards[1].status
+    ${return_value}=    Отримати тест із поля і показати на сторінці   awards[1].status
+    [Return]   ${return_value}
+
+
 
 Відповісти на запитання
     [Arguments]  ${username}  ${tender_uaid}  ${answer_data}  ${question_id}
@@ -526,13 +537,12 @@ Login
     prom.Пошук тендера по ідентифікатору  ${username}  ${tender_uaid}
     Sleep   150
     Reload Page
-    Wait Until Page Contains Element      css=[href*=has_protocol]     30
-    Click Element                         css=[href*=has_protocol]
-    Sleep   10
-    Wait Until Page Contains Element      css=[href*=state_award]     30
-    Click Element                         css=[href*=state_award]
+    Wait Until Page Contains Element      xpath=//a[contains(@href, 'state_award/active/')]     30
+    Click Element                         xpath=//a[contains(@href, 'state_award/active/')]
     Sleep   10
     Reload Page
+
+
 
 Завантажити угоду до тендера
     [Arguments]  ${username}  ${tender_uaid}  ${contract_num}  ${filepath}
@@ -612,9 +622,9 @@ Login
     Wait Until Page Contains Element      xpath=//a[contains(@href, 'state_auction/edit')]    30
     Click Element     xpath=//a[contains(@href, 'state_auction/edit')]
     Choose File       css=.qa_state_offer_add_field       ${filepath}
-    Wait Until Page Contains Element      xpath=(//td[contains(@class, 'qa_type_file')]//div)[last()]
+    Wait Until Page Contains Element      xpath=(//div[contains(@class, 'qa_type_file')])[last()]
     Sleep  5
-    Click Element     xpath=(//td[contains(@class, 'qa_type_file')]//div)[last()]
+    Click Element     xpath=(//div[contains(@class, 'qa_type_file')])[last()]
     Sleep  3
     Click Element     xpath=(//span[text()='Ілюстрація'])[last()]
     Sleep  3
@@ -643,9 +653,9 @@ Login
     Click Element     xpath=//a[contains(@href, 'state_auction/edit')]
     Wait Until Page Contains Element      xpath=(//input[contains(@class, 'qa_state_offer_add_field')])[1]
     Choose File       xpath=(//input[contains(@class, 'qa_state_offer_add_field')])[1]       ${filepath}
-    Wait Until Page Contains Element      xpath=(//td[contains(@class, 'qa_type_file')]//div)[last()]
+    Wait Until Page Contains Element      xpath=(//div[contains(@class, 'qa_type_file')])[last()]
     Sleep  5
-    Click Element     xpath=(//td[contains(@class, 'qa_type_file')]//div)[last()]
+    Click Element     xpath=(//div[contains(@class, 'qa_type_file')])[last()]
     Sleep  3
     ${document}=      convert_document_type    ${documentType}
     Click Element     xpath=(//span[text()='${document}'])[last()]
@@ -719,7 +729,7 @@ Login
     Wait Until Page Contains Element        xpath=//input[contains(@class, 'qa_state_offer_add_field')]   30
     Choose File         xpath=//input[contains(@class, 'qa_state_offer_add_field')]   ${filepath}
     Sleep   3
-    Click Element       xpath=(//div[contains(@class, 'qa_type_file')]//div[1])[last()]
+    Click Element       xpath=(//div[contains(@class, 'qa_type_file')])[last()]
     Sleep  2
     Click Element       xpath=//span[text()='Фінансова ліцензія']
     Click Element       id=reglament_agreement
@@ -757,6 +767,13 @@ Login
     ...      [Return] Reply of API
     [Arguments]  ${username}  ${tender_uaid}  ${award_num}  ${description}
     Reload Page
+    Wait Until Keyword Succeeds     30      150          Run Keywords
+    ...   Reload Page
+    ...   AND     Wait Until Element Is Visible      xpath=//a[contains(@data-afip-url, 'state_award/unsuccessful')]
+    Click Element    xpath=//a[contains(@data-afip-url, 'state_award/unsuccessful')]
+    Sleep  5
+    Click Element    id=submit_button
+
 
 Завантажити документ рішення кваліфікаційної комісії
     [Arguments]  ${username}  ${document}  ${tender_uaid}  ${award_num}
@@ -809,3 +826,24 @@ Login
 Видалити предмет закупівлі
     [Arguments]  ${username}  ${tender_uaid}  ${item_id}  ${lot_id}=${Empty}
     Run Keyword And Ignore Error   Click Element     xpath=//a[contains(@href, 'state_auction/edit')]
+
+Завантажити протокол аукціону в авард
+    [Arguments]  ${username}  ${tender_uaid}  ${filepath}  ${award_index}
+    prom.Пошук тендера по ідентифікатору  ${username}  ${tender_uaid}
+    Wait Until Keyword Succeeds     30      150          Run Keywords
+    ...   Reload Page
+    ...   AND     Wait Until Element Is Visible      id=upload_protocol_popup
+    Click Element   id=upload_protocol_popup
+    Wait Until Page Contains Element     css=.qa_state_offer_add_field
+    Choose File       css=.qa_state_offer_add_field      ${filepath}
+    Sleep  3
+    Click Element   xpath=//button[@type='submit']
+
+
+Підтвердити наявність протоколу аукціону
+	[Arguments]  ${username}  ${tender_uaid}  ${award_index}
+	prom.Пошук тендера по ідентифікатору  ${username}  ${tender_uaid}
+	Wait Until Keyword Succeeds     30      150          Run Keywords
+    ...   Reload Page
+    ...   AND     Wait Until Element Is Visible      xpath=//a[contains(@href, 'state_award/active/')]
+

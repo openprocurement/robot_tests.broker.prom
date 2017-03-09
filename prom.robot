@@ -758,10 +758,11 @@ Login
     prom.Пошук тендера по ідентифікатору  ${username}  ${tender_uaid}
     Wait Until Keyword Succeeds     30      150          Run Keywords
     ...   Reload Page
-    ...   AND     Wait Until Element Is Visible      css=[data-afip-url*='state_award/award_cancel']
-    Click Element     css=[data-afip-url*='state_award/award_cancel']
+    ...   AND     Wait Until Element Is Visible      css=[data-afip-url*='state_offer_auction/money_back_request']
+    Click Element     css=[data-afip-url*='state_offer_auction/money_back_request']
+    sleep  3
     Click Element     id=submit_button
-    Sleep  10
+    Sleep  300
 
 Дискваліфікувати постачальника
     [Documentation]

@@ -50,8 +50,8 @@ ${locator.cancellations[0].reason}                              css=.qa_auction_
 ${locator.contracts[-1].status}                                 css=.qa_auction_status
 ${locator.procurementMethodType}                                css=.qa_purchase_procedure
 ${locator.tenderAttempts}                                       css=.qa_auction_tender_attempts
-${locator.awards[0].status}                                     xpath=(//td[contains(@class, 'qa_status_award')])[1]
-${locator.awards[1].status}                                     xpath=(//td[contains(@class, 'qa_status_award')])[last()]
+${locator.awards[0].status}                                     xpath=(//td[contains(@class, 'qa_member_status_award')])[1]
+${locator.awards[1].status}                                     xpath=(//td[contains(@class, 'qa_member_status_award')])[last()]
 
 *** Keywords ***
 Підготувати клієнт для користувача
@@ -408,13 +408,16 @@ Login
     [Return]  ${return_value}
 
 Отримати інформацію про awards[0].status
+    reload page
     ${return_value}=    Отримати тест із поля і показати на сторінці   awards[0].status
+    ${return_value}=   convert_prom_code_to_common_string    ${return_value}
     [Return]   ${return_value}
 
 Отримати інформацію про awards[1].status
+    reload page
     ${return_value}=    Отримати тест із поля і показати на сторінці   awards[1].status
+    ${return_value}=   convert_prom_code_to_common_string    ${return_value}
     [Return]   ${return_value}
-
 
 
 Відповісти на запитання

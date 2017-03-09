@@ -90,6 +90,13 @@ def convert_prom_code_to_common_string(string):
         u"послуги": u"E48",
         u"шт.": u"H87",
         u"Класифікатор:": u"CAV",
+        u"Очікує протокол": u"pending.verification",
+        u"очікується протокол": u"pending.verification",
+        u"Очікує кваліфікації": u"pending.waiting",
+        u"очікується кінець кваліфікації": u"pending.waiting",
+        u"Відмінено": u"unsuccessful",
+        u"Очікується оплата": u"pending.payment",
+        u"Переможець": u"active",
     }.get(string, string)
 
 

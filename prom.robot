@@ -761,8 +761,12 @@ Login
     ...   AND     Wait Until Element Is Visible      css=[data-afip-url*='state_offer_auction/money_back_request']
     Click Element     css=[data-afip-url*='state_offer_auction/money_back_request']
     sleep  3
+    ${file_path}  ${file_title}  ${file_content}=   create_fake_doc
+    Sleep    10
+    Choose File         css=.qa_state_offer_add_field       ${filepath}
+    Sleep    10
     Click Element     id=submit_button
-    Sleep  300
+    Sleep  10
 
 Дискваліфікувати постачальника
     [Documentation]

@@ -760,13 +760,15 @@ Login
     ...   Reload Page
     ...   AND     Wait Until Element Is Visible      css=[data-afip-url*='state_offer_auction/money_back_request']
     Click Element     css=[data-afip-url*='state_offer_auction/money_back_request']
-    sleep  3
-    ${file_path}  ${file_title}  ${file_content}=   create_fake_doc
-    Sleep    10
-    Choose File         css=.qa_state_offer_add_field       ${filepath}
-    Sleep    10
+    capture page screenshot
+    Sleep   15
     Click Element     id=submit_button
-    Sleep  10
+    Sleep   15
+    capture page screenshot
+    Wait Until Page Does Not Contain Element    id=state_offer_money_back_request_form
+    Sleep   5
+    capture page screenshot
+
 
 Дискваліфікувати постачальника
     [Documentation]

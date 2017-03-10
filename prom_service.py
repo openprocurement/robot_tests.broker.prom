@@ -97,6 +97,7 @@ def convert_prom_code_to_common_string(string):
         u"Відмінено": u"unsuccessful",
         u"Очікується оплата": u"pending.payment",
         u"Переможець": u"active",
+        u"Очікує розгляду": u"cancelled",
     }.get(string, string)
 
 

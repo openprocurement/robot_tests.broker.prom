@@ -8,8 +8,8 @@ Library   prom_service.py
 
 *** Variables ***
 ${sign_in}                                                      css=.qa_entrance_btn
-${login_sign_in}                                                id=phone_email
-${password_sign_in}                                             id=password
+${login_sign_in}                                                name=email
+${password_sign_in}                                             name=password
 ${locator.title}                                                css=.qa_auction_title
 ${locator.status}                                               css=.qa_auction_status
 ${locator.description}                                          css=.qa_auction_descr
@@ -24,7 +24,7 @@ ${locator.auctionPeriod.endDate}                                css=.qa_date_tim
 ${locator.enquiryPeriod.startDate}                              css=.qa_date_time_auction
 ${locator.enquiryPeriod.endDate}                                css=.qa_date_period_clarifications
 ${locator.tenderPeriod.startDate}                               css=.qa_date_submission_of_proposals
-${locator.tenderPeriod.endDate}                                 css=.qa_date_submission_of_proposals
+${locator.tenderPeriod.endDate}                                 css=.qa_enquiry_dt_end
 ${locator.items.quantity}                                       //span[@class='qa_quantity']
 ${locator.items.description}                                    //div[contains(@class, 'qa_item_short_descr')]
 ${locator.items.unit.code}                                      //span[@class='qa_item_unit']
@@ -79,7 +79,7 @@ Login
     [Arguments]  @{ARGUMENTS}
     Click Element   ${sign_in}
     Sleep   1
-    Clear Element Text   id=phone_email
+    Clear Element Text   name=email
     Input Text      ${login_sign_in}          ${USERS.users['${ARGUMENTS[0]}'].login}
     Input Text      ${password_sign_in}       ${USERS.users['${ARGUMENTS[0]}'].password}
     Click Button    id=submit_button
@@ -99,6 +99,7 @@ Login
     ${currency}=                            Get From Dictionary         ${tender_data.data.value}              currency
     ${valueAddedTaxIncluded}=               Get From Dictionary         ${tender_data.data.value}              valueAddedTaxIncluded
     ${step_rate}=                           Get From Dictionary         ${tender_data.data.minimalStep}        amount
+    ${guarantee}=                           Get From Dictionary         ${tender_data.data.guarantee}          amount
     ${start_day_auction}=                   get_all_prom_dates          ${tender_data}                         StartDate
 
     Switch Browser      ${username}
@@ -116,11 +117,11 @@ Login
     Input Text                           css=.qa_multilot_dgf_id              ${dgf}
     Click Element     xpath=//div[contains(@class, 'qa_tender_attempts')]
     Sleep   1
-    Run Keyword If   '${tender_attempts}' == '1'     Click Element     xpath=//div[contains(@class, 'qa_tender_attempts')]//li[contains(@data-reactid, '$1')]
-    ...    ELSE IF   '${tender_attempts}' == '2'     Click Element     xpath=//div[contains(@class, 'qa_tender_attempts')]//li[contains(@data-reactid, '$2')]
-    ...    ELSE IF   '${tender_attempts}' == '3'     Click Element     xpath=//div[contains(@class, 'qa_tender_attempts')]//li[contains(@data-reactid, '$3')]
-    ...    ELSE IF   '${tender_attempts}' == '4'     Click Element     xpath=//div[contains(@class, 'qa_tender_attempts')]//li[contains(@data-reactid, '$4')]
-    ...    ELSE     Click Element     xpath=//div[contains(@class, 'qa_tender_attempts')]//li[contains(@data-reactid, '$0')]
+    Run Keyword If   '${tender_attempts}' == '1'     Click Element     xpath=//div[contains(@class, 'qa_tender_attempts')]//li[text()=1]
+    ...    ELSE IF   '${tender_attempts}' == '2'     Click Element     xpath=//div[contains(@class, 'qa_tender_attempts')]//li[text()=2]
+    ...    ELSE IF   '${tender_attempts}' == '3'     Click Element     xpath=//div[contains(@class, 'qa_tender_attempts')]//li[text()=3]
+    ...    ELSE IF   '${tender_attempts}' == '4'     Click Element     xpath=//div[contains(@class, 'qa_tender_attempts')]//li[text()=4]
+    ...    ELSE     Click Element     xpath=//div[contains(@class, 'qa_tender_attempts')]//li[text()='Невідомо']
 
     Input Text                           css=.qa_dgf_decision_id              ${dgf_id}
     Input Text                           css=.qa_dgf_decision_date            ${dgf_date}
@@ -130,6 +131,7 @@ Login
     ${step_rate}=     Convert To String                                 ${step_rate}
     Input Text        css=.qa_singlelot_tender_step_auction_rate        ${step_rate}
     Click Element     css=.qa_multilot_tax_included
+    Input Text        css=.qa_guarantee_price                           ${guarantee}
     Input Text        css=.qa_singlelot_end_period_adjustments          ${start_day_auction}
     Sleep   1
     Press Key         css=.qa_singlelot_end_period_adjustments            \\13
@@ -157,6 +159,7 @@ Login
     ${postalCode}=           Get From Dictionary         ${items.deliveryAddress}      postalCode
     ${locality}=             Get From Dictionary         ${items.deliveryAddress}      locality
     ${streetAddress}=        Get From Dictionary         ${items.deliveryAddress}      streetAddress
+    ${region}=               Get From Dictionary         ${items.deliveryAddress}      region
 
     Wait Until Page Contains Element       xpath=(//input[contains(@class, 'qa_multilot_tender_descr_product')])[last()]
     Input Text        xpath=(//input[contains(@class, 'qa_multilot_tender_descr_product')])[last()]          ${descr_lot}
@@ -174,7 +177,8 @@ Login
     Sleep    1
     Click Element     xpath=(//div[contains(@class, 'qa_multilot_tender_drop_down_region')])[last()]
     Sleep    2
-    Click Element     xpath=(//div[contains(@class, 'qa_multilot_tender_drop_down_region')]//li[contains(@data-reactid, '$9')])[last()]
+#    Click Element     xpath=(//div[contains(@class, 'qa_multilot_tender_drop_down_region')]//li[contains(@data-reactid, '$9')])[last()]
+    Click Element     xpath=//div[contains(@class, 'qa_multilot_tender_drop_down_region')]//li[text()='Івано-Франківська']
     Input Text        xpath=(//input[contains(@class, 'qa_multilot_tender_zip_code')])[last()]      ${postalCode}
     Input Text        xpath=(//input[contains(@class, 'qa_multilot_tender_locality')])[last()]      ${locality}
     Input Text        xpath=(//input[contains(@class, 'qa_multilot_tender_address')])[last()]       ${streetAddress}
@@ -187,8 +191,8 @@ Login
     log to console    ${tender_uaid}
     Sleep  2
     Click Element     id=js-cabinet_search_form button
-    Wait Until Page Contains Element      xpath=(//a[contains(@class, 'qa_procurement_name_in_list')])[1]         20
-    Click Element     xpath=(//a[contains(@class, 'qa_procurement_name_in_list')])[1]
+    Wait Until Page Contains Element      xpath=(//div[contains(@class, 'qa_procurement_name_in_list')]//a)[1]         20
+    Click Element     xpath=(//div[contains(@class, 'qa_procurement_name_in_list')]//a)[1]
     Sleep  1
 
 Завантажити документ
@@ -275,7 +279,7 @@ Login
 
 Отримати інформацію про minimalStep.amount
     ${return_value}=    Отримати тест із поля і показати на сторінці   minimalStep.amount
-    ${return_value}=    Remove String      ${return_value}     грн.
+    ${return_value}=    Remove String      ${return_value}     грн
     ${return_value}=    Convert To Number   ${return_value.replace(' ', '').replace(',', '.')}
     [Return]   ${return_value}
 
@@ -335,8 +339,7 @@ Login
     [Return]    ${return_value}
 
 Отримати інформацію про tenderPeriod.endDate
-    ${return_value}=    Отримати тест із поля і показати на сторінці  tenderPeriod.endDate
-    ${return_value}=    convert_date_to_prom_tender_enddate    ${return_value}
+    ${return_value}=    Get Element Attribute    ${locator.tenderPeriod.endDate}@datetime
     [Return]    ${return_value}
 
 Отримати інформацію про enquiryPeriod.endDate
@@ -479,7 +482,7 @@ Login
     Sleep  2
     Click Element     css=#js-cabinet_search_form button
     Sleep  5
-    Click Element     xpath=(//a[contains(@class, 'qa_procurement_name_in_list')])[1]
+    Click Element     xpath=(//div[contains(@class, 'qa_procurement_name_in_list')]//a)[1]
     Sleep   20
     Wait Until Page Contains Element      css=.qa_your_suggestion_block     10
     Click Element        css=.qa_your_withdraw_offer

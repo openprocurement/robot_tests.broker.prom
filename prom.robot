@@ -859,4 +859,3 @@ Login
 	Wait Until Keyword Succeeds     30      150          Run Keywords
     ...   Reload Page
     ...   AND     Wait Until Element Is Visible      xpath=//a[contains(@href, 'state_award/active/')]
-

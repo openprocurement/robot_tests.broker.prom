@@ -737,7 +737,7 @@ Login
     Sleep   3
     Click Element       xpath=(//div[contains(@class, 'qa_type_file')])[last()]
     Sleep  2
-    Click Element       xpath=//span[text()='Фінансова ліцензія']
+    Click Element       xpath=(//div[text()='Фінансова ліцензія'])[last()]
     Click Element       id=reglament_agreement
     Click Element       id=oferta_agreement
     Click Element       id=submit_button

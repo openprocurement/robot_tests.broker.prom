@@ -50,7 +50,7 @@ def convert_date_to_prom_tender_enddate(date):
 
 def convert_prom_string_to_common_string(string):
     return {
-        u"грн.": u"UAH",
+        u"грн": u"UAH",
         u"шт.": u"штуки",
         u"кв.м.": u"метри квадратні",
         u"метры квадратные": u"метри квадратні",

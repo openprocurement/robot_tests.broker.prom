@@ -16,7 +16,7 @@ ${locator.description}                                          css=.qa_auction_
 ${locator.minimalStep.amount}                                   css=.qa_bid_step
 ${locator.minimalStep}                                          css=.qa_quantity
 ${locator.value.amount}                                         css=.qa_amount_block .qa_buget
-${locator.value.pdv}                                            css=.qa_amount_block .qa_pdv
+${locator.value.pdv}                                            xpath=(//span[contains(@class, 'qa_pdv')])[last()]
 ${locator.tenderId}                                             css=.qa_ua_ea_id
 ${locator.procuringEntity.name}                                 css=.qa_merchant_name
 ${locator.auctionPeriod.startDate}                              css=.qa_date_time_auction
@@ -147,7 +147,6 @@ Login
     ${TENDER}=     Get Text        css=.qa_ua_ea_id
     ${access_token}=    Get Variable Value    ${TENDER.access.token}
     Set To Dictionary   ${USERS.users['${username}']}    access_token=${access_token}
-    log to console      ${TENDER}
     [Return]    ${TENDER}
 
 Додати предмети

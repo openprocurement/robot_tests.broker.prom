@@ -19,11 +19,11 @@ ${locator.value.amount}                                         css=.qa_amount_b
 ${locator.value.pdv}                                            xpath=(//span[contains(@class, 'qa_pdv')])[last()]
 ${locator.tenderId}                                             css=.qa_ua_ea_id
 ${locator.procuringEntity.name}                                 css=.qa_merchant_name
-${locator.auctionPeriod.startDate}                              css=.qa_date_time_auction
-${locator.auctionPeriod.endDate}                                css=.qa_date_time_auction
+${locator.auctionPeriod.startDate}                              css=.qa_auction_dt_start
+${locator.auctionPeriod.endDate}                                css=.qa_auction_dt_end
 ${locator.enquiryPeriod.startDate}                              css=.qa_date_time_auction
 ${locator.enquiryPeriod.endDate}                                css=.qa_date_period_clarifications
-${locator.tenderPeriod.startDate}                               css=.qa_date_submission_of_proposals
+${locator.tenderPeriod.startDate}                               css=.qa_enquiry_dt_start
 ${locator.tenderPeriod.endDate}                                 css=.qa_enquiry_dt_end
 ${locator.items.quantity}                                       //span[@class='qa_quantity']
 ${locator.items.description}                                    //div[contains(@class, 'qa_item_short_descr')]
@@ -323,14 +323,17 @@ Login
     [Return]  ${return_value}
 
 Отримати інформацію про auctionPeriod.startDate
-    ${return_value}=    Отримати тест із поля і показати на сторінці  auctionPeriod.startDate
-    ${return_value}=    convert_date_prom      ${return_value}
+    ${return_value}=    Get Element Attribute    ${locator.auctionPeriod.startDate}@datetime
     [Return]    ${return_value}
 
+
 Отримати інформацію про auctionPeriod.endDate
-    ${return_value}=    Отримати тест із поля і показати на сторінці  auctionPeriod.endDate
-    ${return_value}=    convert_date_to_prom_tender_enddate    ${return_value}
+    ${return_value}=    Get Element Attribute    ${locator.auctionPeriod.endDate}@datetime
     [Return]    ${return_value}
+#
+#    ${return_value}=    Отримати тест із поля і показати на сторінці  auctionPeriod.endDate
+#    ${return_value}=    convert_date_to_prom_tender_enddate    ${return_value}
+#    [Return]    ${return_value}
 
 Отримати інформацію про tenderPeriod.startDate
     ${return_value}=    Отримати тест із поля і показати на сторінці  tenderPeriod.startDate

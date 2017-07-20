@@ -138,7 +138,7 @@ Login
     ${items}=   Get From Dictionary   ${tender_data.data}   items
     ${number_of_items}=  Get Length  ${items}
     :FOR  ${index}  IN RANGE  ${number_of_items}
-    \  Run Keyword If  '${index}' != '0'   Click Element     css=.qa_singlelot_tender_add_more_product
+    \  Run Keyword If  '${index}' != '0'   Click Element     css=.qa_add_button
     \  Додати предмети    ${items[${index}]}
     Click Button      css=.qa_multilot_tender_submit_button
     Sleep   3
@@ -415,13 +415,22 @@ Login
 Отримати інформацію про awards[0].status
     reload page
     ${return_value}=    Отримати тест із поля і показати на сторінці   awards[0].status
+    log to console   ${return_value}
+    log to console   +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     ${return_value}=   convert_prom_code_to_common_string    ${return_value}
+    log to console   ${return_value}
+    log to console   +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     [Return]   ${return_value}
 
 Отримати інформацію про awards[1].status
     reload page
     ${return_value}=    Отримати тест із поля і показати на сторінці   awards[1].status
+    log to console   ${return_value}
+    log to console   =============================================================================
+
     ${return_value}=   convert_prom_code_to_common_string    ${return_value}
+    log to console   ${return_value}
+    log to console   =============================================================================
     [Return]   ${return_value}
 
 

@@ -16,14 +16,14 @@ ${locator.description}                                          css=.qa_auction_
 ${locator.minimalStep.amount}                                   css=.qa_bid_step
 ${locator.minimalStep}                                          css=.qa_quantity
 ${locator.value.amount}                                         css=.qa_amount_block .qa_buget
-${locator.value.pdv}                                            css=.qa_amount_block .qa_pdv
+${locator.value.pdv}                                            xpath=(//span[contains(@class, 'qa_pdv')])[last()]
 ${locator.tenderId}                                             css=.qa_ua_ea_id
 ${locator.procuringEntity.name}                                 css=.qa_merchant_name
-${locator.auctionPeriod.startDate}                              css=.qa_date_time_auction
-${locator.auctionPeriod.endDate}                                css=.qa_date_time_auction
+${locator.auctionPeriod.startDate}                              css=.qa_auction_dt_start
+${locator.auctionPeriod.endDate}                                css=.qa_auction_dt_end
 ${locator.enquiryPeriod.startDate}                              css=.qa_date_time_auction
 ${locator.enquiryPeriod.endDate}                                css=.qa_date_period_clarifications
-${locator.tenderPeriod.startDate}                               css=.qa_date_submission_of_proposals
+${locator.tenderPeriod.startDate}                               css=.qa_enquiry_dt_start
 ${locator.tenderPeriod.endDate}                                 css=.qa_enquiry_dt_end
 ${locator.items.quantity}                                       //span[@class='qa_quantity']
 ${locator.items.description}                                    //div[contains(@class, 'qa_item_short_descr')]
@@ -147,7 +147,6 @@ Login
     ${TENDER}=     Get Text        css=.qa_ua_ea_id
     ${access_token}=    Get Variable Value    ${TENDER.access.token}
     Set To Dictionary   ${USERS.users['${username}']}    access_token=${access_token}
-    log to console      ${TENDER}
     [Return]    ${TENDER}
 
 Додати предмети
@@ -324,14 +323,17 @@ Login
     [Return]  ${return_value}
 
 Отримати інформацію про auctionPeriod.startDate
-    ${return_value}=    Отримати тест із поля і показати на сторінці  auctionPeriod.startDate
-    ${return_value}=    convert_date_prom      ${return_value}
+    ${return_value}=    Get Element Attribute    ${locator.auctionPeriod.startDate}@datetime
     [Return]    ${return_value}
 
+
 Отримати інформацію про auctionPeriod.endDate
-    ${return_value}=    Отримати тест із поля і показати на сторінці  auctionPeriod.endDate
-    ${return_value}=    convert_date_to_prom_tender_enddate    ${return_value}
+    ${return_value}=    Get Element Attribute    ${locator.auctionPeriod.endDate}@datetime
     [Return]    ${return_value}
+#
+#    ${return_value}=    Отримати тест із поля і показати на сторінці  auctionPeriod.endDate
+#    ${return_value}=    convert_date_to_prom_tender_enddate    ${return_value}
+#    [Return]    ${return_value}
 
 Отримати інформацію про tenderPeriod.startDate
     ${return_value}=    Отримати тест із поля і показати на сторінці  tenderPeriod.startDate
@@ -737,7 +739,7 @@ Login
     Sleep   3
     Click Element       xpath=(//div[contains(@class, 'qa_type_file')])[last()]
     Sleep  2
-    Click Element       xpath=//span[text()='Фінансова ліцензія']
+    Click Element       xpath=(//div[text()='Фінансова ліцензія'])[last()]
     Click Element       id=reglament_agreement
     Click Element       id=oferta_agreement
     Click Element       id=submit_button
@@ -859,4 +861,3 @@ Login
 	Wait Until Keyword Succeeds     30      150          Run Keywords
     ...   Reload Page
     ...   AND     Wait Until Element Is Visible      xpath=//a[contains(@href, 'state_award/active/')]
-

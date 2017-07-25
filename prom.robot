@@ -176,7 +176,6 @@ Login
     Sleep    1
     Click Element     xpath=(//div[contains(@class, 'qa_multilot_tender_drop_down_region')])[last()]
     Sleep    2
-#    Click Element     xpath=(//div[contains(@class, 'qa_multilot_tender_drop_down_region')]//li[contains(@data-reactid, '$9')])[last()]
     Click Element     xpath=//div[contains(@class, 'qa_multilot_tender_drop_down_region')]//li[text()='Івано-Франківська']
     Input Text        xpath=(//input[contains(@class, 'qa_multilot_tender_zip_code')])[last()]      ${postalCode}
     Input Text        xpath=(//input[contains(@class, 'qa_multilot_tender_locality')])[last()]      ${locality}
@@ -415,22 +414,13 @@ Login
 Отримати інформацію про awards[0].status
     reload page
     ${return_value}=    Отримати тест із поля і показати на сторінці   awards[0].status
-    log to console   ${return_value}
-    log to console   +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     ${return_value}=   convert_prom_code_to_common_string    ${return_value}
-    log to console   ${return_value}
-    log to console   +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     [Return]   ${return_value}
 
 Отримати інформацію про awards[1].status
     reload page
     ${return_value}=    Отримати тест із поля і показати на сторінці   awards[1].status
-    log to console   ${return_value}
-    log to console   =============================================================================
-
     ${return_value}=   convert_prom_code_to_common_string    ${return_value}
-    log to console   ${return_value}
-    log to console   =============================================================================
     [Return]   ${return_value}
 
 

@@ -80,6 +80,7 @@ def convert_procurement_method_type(string):
     return {
         u"МАЙНО": u"dgfOtherAssets",
         u"ФІНАНСОВІ АКТИВИ": u"dgfFinancialAssets",
+        u"ГОЛЛАНДСКИЙ АУКЦИОН": u"dgfInsider",
     }.get(string, string)
 
 

@@ -13,7 +13,7 @@ ${password_sign_in}                                             name=password
 ${locator.title}                                                css=.qa_auction_title
 ${locator.status}                                               css=.qa_auction_status
 ${locator.description}                                          css=.qa_auction_descr
-${locator.minimalStep.amount}                                   css=.qa_bid_step
+${locator.minimalStep.amount}                                   xpath=(//span[contains(@class, 'qa_pdv')])[1]
 ${locator.minimalStep}                                          css=.qa_quantity
 ${locator.value.amount}                                         css=.qa_amount_block .qa_buget
 ${locator.value.pdv}                                            xpath=(//span[contains(@class, 'qa_pdv')])[last()]
@@ -303,7 +303,6 @@ Login
 
 Отримати інформацію про value.currency
     ${return_value}=   Отримати тест із поля і показати на сторінці  minimalStep.amount
-    ${return_value}=   Convert To String     ${return_value.split(',')[1].split(' ')[1]}
     ${return_value}=   convert_prom_string_to_common_string      ${return_value}
     [Return]  ${return_value}
 
@@ -329,14 +328,10 @@ Login
 Отримати інформацію про auctionPeriod.endDate
     ${return_value}=    Get Element Attribute    ${locator.auctionPeriod.endDate}@datetime
     [Return]    ${return_value}
-#
-#    ${return_value}=    Отримати тест із поля і показати на сторінці  auctionPeriod.endDate
-#    ${return_value}=    convert_date_to_prom_tender_enddate    ${return_value}
-#    [Return]    ${return_value}
+
 
 Отримати інформацію про tenderPeriod.startDate
     ${return_value}=    Отримати тест із поля і показати на сторінці  tenderPeriod.startDate
-    ${return_value}=    convert_date_to_prom_tender_startdate      ${return_value}
     [Return]    ${return_value}
 
 Отримати інформацію про tenderPeriod.endDate
@@ -442,14 +437,9 @@ Login
     [Documentation]
     ...    ${ARGUMENTS[0]} ==  username
     ...    ${ARGUMENTS[1]} ==  tender_uaid
-    ...    ${ARGUMENTS[2]} ==  test_bid_data
     Should Be Equal   '${ARGUMENTS[2]['data']['qualified']}'   'True'
-    ${amount}=    Get From Dictionary     ${ARGUMENTS[2].data.value}    amount
     prom.Пошук тендера по ідентифікатору   ${ARGUMENTS[0]}   ${ARGUMENTS[1]}
     Click Element       css=.qa_button_create_offer
-    Wait Until Page Contains Element        id=amount       10
-    ${amount}=      Convert To String           ${amount}
-    Input Text          id=amount               ${amount}
     Wait Until Page Contains Element        id=reglament_agreement       10
     Click Element       id=reglament_agreement
     Click Element       id=oferta_agreement

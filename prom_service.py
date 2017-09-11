@@ -80,6 +80,7 @@ def convert_procurement_method_type(string):
     return {
         u"МАЙНО": u"dgfOtherAssets",
         u"ФІНАНСОВІ АКТИВИ": u"dgfFinancialAssets",
+        u"ГОЛЛАНДСКИЙ АУКЦИОН": u"dgfInsider",
     }.get(string, string)
 
 
@@ -92,11 +93,11 @@ def convert_prom_code_to_common_string(string):
         u"Класифікатор:": u"CAV",
         u"Очікує протокол": u"pending.verification",
         u"очікується протокол": u"pending.verification",
-        u"Очікує кваліфікації": u"pending.waiting",
+        u"Очікує рішення": u"pending.waiting",
         u"очікується кінець кваліфікації": u"pending.waiting",
-        u"Відмінено": u"unsuccessful",
-        u"Очікується оплата": u"pending.payment",
-        u"Переможець": u"active",
+        u"Пропозицію відхилено": u"unsuccessful",
+        u"Очікується підписання договору": u"pending.payment",
+        u"Оплачено, очікується підписання договору": u"active",
         u"Очікує розгляду": u"cancelled",
     }.get(string, string)
 

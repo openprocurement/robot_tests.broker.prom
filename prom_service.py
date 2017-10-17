@@ -67,12 +67,14 @@ def convert_prom_string_to_common_string(string):
         u"Подписанный": u"active",
         u"Впервые": u"Лот виставляється вперше",
         u"Повторно": u"Лот виставляється повторно",
+        u"Не розглядався": u"cancelled",
     }.get(string, string)
 
 
 def convert_cancellations_status(string):
     return {
         u"Скасована": u"active",
+        u"Аукціон": u"active.tendering",
     }.get(string, string)
 
 
@@ -81,6 +83,7 @@ def convert_procurement_method_type(string):
         u"МАЙНО": u"dgfOtherAssets",
         u"ФІНАНСОВІ АКТИВИ": u"dgfFinancialAssets",
         u"ГОЛЛАНДСКИЙ АУКЦИОН": u"dgfInsider",
+        u"ГОЛЛАНДСЬКИЙ АУКЦІОН": u"dgfInsider",
     }.get(string, string)
 
 

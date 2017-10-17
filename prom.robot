@@ -55,12 +55,13 @@ ${locator.awards[1].status}                                     xpath=(//td[cont
 
 *** Keywords ***
 Підготувати клієнт для користувача
-    [Arguments]     @{ARGUMENTS}
+    [Arguments]     ${username}
     [Documentation]  Відкрити брaвзер, створити обєкт api wrapper, тощо
-    Open Browser  ${USERS.users['${ARGUMENTS[0]}'].homepage}  ${USERS.users['${ARGUMENTS[0]}'].browser}  alias=${ARGUMENTS[0]}
-    Set Window Size       @{USERS.users['${ARGUMENTS[0]}'].size}
-    Set Window Position   @{USERS.users['${ARGUMENTS[0]}'].position}
-    Run Keyword If   '${ARGUMENTS[0]}' != 'Prom_provider1'   Login   ${ARGUMENTS[0]}
+    Set Suite Variable  ${my_alias}  my_custom_alias
+    Open Browser  ${USERS.users['${username}'].homepage}  ${USERS.users['${username}'].browser}  alias=my_custom_alias
+    Set Window Size       @{USERS.users['${username}'].size}
+    Set Window Position   @{USERS.users['${username}'].position}
+    Run Keyword If   '${username}' != 'Prom_provider1'   Login   ${username}
 
 Підготувати дані для оголошення тендера
     [Arguments]  ${username}   ${tender_data}    ${role_name}
@@ -102,7 +103,7 @@ Login
     ${guarantee}=                           Get From Dictionary         ${tender_data.data.guarantee}          amount
     ${start_day_auction}=                   get_all_prom_dates          ${tender_data}                         StartDate
 
-    Switch Browser      ${username}
+    Switch Browser      my_custom_alias
     Wait Until Page Contains Element     xpath=//a[contains(@href,'/cabinet/purchases/state_auction/list')]    20
     Click Element                        xpath=//a[contains(@href,'/cabinet/purchases/state_auction/list')]
     Wait Until Page Contains Element     xpath=//a[contains(@href,'/cabinet/purchases/state_auction/add')]     20
@@ -164,7 +165,7 @@ Login
     Input Text        xpath=(//input[contains(@class, 'qa_multilot_tender_descr_product')])[last()]          ${descr_lot}
     Input Text        xpath=(//input[contains(@class, 'qa_multilot_tender_quantity_product')])[last()]       ${quantity}
     Click Element     xpath=(//div[contains(@class, 'qa_multilot_tender_drop_down_product')])[last()]
-    Click Element   xpath=(//div[contains(@class, 'qa_multilot_tender_drop_down_product')])[last()]//li[text()='${unit}']
+    Click Element     xpath=(//div[contains(@class, 'qa_multilot_tender_drop_down_product')])[last()]//li[text()='${unit}']
     Click Element     xpath=(//a[contains(@class, 'qa_multilot_tender_cav_classifier')])[last()]
     Wait Until Page Contains Element    css=.qa_search_input    20
     Click Element     css=.qa_search_input
@@ -183,7 +184,15 @@ Login
 
 Пошук тендера по ідентифікатору
     [Arguments]   ${username}   ${tender_uaid}
+    Switch Browser    my_custom_alias
     Go to   ${USERS.users['${username}'].default_page}
+    sleep    3
+    ${href}=    Get Location
+    Run Keyword If  '${href}' in 'https://zakupki.dz-test.net/signin'  Run Keywords
+    ...   Input Text      ${login_sign_in}          ${USERS.users['${username}'].login}
+    ...   AND    Input Text      ${password_sign_in}       ${USERS.users['${username}'].password}
+    ...   AND    Click Button    id=submit_button
+    ...   AND    Sleep   2
     Wait Until Page Contains Element      id=search           20
     Input Text        id=search     ${tender_uaid}
     log to console    ${tender_uaid}
@@ -230,7 +239,7 @@ Login
 
 Оновити сторінку з тендером
     [Arguments]   ${username}   ${tender_uaid}
-    Switch Browser    ${username}
+    Switch Browser    my_custom_alias
     prom.Пошук тендера по ідентифікатору    ${username}    ${tender_uaid}
 
 Отримати інформацію із предмету
@@ -291,7 +300,7 @@ Login
     [Documentation]
     ...      ${ARGUMENTS[0]} =  username
     ...      ${ARGUMENTS[1]} =  tender_uaid
-    Switch Browser    ${ARGUMENTS[0]}
+    Switch Browser    my_custom_alias
     prom.Пошук тендера по ідентифікатору  ${ARGUMENTS[0]}  ${ARGUMENTS[1]}
     Sleep   2
     Click Element     xpath=//a[contains(@href, 'state_auction/edit')]
@@ -437,7 +446,15 @@ Login
     [Documentation]
     ...    ${ARGUMENTS[0]} ==  username
     ...    ${ARGUMENTS[1]} ==  tender_uaid
+    Switch Browser       my_custom_alias
     Should Be Equal   '${ARGUMENTS[2]['data']['qualified']}'   'True'
+    ${href}=    Get Location
+    Run Keyword If  '${SUITE_NAME}' == 'іnsider_full'  Run Keywords
+    ...   Go to   https://zakupki.dz-test.net/signin
+    ...   AND    Input Text      ${login_sign_in}          ${USERS.users['${ARGUMENTS[0]}'].login}
+    ...   AND    Input Text      ${password_sign_in}       ${USERS.users['${ARGUMENTS[0]}'].password}
+    ...   AND    Click Button    id=submit_button
+    ...   AND    Sleep   2
     prom.Пошук тендера по ідентифікатору   ${ARGUMENTS[0]}   ${ARGUMENTS[1]}
     Click Element       css=.qa_button_create_offer
     Wait Until Page Contains Element        id=reglament_agreement       10
@@ -466,7 +483,7 @@ Login
     ...    ${ARGUMENTS[0]} ==  username
     ...    ${ARGUMENTS[1]} ==  none
     ...    ${ARGUMENTS[2]} ==  tender_uaid
-    Switch Browser       ${ARGUMENTS[0]}
+    Switch Browser       my_custom_alias
     Go to   ${USERS.users['${ARGUMENTS[0]}'].default_page}
     Sleep  10
     Input Text        id=search     ${ARGUMENTS[1]}
@@ -485,6 +502,13 @@ Login
     ...    ${ARGUMENTS[1]} ==  tender_uaid
     ...    ${ARGUMENTS[2]} ==  amount
     ...    ${ARGUMENTS[3]} ==  amount.value
+    sleep   3
+    ${href}=    Get Location
+    Run Keyword If  '${href}' in 'https://zakupki.dz-test.net/signin'  Run Keywords
+    ...   Input Text      ${login_sign_in}          ${USERS.users['${ARGUMENTS[0]}'].login}
+    ...   AND    Input Text      ${password_sign_in}       ${USERS.users['${ARGUMENTS[0]}'].password}
+    ...   AND    Click Button    id=submit_button
+    ...   AND    Sleep   2
     prom.Пошук тендера по ідентифікатору  ${ARGUMENTS[0]}  ${ARGUMENTS[1]}
     Click Element           css=.qa_your_modify_offer
     Clear Element Text      id=amount
@@ -513,6 +537,14 @@ Login
 
 Отримати посилання на аукціон для глядача
     [Arguments]  ${username}  ${tender_uaid}  ${lot_id}=${Empty}
+    Switch Browser       my_custom_alias
+    sleep    3
+    ${href}=    Get Location
+    Run Keyword If  '${href}' in 'https://zakupki.dz-test.net/signin'  Run Keywords
+    ...   Input Text      ${login_sign_in}          ${USERS.users['${username}'].login}
+    ...   AND    Input Text      ${password_sign_in}       ${USERS.users['${username}'].password}
+    ...   AND    Click Button    id=submit_button
+    ...   AND    Sleep   2
     prom.Пошук тендера по ідентифікатору  ${username}  ${tender_uaid}
     Wait Until Keyword Succeeds     30      150          Run Keywords
     ...   Reload Page
@@ -522,6 +554,15 @@ Login
 
 Отримати посилання на аукціон для учасника
     [Arguments]  ${username}  ${tender_uaid}  ${lot_id}=${Empty}
+    Switch Browser       my_custom_alias
+    sleep    3
+    ${href}=    Get Location
+    Run Keyword If  '${href}' in 'https://zakupki.dz-test.net/signin'  Run Keywords
+    ...   Input Text      ${login_sign_in}          ${USERS.users['${username}'].login}
+    ...   AND    Input Text      ${password_sign_in}       ${USERS.users['${username}'].password}
+    ...   AND    Click Button    id=submit_button
+    ...   AND    Sleep   2
+
     prom.Пошук тендера по ідентифікатору  ${username}  ${tender_uaid}
     Wait Until Keyword Succeeds     30      150          Run Keywords
     ...   Reload Page
@@ -538,8 +579,6 @@ Login
     Click Element                         xpath=//a[contains(@href, 'state_award/active/')]
     Sleep   10
     Reload Page
-
-
 
 Завантажити угоду до тендера
     [Arguments]  ${username}  ${tender_uaid}  ${contract_num}  ${filepath}

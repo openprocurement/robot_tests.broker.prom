@@ -794,7 +794,12 @@ Login
     ...   AND     Wait Until Element Is Visible      css=[data-afip-url*='state_offer_auction/money_back_request']
     Click Element     css=[data-afip-url*='state_offer_auction/money_back_request']
     capture page screenshot
+    Sleep   3
+    ${file_path}  ${file_title}  ${file_content}=   create_fake_doc
+    Sleep    10
+    Choose File         css=.qa_state_offer_add_field       ${filepath}
     Sleep   15
+    capture page screenshot
     Click Element     id=submit_button
     Sleep   15
     capture page screenshot

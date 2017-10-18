@@ -67,7 +67,6 @@ def convert_prom_string_to_common_string(string):
         u"Подписанный": u"active",
         u"Впервые": u"Лот виставляється вперше",
         u"Повторно": u"Лот виставляється повторно",
-        u"Не розглядався": u"cancelled",
     }.get(string, string)
 
 
@@ -102,6 +101,7 @@ def convert_prom_code_to_common_string(string):
         u"Очікується підписання договору": u"pending.payment",
         u"Оплачено, очікується підписання договору": u"active",
         u"Очікує розгляду": u"cancelled",
+        u"Не розглядався": u"cancelled",
     }.get(string, string)
 
 

@@ -15,6 +15,11 @@ def get_all_prom_dates(initial_tender_data, key):
     return data.get(key, '')
 
 
+def convert_iso_date_to_prom(date):
+    a = dateutil.parser.parse(date)
+    return a.strftime("%d.%m.%Y")
+
+
 def convert_date_prom(date):
     date_obj = datetime.strptime(date, "%d.%m.%y %H:%M")
     time_zone = pytz.timezone('Europe/Kiev')
@@ -53,9 +58,15 @@ def convert_prom_string_to_common_string(string):
         u"грн": u"UAH",
         u"шт.": u"штуки",
         u"кв.м.": u"метри квадратні",
+        u"м2": u"метри квадратні",
+        u"м²": u"метри квадратні",
         u"метры квадратные": u"метри квадратні",
+        u"метр квадратний": u"метри квадратні",
+        u"Рівненська область": u"Ровненская",
+        u"с НДС": True,
         u"з ПДВ": True,
-        u"Класифікатор:": u"CAV",
+        u"Класифікатор:": u"CAV-PS",
+        u"Оголошення аукціону з Найму": u"Оренда",
         u"Період уточнень": u"active.enquiries",
         u"Прийом пропозицій": u"active.tendering",
         u"Аукціон": u"active.auction",
@@ -66,6 +77,8 @@ def convert_prom_string_to_common_string(string):
         u"Завершена": u"complete",
         u"Подписанный": u"active",
         u"Впервые": u"Лот виставляється вперше",
+        u"Вперше": u"Лот виставляється вперше",
+        u"Вдруге": u"Лот виставляється повторно",
         u"Повторно": u"Лот виставляється повторно",
     }.get(string, string)
 
@@ -83,16 +96,21 @@ def convert_procurement_method_type(string):
         u"ФІНАНСОВІ АКТИВИ": u"dgfFinancialAssets",
         u"ГОЛЛАНДСКИЙ АУКЦИОН": u"dgfInsider",
         u"ГОЛЛАНДСЬКИЙ АУКЦІОН": u"dgfInsider",
+        u"Державне майно": u"dgfOtherAssets",
+        u"Государственное имущество": u"dgfOtherAssets",
     }.get(string, string)
 
 
 def convert_prom_code_to_common_string(string):
     return {
         u"кв.м.": u"MTK",
+        u"м2": u"MTK",
+        u"м²": u"MTK",
         u"послуга": u"E48",
         u"послуги": u"E48",
         u"шт.": u"H87",
-        u"Класифікатор:": u"CAV",
+        u"Класифікатор:": u"CPV",
+        u"метр квадратний": u"метри квадратні",
         u"Очікує протокол": u"pending.verification",
         u"очікується протокол": u"pending.verification",
         u"Очікує рішення": u"pending.waiting",

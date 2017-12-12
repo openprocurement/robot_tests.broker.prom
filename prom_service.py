@@ -129,6 +129,7 @@ def convert_document_type(string):
         u"tenderNotice": u"Паспорт торгів",
         u"x_presentation": u"Презентація",
         u"technicalSpecifications": u"Публічний паспорт активу",
+        u"Згідно рішення виконавчої дирекції Замовника": u"Згідно рішення Організатора торгів",
     }.get(string, string)
 
 

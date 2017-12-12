@@ -120,6 +120,7 @@ def convert_prom_code_to_common_string(string):
         u"Оплачено, очікується підписання договору": u"active",
         u"Очікує розгляду": u"cancelled",
         u"Не розглядався": u"cancelled",
+        u"Завершено": u"complete",
     }.get(string, string)
 
 

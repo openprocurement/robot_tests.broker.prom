@@ -339,6 +339,7 @@ Login
     [Arguments]   ${field_name}
     ${return_value}=   Run Keyword If  'contractPeriod' in '${field_name}'    Get Element Attribute   ${locator.${field_name}}@datetime
     ...  ELSE IF  'tenderPeriod' in '${field_name}'   Get Element Attribute  ${locator.${field_name}}@datetime
+    ...  ELSE IF  'auctionPeriod' in '${field_name}'   Get Element Attribute  ${locator.${field_name}}@datetime
     ...  ELSE     Get Text  ${locator.${field_name}}
     [Return]  ${return_value}
 
@@ -442,6 +443,15 @@ Login
 Отримати інформацію про procuringEntity.name
     ${return_value}=   Отримати текст із поля і показати на сторінці   procuringEntity.name
     [Return]  ${return_value}
+
+Отримати інформацію про auctionPeriod.startDate
+    ${return_value}=    Отримати текст із поля і показати на сторінці    auctionPeriod.startDate
+    [Return]    ${return_value}
+
+Отримати інформацію про auctionPeriod.endDate
+    ${return_value}=    Отримати текст із поля і показати на сторінці    auctionPeriod.endDate
+    [Return]    ${return_value}
+
 
 Отримати інформацію про items[0].contractPeriod.startDate
     ${return_value}=    Отримати текст із поля і показати на сторінці    items[0].contractPeriod.startDate
@@ -876,12 +886,17 @@ Login
     Sleep   1
     Click Element       xpath=//div[@id='reason_dd']
     Sleep   1
-    Click Element       xpath=//ul[@id='reason_dd_ul']//li[contains(text(), "${ARGUMENTS[2]}")]
+    ${reason}=    convert_document_type    ${ARGUMENTS[2]}
+    Click Element       id=reason_dd
+    sleep   1
+    Click Element       xpath=//ul[@id='reason_dd_ul']//li[contains(text(), "${reason}")]
     Sleep   2
     Click Element       id=submit_button
+    sleep   60
+    reload page
     Wait Until Keyword Succeeds     30      30          Run Keywords
     ...   Reload Page
-    ...   AND     Wait Until Element Is Visible       xpath=//span[contains(@data-href, 'state_auction/confirm_cancellation')]
+    ...   AND     Wait Until Element Is Visible       xpath=//span[contains(@data-href, 'state_auction/confirm_cancellation')]//span
     Click Element               xpath=//span[contains(@data-href, 'state_auction/confirm_cancellation')]
 
 Отримати інформацію із документа

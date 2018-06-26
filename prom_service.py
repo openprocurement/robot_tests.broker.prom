@@ -2,22 +2,37 @@
 import pytz
 import dateutil.parser
 import urllib
+import shutil
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
-def get_all_prom_dates(initial_tender_data, key):
-    tender_period = initial_tender_data.data.auctionPeriod
-    start_dt = dateutil.parser.parse(tender_period['startDate'])
-    data = {
-        'StartDate': start_dt.strftime("%d.%m.%Y %H:%M"),
-    }
-    return data.get(key, '')
+def move_uploaded_file(file_name, src_dir, dest_dir):
+    src_path = '{path}/{file}'.format(path=src_dir, file=file_name)
+    dest_path = '{path}/{file}'.format(path=dest_dir, file=file_name)
+    shutil.move(src_path, dest_path)
+
+
+def create_random_file():
+    index = datetime.now().strftime("%s%f")
+    file_path = '/tmp/tmp_file_%s' % index
+    files = open(file_path, 'w')
+    files.close()
+    return file_path
+
+
+def convert_to_float(price):
+    return float(price.replace(',', '.'))
+
+
+def iso_date(date):
+    next_date = datetime.now() + timedelta(days=10)
+    return next_date.strftime("%d.%m.%Y 00:00")
 
 
 def convert_iso_date_to_prom(date):
     a = dateutil.parser.parse(date)
-    return a.strftime("%d.%m.%Y")
+    return a.strftime("%d.%m.%Y %H:%M")
 
 
 def convert_date_prom(date):
@@ -82,6 +97,7 @@ def convert_prom_string_to_common_string(string):
         u"Повторно": u"Лот виставляється повторно",
         u"Згідно рішення Організатора торгів": u"Згідно рішення виконавчої дирекції Замовника",
         u"Завершено": u"complete",
+        u"Uri:": u"UA-EDR",
     }.get(string, string)
 
 
@@ -89,6 +105,22 @@ def convert_cancellations_status(string):
     return {
         u"Скасована": u"active",
         u"Аукціон": u"active.tendering",
+    }.get(string, string)
+
+
+def convert_registration_details(string):
+    return {
+        u"complete": u"Об'єкт зареєстровано",
+        u"registering": u"Об'єкт реєструється",
+        u"unknown": u"За замовчуванням",
+    }.get(string, string)
+
+
+def revert_registration_details(string):
+    return {
+        u"Об'єкт зареєстровано": u"complete",
+        u"Об'єкт реєструється": u"registering",
+        u"За замовчуванням": u"unknown",
     }.get(string, string)
 
 
@@ -112,7 +144,7 @@ def convert_prom_code_to_common_string(string):
         u"послуги": u"E48",
         u"шт.": u"H87",
         u"Класифікатор:": u"CPV",
-        u"метр квадратний": u"метри квадратні",
+        u"метри квадратні": u"метр квадратний",
         u"Очікує протокол": u"pending.verification",
         u"очікується протокол": u"pending.verification",
         u"Очікує рішення": u"pending.waiting",
@@ -123,36 +155,69 @@ def convert_prom_code_to_common_string(string):
         u"Очікує розгляду": u"cancelled",
         u"Не розглядався": u"cancelled",
         u"Завершено": u"complete",
+        u"Виключений з переліку": u"deleted",
+        u"Опубліковано. Очікування інформаційного повідомлення.": u"pending",
+        u"Опубліковано": u"pending",
+        u"Аукціон": u"scheduled",
+        u"Аукціон із зниженням стартової ціни": u"scheduled",
+        u"Аукціон за методом покрокового зниження стартової ціни та подальшого подання цінових пропозицій": u"scheduled",
+        u"Англійський аукціон": u"scheduled",
+        u"Голландський аукціон": u"scheduled",
+        u"Об’єкт виключено": u"deleted",
+        u"cavps": u"CAV-PS",
+        u"notice": u"Рішення про затвердження переліку об'єктів, що підлягають приватизації",
     }.get(string, string)
 
 
 def convert_document_type(string):
     return {
-        u"x_nda": u"Договір NDA",
-        u"tenderNotice": u"Паспорт торгів",
-        u"x_presentation": u"Презентація",
-        u"technicalSpecifications": u"Публічний паспорт активу",
-        u"Згідно рішення виконавчої дирекції Замовника": u"Згідно рішення Організатора торгів",
+        u"Додаткова інформація": u"informationDetails",
+        u"Виключення з переліку": u"cancellationDetails",
+        u"Рішення про затвердження переліку об'єктів, що підлягають приватизації": u"notice",
+        u"Презентація": u"x_presentation",
+        u"Інформація про об'єкт малої приватизації": u"technicalSpecifications",
+        u"Ілюстрації": u"illustration",
     }.get(string, string)
 
 
 def revert_document_type(string):
     return {
-        u"Договір NDA": u"x_nda",
-        u"Паспорт торгів": u"tenderNotice",
-        u"Презентація": u"x_presentation",
-        u"Публічний паспорт активу": u"technicalSpecifications",
-        u"Місце та форма прийому заяв на участь в аукціоні та банківські "
-        u"реквізити для зарахування гарантійних внесків": u"x_dgfPlatformLegalDetails",
-        u"Sample Virtual Data Room": u"virtualDataRoom",
-        u"Public Asset Certificate": u"x_dgfAssetFamiliarization",
-        u"—": u"None",
+        u"informationDetails": u"Додаткова інформація",
+        u"cancellationDetails": u"Виключення з переліку",
+        # u"notice": u"Рішення про затвердження переліку об'єктів, що підлягають приватизації",
+        u"notice": u"Рішення аукціонної комісії",
+        u"x_presentation": u"Презентація",
+        u"technicalSpecifications": u"Інформація про об'єкт малої приватизації",
+        u"illustration": u"Ілюстрації",
     }.get(string, string)
 
 
-def adapt_procuringEntity(tender_data):
-    tender_data['data']['procuringEntity']['name'] = u'ТОВ "ЭТУ КОМПАНИЮ НЕ ТРОГАТЬ"'
-    tender_data['data']['procuringEntity']['address']['countryName'] = u"Украина"
+def adapt_assetholder_owner(tender_data):
+    tender_data['data']['assetCustodian']['identifier']['legalName'] = u'ТОВ "ЭТУ КОМПАНИЮ НЕ ТРОГАТЬ"'
+    tender_data['data']['assetHolder']['identifier']['legalName'] = u'ТОВ "ЭТУ КОМПАНИЮ НЕ ТРОГАТЬ"'
+    tender_data['data']['assetCustodian']['identifier']['legalName'] = u'ТОВ "ЭТУ КОМПАНИЮ НЕ ТРОГАТЬ"'
+    tender_data['data']['assetHolder']['identifier']['id'] = u'2222233'
+    tender_data['data']['assetCustodian']['identifier']['id'] = u'2222233'
+    tender_data['data']['assetHolder']['contactPoint']['telephone'] = u'+380440000011'
+    tender_data['data']['assetCustodian']['contactPoint']['telephone'] = u'+380440000011'
+    tender_data['data']['assetHolder']['contactPoint']['email'] = u'test@test17.com'
+    tender_data['data']['assetCustodian']['contactPoint']['email'] = u'test@test17.com'
+    tender_data['data']['assetHolder']['contactPoint']['name'] = u'Авокадо Ананасович'
+    tender_data['data']['assetCustodian']['contactPoint']['name'] = u'Авокадо Ананасович'
+    return tender_data
+
+
+def adapt_assetholder_viewer(tender_data):
+    tender_data['data']['assetCustodian']['identifier']['legalName'] = u'ТОВ "ЭТУ КОМПАНИЮ НЕ ТРОГАТЬ"'
+    tender_data['data']['assetHolder']['identifier']['legalName'] = u'ТОВ "ЭТУ КОМПАНИЮ НЕ ТРОГАТЬ"'
+    tender_data['data']['assetHolder']['identifier']['id'] = u'54353455'
+    tender_data['data']['assetCustodian']['identifier']['id'] = u'54353455'
+    tender_data['data']['assetHolder']['contactPoint']['telephone'] = u'+380441112233'
+    tender_data['data']['assetCustodian']['contactPoint']['telephone'] = u'+380441112233'
+    tender_data['data']['assetHolder']['contactPoint']['email'] = u'test@test13.com'
+    tender_data['data']['assetCustodian']['contactPoint']['email'] = u'test@test13.com'
+    tender_data['data']['assetHolder']['contactPoint']['name'] = u'Рустам Коноплянка'
+    tender_data['data']['assetCustodian']['contactPoint']['name'] = u'Рустам Коноплянка'
     return tender_data
 
 
@@ -165,5 +230,3 @@ def adapt_qualified(tender_data, username):
 
 def download_file(url, file_name, output_dir):
     urllib.urlretrieve(url, ('{}/{}'.format(output_dir, file_name)))
-
-

@@ -184,7 +184,6 @@ def revert_document_type(string):
     return {
         u"informationDetails": u"Додаткова інформація",
         u"cancellationDetails": u"Виключення з переліку",
-        # u"notice": u"Рішення про затвердження переліку об'єктів, що підлягають приватизації",
         u"notice": u"Рішення аукціонної комісії",
         u"x_presentation": u"Презентація",
         u"technicalSpecifications": u"Інформація про об'єкт малої приватизації",

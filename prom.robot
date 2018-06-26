@@ -238,16 +238,6 @@ Login
     ...   ELSE      convert_prom_string_to_common_string     ${return_value}
     [Return]  ${return_value}
 
-Очікування зміни статусу
-    [Arguments]   ${old_status}
-    : FOR    ${i}    IN RANGE   1   60
-    \   ${status_text}=        Get Text        css=[data-qa='qa_status_text']
-    \   Exit For Loop If      '${status_text}' != '${old_status}'
-    \   Sleep  10
-    \   Reload Page
-    \   Sleep  2
-    [Return]    ${status_text}
-
 
 Отримати інформацію з активу об'єкта МП
     [Arguments]   ${username}   ${tender_uaid}   ${item_id}   ${field_name}

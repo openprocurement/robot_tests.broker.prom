@@ -220,10 +220,10 @@ Login
     ...  ELSE IF  '${field_name}' == 'decisions[0].decisionID'                  Get Text   css=[data-qa="qa_numer_solutions"]
     ...  ELSE IF  '${field_name}' == 'assetHolder.name'                         Get Text   css=.qa_holder_name
     ...  ELSE IF  '${field_name}' == 'assetHolder.identifier.scheme'            Get Text   css=[data-qa="qa_url"]
-    ...  ELSE IF  '${field_name}' == 'assetHolder.identifier.id'                Get Text   css=[data-qa="merchant_srn"]
+    ...  ELSE IF  '${field_name}' == 'assetHolder.identifier.id'                Get Text   css=.qa_holder_srn
     ...  ELSE IF  '${field_name}' == 'assetCustodian.identifier.scheme'         Get Text   css=[data-qa="qa_url"]
     ...  ELSE IF  '${field_name}' == 'documents[0].documentType'                Get Text   css=[data-qa="doc_type"]
-    ...  ELSE IF  '${field_name}' == 'assetCustodian.identifier.id'             Get Text   css=.qa_holder_srn
+    ...  ELSE IF  '${field_name}' == 'assetCustodian.identifier.id'             Get Text   css=[data-qa="merchant_srn"]
     ...  ELSE IF  '${field_name}' == 'assetCustodian.identifier.legalName'      Get Text   css=[data-qa="merchant_name"]
     ...  ELSE IF  '${field_name}' == 'assetCustodian.contactPoint.name'         Get Text   css=[data-qa="main_contact_name"]
     ...  ELSE IF  '${field_name}' == 'assetCustodian.contactPoint.telephone'    Get Text   css=[data-qa="main_contact_phone"]
@@ -517,7 +517,7 @@ Login
     ...  ELSE IF  '${field_name}' == 'description'                              Get Text   css=[data-qa="asset_description"]
     ...  ELSE IF  '${field_name}' == 'assetHolder.name'                         Get Text   css=.qa_holder_name
     ...  ELSE IF  '${field_name}' == 'assetHolder.identifier.scheme'            Get Text   css=[data-qa="qa_url"]
-    ...  ELSE IF  '${field_name}' == 'assetHolder.identifier.id'                Get Text   css=[data-qa="merchant_srn"]
+    ...  ELSE IF  '${field_name}' == 'assetHolder.identifier.id'                Get Text   css=[data-qa="qa_holder_srn"]
     ...  ELSE IF  '${field_name}' == 'assetCustodian.identifier.scheme'         Get Text   css=[data-qa="qa_url"]
     ...  ELSE IF  '${field_name}' == 'documents[0].documentType'                Get Text   css=[data-qa="doc_type"]
     ...  ELSE IF  '${field_name}' == 'assetCustodian.identifier.id'             Get Text   css=.qa_holder_srn
@@ -528,7 +528,7 @@ Login
     ...  ELSE IF  '${field_name}' == 'lotID'                                    Get Text   css=[data-qa="qa_uid"]
     ...  ELSE IF  '${field_name}' == 'lotHolder.name'                           Get Text   css=.qa_holder_name
     ...  ELSE IF  '${field_name}' == 'lotHolder.identifier.scheme'              Get Text   css=[data-qa="qa_url"]
-    ...  ELSE IF  '${field_name}' == 'lotHolder.identifier.id'                  Get Text   css=[data-qa="merchant_srn"]
+    ...  ELSE IF  '${field_name}' == 'lotHolder.identifier.id'                  Get Text   css=[data-qa="qa_holder_srn"]
     ...  ELSE IF  '${field_name}' == 'lotCustodian.identifier.scheme'           Get Text   css=[data-qa="qa_url"]
     ...  ELSE IF  '${field_name}' == 'lotCustodian.identifier.id'               Get Text   css=[data-qa="merchant_srn"]
     ...  ELSE IF  '${field_name}' == 'lotCustodian.identifier.legalName'        Get Text   css=[data-qa="merchant_name"]
@@ -713,9 +713,9 @@ Login
     ...  ELSE IF  '${field_name}' == 'title'                                    Get Text                    xpath=//h1
     ...  ELSE IF  '${field_name}' == 'lotHolder.name'                           Get Text                    xpath=//div[contains(@class, 'qa_holder_name')]
     ...  ELSE IF  '${field_name}' == 'lotHolder.identifier.scheme'              Get Text                    xpath=//div[contains(@class, 'qa_holder_address')]
-    ...  ELSE IF  '${field_name}' == 'lotHolder.identifier.id'                  Get Text                    xpath=//div[contains(@class, 'qa_holder_srn')]
+    ...  ELSE IF  '${field_name}' == 'lotHolder.identifier.id'                  Get Text                    xpath=//div[contains(@class, 'merchant_srn')]
     ...  ELSE IF  '${field_name}' == 'lotCustodian.identifier.scheme'           Get Text                    css=[data-qa="merchant_name"]
-    ...  ELSE IF  '${field_name}' == 'lotCustodian.identifier.id'               Get Text                    css=[data-qa="merchant_srn"]
+    ...  ELSE IF  '${field_name}' == 'lotCustodian.identifier.id'               Get Text                    css=[data-qa="qa_holder_srn"]
     ...  ELSE IF  '${field_name}' == 'lotCustodian.identifier.legalName'        Get Text                    css=[data-qa="merchant_address"]
     ...  ELSE IF  '${field_name}' == 'lotCustodian.contactPoint.name'           Get Text                    css=[data-qa="main_contact_name"]
     ...  ELSE IF  '${field_name}' == 'lotCustodian.contactPoint.telephone'      Get Text                    css=[data-qa="main_contact_phone"]

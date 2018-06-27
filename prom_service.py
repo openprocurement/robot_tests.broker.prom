@@ -207,16 +207,11 @@ def adapt_assetholder_owner(tender_data):
 
 
 def adapt_assetholder_viewer(tender_data):
-    tender_data['data']['assetCustodian']['identifier']['legalName'] = u'ТОВ "ЭТУ КОМПАНИЮ НЕ ТРОГАТЬ"'
     tender_data['data']['assetHolder']['identifier']['legalName'] = u'ТОВ "ЭТУ КОМПАНИЮ НЕ ТРОГАТЬ"'
     tender_data['data']['assetHolder']['identifier']['id'] = u'54353455'
-    tender_data['data']['assetCustodian']['identifier']['id'] = u'54353455'
     tender_data['data']['assetHolder']['contactPoint']['telephone'] = u'+380441112233'
-    tender_data['data']['assetCustodian']['contactPoint']['telephone'] = u'+380441112233'
     tender_data['data']['assetHolder']['contactPoint']['email'] = u'test@test13.com'
-    tender_data['data']['assetCustodian']['contactPoint']['email'] = u'test@test13.com'
     tender_data['data']['assetHolder']['contactPoint']['name'] = u'Рустам Коноплянка'
-    tender_data['data']['assetCustodian']['contactPoint']['name'] = u'Рустам Коноплянка'
     return tender_data
 
 

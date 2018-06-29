@@ -378,18 +378,18 @@ Login
     ${decisions_date}=          convert_iso_date_to_prom    ${decisions_date}
     ${decisions_id}=            Get From Dictionary         ${tender_data.data.decisions[0]}        decisionID
     prom.Пошук об’єкта МП по ідентифікатору   ${username}   ${tender_uaid}
-
+    capture page screenshot
     Wait Until Page Contains Element     css=[data-qa='edit_button']     20
     Click Element                        css=[data-qa='edit_button']
-    Sleep  1
+    Sleep  2
     Wait Until Page Contains Element     css=[data-qa='info_title']       20
     Input Text                           xpath=(//div[contains(@class, 'react-datepicker__input')]//input)[last()]         ${decisions_date}
     Input Text                           css=[data-qa='decision_num']                   ${decisions_id}
     Click Element                        css=[data-qa='btn_save']
-    Sleep  3
+    Sleep  5
     Wait Until Page Contains Element     css=[data-qa='link_lot']     20
     Click Element                        css=[data-qa='link_lot']
-    Sleep  2
+    Sleep  3
     ${tender_uaid}=              Get Text                   css=[data-qa="qa_uid"]
     [Return]  ${tender_uaid}
 
@@ -505,8 +505,13 @@ Login
 
 Отримати інформацію із лоту
     [Arguments]   ${username}   ${tender_uaid}   ${field_name}
+    capture page screenshot
     Reload Page
     Sleep   2
+    Click Element     css=[data-qa="link_lot"]
+    Sleep   3
+    Run Keyword If    '${username}' == 'viewer'
+    ...  prom.Пошук лоту по ідентифікатору    ${username}    ${tender_uaid}
     ${return_value}=    Run Keyword If    '${field_name}' == 'assetID'
     ...  Get Text   css=[data-qa="qa_uid"]
     ...  ELSE IF  '${field_name}' == 'date'                                     Get Element Attribute   xpath=//div[contains(@class, 'qa_created_date')]@data-qa
@@ -528,7 +533,7 @@ Login
     ...  ELSE IF  '${field_name}' == 'lotID'                                    Get Text   css=[data-qa="qa_uid"]
     ...  ELSE IF  '${field_name}' == 'lotHolder.name'                           Get Text   css=.qa_holder_name
     ...  ELSE IF  '${field_name}' == 'lotHolder.identifier.scheme'              Get Text   css=[data-qa="qa_url"]
-    ...  ELSE IF  '${field_name}' == 'lotHolder.identifier.id'                  Get Text   css=[data-qa="qa_holder_srn"]
+    ...  ELSE IF  '${field_name}' == 'lotHolder.identifier.id'                  Get Text   css=.qa_holder_srn
     ...  ELSE IF  '${field_name}' == 'lotCustodian.identifier.scheme'           Get Text   css=[data-qa="qa_url"]
     ...  ELSE IF  '${field_name}' == 'lotCustodian.identifier.id'               Get Text   css=[data-qa="merchant_srn"]
     ...  ELSE IF  '${field_name}' == 'lotCustodian.identifier.legalName'        Get Text   css=[data-qa="merchant_name"]

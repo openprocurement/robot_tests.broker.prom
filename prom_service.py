@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import os
 import pytz
 import dateutil.parser
 import urllib
@@ -9,6 +10,8 @@ from datetime import datetime, timedelta
 
 def move_uploaded_file(file_name, src_dir, dest_dir):
     src_path = '{path}/{file}'.format(path=src_dir, file=file_name)
+    if not os.path.exists(src_path):
+        src_path = '{path}/Downloads/{file}'.format(path=src_dir, file=file_name)
     dest_path = '{path}/{file}'.format(path=dest_dir, file=file_name)
     shutil.move(src_path, dest_path)
 

@@ -341,8 +341,7 @@ Login
     Sleep   2
     ${doc_name}=            Get Text                    xpath=(//div//*[contains(text(), "${document_name}")])
     ${home_dir}             Get Environment Variable    HOME
-    ${download_dir}         Join Path   ${home_dir}     Downloads
-    move_uploaded_file      ${doc_name}     ${download_dir}     ${OUTPUT_DIR}
+    move_uploaded_file      ${doc_name}     ${home_dir}     ${OUTPUT_DIR}
     Sleep  2
     [Return]   ${doc_name}
 
@@ -510,8 +509,6 @@ Login
     Sleep   2
     Click Element     css=[data-qa="link_lot"]
     Sleep   3
-    Run Keyword If    '${username}' == 'viewer'
-    ...  prom.Пошук лоту по ідентифікатору    ${username}    ${tender_uaid}
     ${return_value}=    Run Keyword If    '${field_name}' == 'assetID'
     ...  Get Text   css=[data-qa="qa_uid"]
     ...  ELSE IF  '${field_name}' == 'date'                                     Get Element Attribute   xpath=//div[contains(@class, 'qa_created_date')]@data-qa

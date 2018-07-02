@@ -74,7 +74,7 @@ def convert_date_to_prom_tender_enddate(date):
 def convert_prom_string_to_common_string(string):
     return {
         u"грн": u"UAH",
-        u"шт.": u"штука",
+        u"шт.": u"штуки",
         u"кв.м.": u"метри квадратні",
         u"м2": u"метри квадратні",
         u"м²": u"метри квадратні",
@@ -217,13 +217,3 @@ def adapt_assetholder_viewer(tender_data):
     tender_data['data']['assetHolder']['contactPoint']['name'] = u'Рустам Коноплянка'
     return tender_data
 
-
-def adapt_qualified(tender_data, username):
-    if username == 'Prom_Provider':
-        if 'qualified' in tender_data['data']:
-            return True
-    return False
-
-
-def download_file(url, file_name, output_dir):
-    urllib.urlretrieve(url, ('{}/{}'.format(output_dir, file_name)))

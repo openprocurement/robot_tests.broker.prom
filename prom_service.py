@@ -168,6 +168,7 @@ def convert_prom_code_to_common_string(string):
         u"Голландський аукціон": u"scheduled",
         u"Об’єкт виключено": u"deleted",
         u"cavps": u"CAV-PS",
+        u"cpv": u"CPV",
         u"notice": u"Рішення про затвердження переліку об'єктів, що підлягають приватизації",
     }.get(string, string)
 

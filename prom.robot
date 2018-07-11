@@ -175,7 +175,6 @@ Login
 
 Пошук об’єкта МП по ідентифікатору
     [Arguments]   ${username}   ${tender_uaid}
-    log to console    ${tender_uaid}
     Switch Browser    my_custom_alias
     Go to   ${USERS.users['${username}'].default_page}
     sleep    3
@@ -189,6 +188,7 @@ Login
     sleep   3
     Wait Until Page Contains Element      css=[data-qa="search_form_input"]     20
     Input Text         css=[data-qa="search_form_input"]     ${tender_uaid}
+    log to console    ${tender_uaid}
     Sleep  2
     Click Element     css=[data-qa="search_form_search_button"]
     Wait Until Keyword Succeeds     180      10          Run Keywords
@@ -210,6 +210,8 @@ Login
     ${return_value}=    Run Keyword If    '${field_name}' == 'assetID'
     ...  Get Text   css=[data-qa="qa_uid"]
     ...  ELSE IF  '${field_name}' == 'date'                                     Get Element Attribute   xpath=//div[contains(@class, 'qa_created_date')]@data-qa
+    ...  ELSE IF  '${field_name}' == 'rectificationPeriod.endDate'              Sleep  30
+    ...  ELSE IF  '${field_name}' == 'rectificationPeriod.endDate'              Reload page
     ...  ELSE IF  '${field_name}' == 'rectificationPeriod.endDate'              Get Element Attribute   xpath=//div[contains(@class, "qa_rectification_date")]@data-qa2
     ...  ELSE IF  '${field_name}' == 'dateModified'                             Get Element Attribute   xpath=//div[contains(@class, "qa_modified_date")]@data-qa
     ...  ELSE IF  '${field_name}' == 'status'                                   Get Text   css=[data-qa="qa_status_text"]
@@ -220,10 +222,10 @@ Login
     ...  ELSE IF  '${field_name}' == 'decisions[0].decisionID'                  Get Text   css=[data-qa="qa_numer_solutions"]
     ...  ELSE IF  '${field_name}' == 'assetHolder.name'                         Get Text   css=.qa_holder_name
     ...  ELSE IF  '${field_name}' == 'assetHolder.identifier.scheme'            Get Text   css=[data-qa="qa_url"]
-    ...  ELSE IF  '${field_name}' == 'assetHolder.identifier.id'                Get Text   css=.qa_holder_srn
+    ...  ELSE IF  '${field_name}' == 'assetHolder.identifier.id'                Get Text   css=[data-qa="merchant_srn"]
     ...  ELSE IF  '${field_name}' == 'assetCustodian.identifier.scheme'         Get Text   css=[data-qa="qa_url"]
     ...  ELSE IF  '${field_name}' == 'documents[0].documentType'                Get Text   css=[data-qa="doc_type"]
-    ...  ELSE IF  '${field_name}' == 'assetCustodian.identifier.id'             Get Text   css=[data-qa="merchant_srn"]
+    ...  ELSE IF  '${field_name}' == 'assetCustodian.identifier.id'             Get Text   css=.qa_holder_srn
     ...  ELSE IF  '${field_name}' == 'assetCustodian.identifier.legalName'      Get Text   css=[data-qa="merchant_name"]
     ...  ELSE IF  '${field_name}' == 'assetCustodian.contactPoint.name'         Get Text   css=[data-qa="main_contact_name"]
     ...  ELSE IF  '${field_name}' == 'assetCustodian.contactPoint.telephone'    Get Text   css=[data-qa="main_contact_phone"]
@@ -237,6 +239,16 @@ Login
     ...   ELSE IF   '${field_name}' == 'documents[0].documentType'   convert_document_type      ${return_value}
     ...   ELSE      convert_prom_string_to_common_string     ${return_value}
     [Return]  ${return_value}
+
+Очікування зміни статусу
+    [Arguments]   ${old_status}
+    : FOR    ${i}    IN RANGE   1   60
+    \   ${status_text}=        Get Text        css=[data-qa='qa_status_text']
+    \   Exit For Loop If      '${status_text}' != '${old_status}'
+    \   Sleep  10
+    \   Reload Page
+    \   Sleep  2
+    [Return]    ${status_text}
 
 
 Отримати інформацію з активу об'єкта МП
@@ -341,11 +353,13 @@ Login
     Sleep   2
     ${doc_name}=            Get Text                    xpath=(//div//*[contains(text(), "${document_name}")])
     ${home_dir}             Get Environment Variable    HOME
-    move_uploaded_file      ${doc_name}     ${home_dir}     ${OUTPUT_DIR}
+    ${download_dir}         Join Path   ${home_dir}     Downloads
+    move_uploaded_file      ${doc_name}     ${download_dir}     ${OUTPUT_DIR}
     Sleep  2
     [Return]   ${doc_name}
 
 #------------------------------------------------------------------------------
+# delete asset
 Завантажити документ для видалення об'єкта МП
     [Arguments]   ${username}   ${tender_uaid}      ${filepath}
     Switch Browser    my_custom_alias
@@ -370,6 +384,7 @@ Login
     Sleep   1
 
 
+# delete lot
 Створити лот
     [Arguments]   ${username}   ${tender_data}      ${tender_uaid}
     Switch Browser    my_custom_alias
@@ -377,19 +392,24 @@ Login
     ${decisions_date}=          convert_iso_date_to_prom    ${decisions_date}
     ${decisions_id}=            Get From Dictionary         ${tender_data.data.decisions[0]}        decisionID
     prom.Пошук об’єкта МП по ідентифікатору   ${username}   ${tender_uaid}
-    capture page screenshot
-    Wait Until Page Contains Element     css=[data-qa='edit_button']     20
-    Click Element                        css=[data-qa='edit_button']
+    Sleep  10
+    Reload page
     Sleep  2
-    Wait Until Page Contains Element     css=[data-qa='info_title']       20
-    Input Text                           xpath=(//div[contains(@class, 'react-datepicker__input')]//input)[last()]         ${decisions_date}
-    Input Text                           css=[data-qa='decision_num']                   ${decisions_id}
-    Click Element                        css=[data-qa='btn_save']
-    Sleep  5
+    Click Element                        css=[data-qa="asset_lot_init"]
+    Wait Until Page Contains Element     css=[data-qa="decision_title"]   20
+    Input Text                           css=[data-qa='decision_num']          ${decisions_id}
+    Sleep  2
+    Input Text                           css=[data-qa="decision_date"]         ${decisions_date}
+    Sleep  2
+    Click Element                        css=[data-qa="decision_title"]
+    Sleep  2
+    Click Element                        css=[data-qa="decision_form"] [data-qa="ok"]
+    prom.Пошук об’єкта МП по ідентифікатору   ${username}   ${tender_uaid}
     Wait Until Page Contains Element     css=[data-qa='link_lot']     20
     Click Element                        css=[data-qa='link_lot']
-    Sleep  3
+    Sleep  5
     ${tender_uaid}=              Get Text                   css=[data-qa="qa_uid"]
+    log to console   ${tender_uaid}
     [Return]  ${tender_uaid}
 
 
@@ -404,7 +424,7 @@ Login
 Заповнити аукціон
     [Arguments]     ${tender_data}
     ${start_date}=              Get From Dictionary         ${tender_data.auctionPeriod}            startDate
-    ${conver_date}=             iso_date                    ${start_date}
+    ${conver_date}=             iso_date        ${start_date}
     ${bank_description}=        Get From Dictionary         ${tender_data.bankAccount.accountIdentification[0]}                description
     ${bank_id}=                 Get From Dictionary         ${tender_data.bankAccount.accountIdentification[0]}                id
     ${bank_scheme}=             Get From Dictionary         ${tender_data.bankAccount.accountIdentification[0]}                scheme
@@ -423,7 +443,6 @@ Login
     ${value_amount}=            Convert To String           ${value_amount}
     ${value_currency}           Get From Dictionary         ${tender_data.value}                    currency
     ${value_tax}                Get From Dictionary         ${tender_data.value}                    valueAddedTaxIncluded
-
     Wait Until Page Contains Element     css=[data-qa='edit_button']     20
     Click Element                        css=[data-qa='edit_button']
     Sleep  1
@@ -433,6 +452,8 @@ Login
     Click Element                        xpath=(//div[@data-qa='currency'])[last()]
     Click Element                        xpath=(//div[@data-qa="currency"]//*[text()="гривня"])[last()]
     sleep   1
+    Click Element                        css=[data-qa='tax_included']
+    Sleep   2
     Input Text                           css=[data-qa='start_auction_price']            ${value_amount}
     Input Text                           css=[data-qa='amount_percent']                 ${step_amount}
     Input Text                           css=[data-qa='guarantee_price']                ${guarantee_ampunt}
@@ -442,6 +463,7 @@ Login
     Input Text                           css=[data-qa='account_srn']                    ${bank_id}
     Input Text                           css=[data-qa='account_mfo']                    ${bank_scheme}
     Input Text                           css=[data-qa='account_number']                 ${bank_description}
+
     capture page screenshot
 
 
@@ -456,12 +478,10 @@ Login
     capture page screenshot
     Click Element                        css=[data-qa='save_lot']
 
-
 Оновити сторінку з лотом
     [Arguments]   ${username}   ${tender_uaid}
     Switch Browser    my_custom_alias
     prom.Пошук лота МП по ідентифікатору    ${username}    ${tender_uaid}
-
 
 Пошук лоту по ідентифікатору
     [Arguments]   ${username}   ${tender_uaid}
@@ -471,7 +491,6 @@ Login
 
 Пошук лота МП по ідентифікатору
     [Arguments]   ${username}   ${tender_uaid}
-    log to console    ${tender_uaid}
     Switch Browser    my_custom_alias
     Go to   ${USERS.users['${username}'].default_page}
     Sleep    3
@@ -491,6 +510,7 @@ Login
     Sleep    3
     Wait Until Page Contains Element      css=[data-qa="search_form_input"]     20
     Input Text         css=[data-qa="search_form_input"]     ${tender_uaid}
+    log to console    ${tender_uaid}
     Sleep  2
     Click Element     css=[data-qa="search_form_search_button"]
     Wait Until Keyword Succeeds     180      10          Run Keywords
@@ -504,11 +524,6 @@ Login
 
 Отримати інформацію із лоту
     [Arguments]   ${username}   ${tender_uaid}   ${field_name}
-    capture page screenshot
-    Reload Page
-    Sleep   2
-    Click Element     css=[data-qa="link_lot"]
-    Sleep   3
     ${return_value}=    Run Keyword If    '${field_name}' == 'assetID'
     ...  Get Text   css=[data-qa="qa_uid"]
     ...  ELSE IF  '${field_name}' == 'date'                                     Get Element Attribute   xpath=//div[contains(@class, 'qa_created_date')]@data-qa
@@ -519,7 +534,7 @@ Login
     ...  ELSE IF  '${field_name}' == 'description'                              Get Text   css=[data-qa="asset_description"]
     ...  ELSE IF  '${field_name}' == 'assetHolder.name'                         Get Text   css=.qa_holder_name
     ...  ELSE IF  '${field_name}' == 'assetHolder.identifier.scheme'            Get Text   css=[data-qa="qa_url"]
-    ...  ELSE IF  '${field_name}' == 'assetHolder.identifier.id'                Get Text   css=[data-qa="qa_holder_srn"]
+    ...  ELSE IF  '${field_name}' == 'assetHolder.identifier.id'                Get Text   css=[data-qa="merchant_srn"]
     ...  ELSE IF  '${field_name}' == 'assetCustodian.identifier.scheme'         Get Text   css=[data-qa="qa_url"]
     ...  ELSE IF  '${field_name}' == 'documents[0].documentType'                Get Text   css=[data-qa="doc_type"]
     ...  ELSE IF  '${field_name}' == 'assetCustodian.identifier.id'             Get Text   css=.qa_holder_srn
@@ -530,7 +545,7 @@ Login
     ...  ELSE IF  '${field_name}' == 'lotID'                                    Get Text   css=[data-qa="qa_uid"]
     ...  ELSE IF  '${field_name}' == 'lotHolder.name'                           Get Text   css=.qa_holder_name
     ...  ELSE IF  '${field_name}' == 'lotHolder.identifier.scheme'              Get Text   css=[data-qa="qa_url"]
-    ...  ELSE IF  '${field_name}' == 'lotHolder.identifier.id'                  Get Text   css=.qa_holder_srn
+    ...  ELSE IF  '${field_name}' == 'lotHolder.identifier.id'                  Get Text   css=[data-qa="merchant_srn"]
     ...  ELSE IF  '${field_name}' == 'lotCustodian.identifier.scheme'           Get Text   css=[data-qa="qa_url"]
     ...  ELSE IF  '${field_name}' == 'lotCustodian.identifier.id'               Get Text   css=[data-qa="merchant_srn"]
     ...  ELSE IF  '${field_name}' == 'lotCustodian.identifier.legalName'        Get Text   css=[data-qa="merchant_name"]
@@ -568,7 +583,15 @@ Login
     ...  ELSE IF  '${field_name}' == 'auctions[0].tenderingDuration'            Get Element Attribute       xpath=(//div[contains(@class, 'qa_auction_period')])[1]@data-qa
     ...  ELSE IF  '${field_name}' == 'auctions[1].tenderingDuration'            Get Element Attribute       xpath=(//div[contains(@class, 'qa_auction_period')])[2]@data-qa
     ...  ELSE IF  '${field_name}' == 'auctions[2].tenderingDuration'            Get Element Attribute       xpath=(//div[contains(@class, 'qa_auction_period')])[3]@data-qa
+    ...  ELSE IF  '${field_name}' == 'auctions[0].auctionID'                    Get Text                    xpath=(//div[contains(@class, 'qa_auction_auid')])[1]
+    ...  ELSE IF  '${field_name}' == 'auctions[1].auctionID'                    Get Text                    xpath=(//div[contains(@class, 'qa_auction_auid')])[2]
+    ...  ELSE IF  '${field_name}' == 'auctions[2].auctionID'                    Get Text                    xpath=(//div[contains(@class, 'qa_auction_auid')])[3]
+    ${return_value}=    Run Keyword If   '${return_value}' == 'не вказано'    Run Keywords
+    ...    Sleep  20
+    ...    AND    Reload page
+    ...    AND    Sleep  3
     ${return_value}=  Run Keyword If  '${field_name}' == 'status'               convert_prom_code_to_common_string      ${return_value}
+    ...   ELSE IF   '${field_name}' == 'auctions[0].auctionID'                  Get Text                    xpath=(//div[contains(@class, 'qa_auction_auid')])[1]
     ...   ELSE IF   '${field_name}' == 'documents[0].documentType'              convert_document_type                   ${return_value}
     ...   ELSE IF   '${field_name}' == 'auctions[0].status'                     convert_prom_code_to_common_string      ${return_value}
     ...   ELSE IF   '${field_name}' == 'auctions[1].status'                     convert_prom_code_to_common_string      ${return_value}
@@ -649,7 +672,6 @@ Login
     Sleep  3
 
 
-
 Завантажити документ для видалення лоту
     [Arguments]   ${username}   ${tender_uaid}      ${filepath}
     Switch Browser    my_custom_alias
@@ -694,7 +716,6 @@ Login
     ...  ELSE IF  '${field_name}' == 'decisions[0].title'                       Click Element     css=[data-qa="link_lot"]
     ...  ELSE IF  '${field_name}' == 'decisions[0].decisionDate'                Click Element     css=[data-qa="link_lot"]
     ...  ELSE IF  '${field_name}' == 'decisions[0].decisionID'                  Click Element     css=[data-qa="link_lot"]
-    Sleep  2
     capture page screenshot
     ${return_value}=    Run Keyword If    '${field_name}' == 'description'
     ...  Get Text       xpath=//div[contains(text(), '${item_id}')]//parent::*[@data-qa='item_descr'][last()]
@@ -715,9 +736,9 @@ Login
     ...  ELSE IF  '${field_name}' == 'title'                                    Get Text                    xpath=//h1
     ...  ELSE IF  '${field_name}' == 'lotHolder.name'                           Get Text                    xpath=//div[contains(@class, 'qa_holder_name')]
     ...  ELSE IF  '${field_name}' == 'lotHolder.identifier.scheme'              Get Text                    xpath=//div[contains(@class, 'qa_holder_address')]
-    ...  ELSE IF  '${field_name}' == 'lotHolder.identifier.id'                  Get Text                    xpath=//div[contains(@class, 'merchant_srn')]
+    ...  ELSE IF  '${field_name}' == 'lotHolder.identifier.id'                  Get Text                    xpath=//div[contains(@class, 'qa_holder_srn')]
     ...  ELSE IF  '${field_name}' == 'lotCustodian.identifier.scheme'           Get Text                    css=[data-qa="merchant_name"]
-    ...  ELSE IF  '${field_name}' == 'lotCustodian.identifier.id'               Get Text                    css=[data-qa="qa_holder_srn"]
+    ...  ELSE IF  '${field_name}' == 'lotCustodian.identifier.id'               Get Text                    css=[data-qa="merchant_srn"]
     ...  ELSE IF  '${field_name}' == 'lotCustodian.identifier.legalName'        Get Text                    css=[data-qa="merchant_address"]
     ...  ELSE IF  '${field_name}' == 'lotCustodian.contactPoint.name'           Get Text                    css=[data-qa="main_contact_name"]
     ...  ELSE IF  '${field_name}' == 'lotCustodian.contactPoint.telephone'      Get Text                    css=[data-qa="main_contact_phone"]
@@ -732,6 +753,7 @@ Login
     ...   ELSE IF   '${field_name}' == 'registrationDetails.status'     revert_registration_details             ${return_value}
     ...   ELSE      convert_prom_string_to_common_string     ${return_value}
     [Return]    ${return_value}
+
 
 
 Завантажити документ в умови проведення аукціону
@@ -790,3 +812,323 @@ Login
     prom.Завантажити документ про зміни     ${username}    ${tender_uaid}
     Click Element     css=[data-qa="save_lot"]
     Sleep   2
+
+#-----------------------------------------------------------------------------#
+#---------------------------------Action--------------------------------------#
+#-----------------------------------------------------------------------------#
+
+Пошук тендера по ідентифікатору
+    [Arguments]   ${username}   ${tender_uaid}
+    Switch Browser    my_custom_alias
+    Go to   https://my.zakupki.dz-test.net/cabinet/purchases/state_auction/list?mode=all
+    sleep    3
+    ${href}=    Get Location
+    Run Keyword If  '${href}' in 'https://zakupki.dz-test.net/signin'  Run Keywords
+    ...   Input Text      ${login_sign_in}          ${USERS.users['${username}'].login}
+    ...   AND    Input Text      ${password_sign_in}       ${USERS.users['${username}'].password}
+    ...   AND    Click Button    id=submit_button
+    ...   AND    Sleep   2
+    Go to   https://my.zakupki.dz-test.net/cabinet/purchases/state_auction/list?mode=all
+    sleep   3
+    Wait Until Page Contains Element      id=search           20
+    Input Text        id=search     ${tender_uaid}
+    log to console    ${tender_uaid}
+    Sleep  2
+    Click Element     css=[type="submit"]
+    Wait Until Keyword Succeeds     60      60          Run Keywords
+    ...   Reload Page
+    ...   AND     Wait Until Element Is Visible       xpath=(//div[contains(@class, 'qa_procurement_name_in_list')]//a)[1]
+    Click Element     xpath=(//div[contains(@class, 'qa_procurement_name_in_list')]//a)[1]
+    Sleep    1
+
+Оновити сторінку з тендером
+    [Arguments]   ${username}   ${tender_uaid}
+    Switch Browser    my_custom_alias
+    prom.Пошук тендера по ідентифікатору    ${username}    ${tender_uaid}
+
+Отримати інформацію із тендера
+    [Arguments]    ${username}    ${tender_uaid}    ${field_name}
+    ${return_value}=    Run Keyword If    '${field_name}' == 'auctionID'
+    ...  Get Text   css=.qa_ua_ea_id span
+    ...  ELSE IF  '${field_name}' == 'title'                        Get Text   xpath=//dt[contains(@class, 'qa_auction_title')]
+    ...  ELSE IF  '${field_name}' == 'description'                  Get Text   css=.qa_auction_descr
+    ...  ELSE IF  '${field_name}' == 'minNumberOfQualifiedBids'     Get Text   css=.qa_number_bids span
+    ...  ELSE IF  '${field_name}' == 'procurementMethodType'        Get Text   css=.qa_rent_class
+    ...  ELSE IF  '${field_name}' == 'procuringEntity.name'         Get Text   css=.qa_oragizator_name
+    ...  ELSE IF  '${field_name}' == 'value.amount'                 Get Text   css=.qa_buget
+    ...  ELSE IF  '${field_name}' == 'minimalStep.amount'           Get Element Attribute   xpath=//dd[contains(@class, 'qa_bid_step')]//span@data-price
+    ...  ELSE IF  '${field_name}' == 'tenderPeriod.endDate'         Get Element Attribute   xpath=//time[@class="qa_enquiry_dt_end"]@datetime
+    ...  ELSE IF  '${field_name}' == 'guarantee.amount'             Get Element Attribute   xpath=(//dd[contains(@class, 'qa_guarantee_price')]//span)@data-price
+    ...  ELSE IF  '${field_name}' == 'registrationFee.amount'       Get Element Attribute   xpath=(//dd[contains(@class, 'qa_registration_fee')]//span)@data-price
+    ...  ELSE IF  '${field_name}' == 'cancellations[0].status'      Get Text     css=.qa_auction_status
+    ...  ELSE IF  '${field_name}' == 'status'                       Get Text     css=.qa_auction_status
+    ...  ELSE IF  '${field_name}' == 'cancellations[0].reason'      Get Text     css=.qa_auction_cancel_reason
+    ${return_value}=  Run Keyword If  '${field_name}' == 'value.amount'   Convert To Number      ${return_value.replace(' ', '').replace(',', '.')}
+    ...   ELSE IF   'minNumberOfQualifiedBids' in '${field_name}'   Convert To Number      ${return_value}
+    ...   ELSE IF   'minimalStep.amount' in '${field_name}'   Convert To Number      ${return_value}
+    ...   ELSE IF   'guarantee.amount' in '${field_name}'   Convert To Number      ${return_value}
+    ...   ELSE IF   'registrationFee.amount' in '${field_name}'   Convert To Number      ${return_value}
+    ...   ELSE IF   'cancellations[0].status' in '${field_name}'   convert_prom_code_to_common_string      ${return_value}
+    ...   ELSE IF   'procurementMethodType' in '${field_name}'   convert_prom_code_to_common_string      ${return_value}
+    ...   ELSE      convert_prom_string_to_common_string     ${return_value}
+    [Return]  ${return_value}
+
+Отримати інформацію із предмету
+    [Arguments]   ${username}   ${tender_uaid}   ${item_id}   ${field_name}
+    ${return_value}=    Run Keyword If    '${field_name}' == 'description'
+    ...  Get Text   xpath=//tr[contains(@class, 'table__row') and .//div[contains(text(), '${item_id}')]]//div[contains(@class, 'qa_item_short_descr')]
+    ...  ELSE IF  '${field_name}' == 'classification.scheme'   Get Text   xpath=//tr[contains(@class, 'table__row') and .//div[contains(text(), '${item_id}')]]//span[@class='qa_classifier_scheme']
+    ...  ELSE IF  '${field_name}' == 'classification.id'   Get Text   xpath=//tr[contains(@class, 'table__row') and .//div[contains(text(), '${item_id}')]]//span[@class='qa_classifier_code']
+    ...  ELSE IF  '${field_name}' == 'classification.description'   Get Text   xpath=//tr[contains(@class, 'table__row') and .//div[contains(text(), '${item_id}')]]//span[@class='qa_classifier_name']
+    ...  ELSE IF  '${field_name}' == 'additionalClassifications[0].scheme'   Get Text   xpath=//tr[contains(@class, 'table__row') and .//div[contains(text(), '${item_id}')]]//span[@class='qa_classifier_scheme']
+    ...  ELSE IF  '${field_name}' == 'additionalClassifications[0].id'   Get Text   xpath=//tr[contains(@class, 'table__row') and .//div[contains(text(), '${item_id}')]]//span[@class='qa_classifier_code']
+    ...  ELSE IF  '${field_name}' == 'additionalClassifications[0].description'   Get Text   //div[contains(@class, 'qa_rent_class')]
+    ...  ELSE IF  '${field_name}' == 'contractPeriod.startDate'    Get Element Attribute   xpath=//tr[contains(@class, 'table__row') and .//div[contains(text(), '${item_id}')]]//time[@class='qa_contracting_start']@datetime
+    ...  ELSE IF  '${field_name}' == 'contractPeriod.endDate'    Get Element Attribute   xpath=//tr[contains(@class, 'table__row') and .//div[contains(text(), '${item_id}')]]//time[@class='qa_contracting_end']@datetime
+    ...  ELSE IF  '${field_name}' == 'unit.name'    Get Text   xpath=//tr[contains(@class, 'table__row') and .//div[contains(text(), '${item_id}')]]//span[@class='qa_item_unit']
+    ...  ELSE IF  '${field_name}' == 'unit.code'    Get Text   xpath=//tr[contains(@class, 'table__row') and .//div[contains(text(), '${item_id}')]]//span[@class='qa_item_unit']
+    ...  ELSE IF  '${field_name}' == 'quantity'     Get Text   xpath=//tr[contains(@class, 'table__row') and .//div[contains(text(), '${item_id}')]]//span[@class='qa_quantity']
+    ${return_value}=  Run Keyword If  '${field_name}' == 'unit.code'   convert_prom_code_to_common_string   ${return_value}
+    ...   ELSE IF   'quantity' in '${field_name}'   Convert To Number      ${return_value.replace(' ', '').replace(',', '.')}
+    ...   ELSE IF   'description' in '${field_name}'   Convert To String      ${return_value}
+    ...   ELSE IF   'additionalClassifications[0].description' in '${field_name}'   Convert To String     ${return_value.split(' ')[1].replace(':','')}
+    ...   ELSE IF   'classification.scheme' in '${field_name}'   Convert To String     ${return_value.split(' ')[1].replace(':','')}
+    ...   ELSE IF   'unit.name' in '${field_name}'   convert_prom_string_to_common_string      ${return_value}
+    ...   ELSE      convert_prom_string_to_common_string     ${return_value}
+    [Return]  ${return_value}
+
+
+Активувати процедуру
+  [Arguments]  ${username}  ${tender_uaid}
+  Sleep  70
+  No Operation
+
+
+Задати запитання на тендер
+    [Arguments]      ${username}     ${tender_uaid}    ${question}
+    ${title}=        Get From Dictionary  ${question.data}  title
+    ${description}=  Get From Dictionary  ${question.data}  description
+    prom.Пошук тендера по ідентифікатору  ${username}   ${tender_uaid}
+    Wait Until Page Contains Element      css=[href*=state_auction_question]
+    Click Element     css=[href*=state_auction_question]
+    Sleep   15
+    Click Element     css=.qa_ask_a_question
+    Wait Until Page Contains Element    name=title    20
+    Input Text                          name=title                 ${title}
+    Input Text                          xpath=//textarea[@name='description']           ${description}
+    Click Element                       id=submit_button
+    Wait Until Page Contains Element            css=.qa_ask_a_question     30
+    capture page screenshot
+
+
+Відповісти на запитання
+    [Arguments]  ${username}  ${tender_uaid}  ${answer_data}  ${question_id}
+    prom.Пошук тендера по ідентифікатору  ${username}   ${tender_uaid}
+    Sleep   2
+    Wait Until Page Contains Element      css=[href*='state_auction_question/list']
+    Click Element                         css=[href*='state_auction_question/list']
+    Wait Until Page Contains Element      xpath=//div[@class='zk-question' and .//p[contains(text(), '${question_id}')]]
+    Click Element           xpath=//div[@class='zk-question' and .//p[contains(text(), '${question_id}')]]
+    Sleep  3
+    Input Text      xpath=//div[@class='zk-question' and .//p[contains(text(), '${question_id}')]]//textarea[@name='answer']        ${answer_data.data.answer}
+    Sleep  3
+    Click Element   xpath=//div[@class='zk-question' and .//p[contains(text(), '${question_id}')]]//button[@type='submit']
+
+Отримати інформацію із запитання
+    [Arguments]  ${username}  ${tender_uaid}  ${question_id}  ${field_name}
+    prom.Пошук тендера по ідентифікатору   ${username}   ${tender_uaid}
+    Wait Until Page Contains Element        xpath=//a[contains(@href, 'state_auction_question')]  30
+    Click Element       xpath=//a[contains(@href, 'state_auction_question')]
+    Sleep   30
+    reload page
+    Wait Until Page Contains Element      xpath=//div[@class='zk-question' and .//p[contains(text(), '${question_id}')]]
+    ${status}=  Run Keyword And Return Status    Element Should Be Visible   xpath=//div[@class='zk-question' and .//p[contains(text(), '${question_id}')]]//div[contains(@class, 'qa_message_description')]
+    Run Keyword If   '${status}' == 'False'   Click Element   xpath=//div[@class='zk-question' and .//p[contains(text(), '${question_id}')]]//p[contains(@class, 'qa_message_title')]
+    Sleep  3
+    ${return_value}=      Run Keyword If   '${field_name}' == 'title'
+    ...     Get Text    xpath=//div[@class='zk-question' and .//p[contains(text(), '${question_id}')]]//p[contains(@class, 'qa_message_title')]
+    ...     ELSE IF  '${field_name}' == 'answer'     Get Text   xpath=//div[@class='zk-question' and .//p[contains(text(), '${question_id}')]]//span[@class='qa_answer']
+    ...     ELSE    Get Text   xpath=//div[@class='zk-question' and .//p[contains(text(), '${question_id}')]]//div[contains(@class, 'qa_message_description')]
+    [Return]  ${return_value}
+
+
+
+Отримати посилання на аукціон для глядача
+    [Arguments]  ${username}  ${tender_uaid}  ${lot_id}=${Empty}
+    Switch Browser       my_custom_alias
+    sleep    3
+    ${href}=    Get Location
+    Run Keyword If  '${href}' in 'https://zakupki.dz-test.net/signin'  Run Keywords
+    ...   Input Text      ${login_sign_in}          ${USERS.users['${username}'].login}
+    ...   AND    Input Text      ${password_sign_in}       ${USERS.users['${username}'].password}
+    ...   AND    Click Button    id=submit_button
+    ...   AND    Sleep   2
+    prom.Пошук тендера по ідентифікатору  ${username}  ${tender_uaid}
+    Wait Until Keyword Succeeds     30      150          Run Keywords
+    ...   Reload Page
+    ...   AND     Wait Until Element Is Visible       css=.qa_auction_url
+    ${value}=   get text     css=.qa_auction_url
+    [Return]   ${value}
+
+Отримати посилання на аукціон для учасника
+    [Arguments]  ${username}  ${tender_uaid}  ${lot_id}=${Empty}
+    Switch Browser       my_custom_alias
+    sleep    3
+    ${href}=    Get Location
+    Run Keyword If  '${href}' in 'https://zakupki.dz-test.net/signin'  Run Keywords
+    ...   Input Text      ${login_sign_in}          ${USERS.users['${username}'].login}
+    ...   AND    Input Text      ${password_sign_in}       ${USERS.users['${username}'].password}
+    ...   AND    Click Button    id=submit_button
+    ...   AND    Sleep   2
+
+    prom.Пошук тендера по ідентифікатору  ${username}  ${tender_uaid}
+    Wait Until Keyword Succeeds     30      150          Run Keywords
+    ...   Reload Page
+    ...   AND     Wait Until Element Is Visible       css=.qa_auction_url
+    ${value}=   get text     css=.qa_auction_url
+    [Return]   ${value}
+
+Отримати інформацію із документа
+    [Arguments]  ${username}  ${tender_uaid}  ${doc_id}  ${field}
+    prom.Пошук тендера по ідентифікатору   ${username}   ${tender_uaid}
+    Run Keyword If   '${field}' == 'description'   Fail    ***** Опис документу скасування закупівлі не виводиться на Zakupki.dz-test *****
+    ${doc_name}=   Get Text     xpath=//div[contains(@class, 'file-name')]//a[contains(text(), '${doc_id}')]
+    [Return]   ${doc_name}
+
+Отримати інформацію із документа по індексу
+    [Arguments]  ${username}  ${tender_uaid}  ${document_index}  ${field}
+    prom.Пошук тендера по ідентифікатору   ${username}   ${tender_uaid}
+    Run Keyword If   '${field}' == 'description'   Fail    ***** Опис документу скасування закупівлі не виводиться на Zakupki.dz-test *****
+    ${index}=   Set Variable   ${document_index + 1}
+    ${doc_name}=   Get Text     xpath=//div[contains(@class, 'modified__item')][${index}]//div[contains(@class, 'file-type')]
+    ${doc_name}=   Run keyword if   '${doc_name}' == 'Посилання'    Get Text     xpath=//div[contains(@class, 'modified__item')][${index}]//div[contains(@class, 'description')]//a
+    ${doc_type}=   revert_document_type   ${doc_name}
+    [Return]   ${doc_type}
+
+
+Задати запитання на предмет
+    [Arguments]  ${username}  ${tender_uaid}  ${item_id}  ${question}
+    prom.Пошук тендера по ідентифікатору  ${username}  ${tender_uaid}
+    Wait Until Page Contains Element      css=[href*=state_auction_question]
+    Click Element     css=[href*=state_auction_question]
+    Sleep  5
+    Click Element     css=.qa_ask_a_question
+    Wait Until Page Contains Element    name=title    20
+    Input Text                          name=title                 ${question.data.title}
+    Input Text                          xpath=//textarea[@name='description']           ${question.data.description}
+    Click Element                       id=submit_button
+
+
+Отримати інформацію із пропозиції
+    [Arguments]  ${username}  ${tender_uaid}   ${field}
+    Wait Until Page Contains Element      css=.qa_your_suggestion_block     10
+    Click Element        css=.qa_your_modify_offer
+    Sleep   1
+    ${value}=   Get Value     id=offer-amount
+    ${value}=   Convert To Number      ${value}
+    Click Element        css=.qa_cancel_offer
+    [Return]    ${value}
+
+Скасувати цінову пропозицію
+    [Arguments]  @{ARGUMENTS}
+    [Documentation]
+    ...    ${ARGUMENTS[0]} ==  username
+    ...    ${ARGUMENTS[1]} ==  none
+    ...    ${ARGUMENTS[2]} ==  tender_uaid
+    Switch Browser       my_custom_alias
+    Go to   ${USERS.users['${ARGUMENTS[0]}'].default_page}
+    Sleep  10
+    Input Text        id=search     ${ARGUMENTS[1]}
+    Sleep  2
+    Click Element     css=#js-cabinet_search_form button
+    Sleep  5
+    Click Element     xpath=(//div[contains(@class, 'qa_procurement_name_in_list')]//a)[1]
+    Sleep   20
+    Wait Until Page Contains Element      css=.qa_your_suggestion_block     10
+    Click Element        css=.qa_your_withdraw_offer
+
+Змінити цінову пропозицію
+    [Arguments]  ${username}  ${tender_uaid}  ${fieldname}  ${fieldvalue}
+    sleep   3
+    ${href}=    Get Location
+    Run Keyword If  '${href}' in 'https://zakupki.dz-test.net/signin'  Run Keywords
+    ...   Input Text      ${login_sign_in}          ${USERS.users['${username}'].login}
+    ...   AND    Input Text      ${password_sign_in}       ${USERS.users['${username}'].password}
+    ...   AND    Click Button    id=submit_button
+    ...   AND    Sleep   2
+    prom.Пошук тендера по ідентифікатору  ${username}  ${tender_uaid}
+    Click Element           css=.qa_your_modify_offer
+    Clear Element Text      id=offer-amount
+    ${value} =     Convert To String    ${fieldvalue}
+    Input Text              id=offer-amount        ${value}
+    Sleep   3
+    Click Element       id=reglament_agreement
+    Sleep   1
+    Click Element       id=oferta_agreement
+    Sleep   1
+    capture page screenshot
+    Click Element       id=submit_button
+
+Завантажити документ в ставку
+    [Arguments]  ${username}  ${filePath}  ${tender_uaid}  ${doc_type}=documents
+    Wait Until Page Contains Element      css=.qa_your_suggestion_block     10
+    Sleep   5
+    Click Element       css=.qa_your_modify_offer
+    Sleep   3
+    Choose File         xpath=//input[contains(@class, 'qa_state_offer_add_field')]   ${filePath}
+    Sleep   10
+    Click Element       id=reglament_agreement
+    Click Element       id=oferta_agreement
+    Click Element       id=submit_button
+
+
+Подати цінову пропозицію
+    [Arguments]  ${username}  ${tender_uaid}  ${bid}
+    Switch Browser       my_custom_alias
+    Should Be Equal   '${bid.data.qualified}'   'True'
+    ${href}=    Get Location
+    Run Keyword If  '${SUITE_NAME}' == 'іnsider_full'  Run Keywords
+    ...   Go to   https://zakupki.dz-test.net/signin
+    ...   AND    Input Text      ${login_sign_in}          ${USERS.users['${username}'].login}
+    ...   AND    Input Text      ${password_sign_in}       ${USERS.users['${username}'].password}
+    ...   AND    Click Button    id=submit_button
+    ...   AND    Sleep   2
+    prom.Пошук тендера по ідентифікатору   ${username}   ${tender_uaid}
+    Click Element       css=.qa_button_create_offer
+    ${bid_amount}=     Convert To String    ${bid.data.value.amount}
+    Wait Until Page Contains Element        id=reglament_agreement       10
+    input Text          id=offer-amount    ${bid_amount}
+    Click Element       id=reglament_agreement
+    sleep   1
+    Click Element       id=oferta_agreement
+    sleep   1
+    capture page screenshot
+    Click Element       id=submit_button
+    capture page screenshot
+    Sleep   90
+    reload page
+    ${resp}=    Get Text      css=.qa_offer_id
+    [Return]    ${resp}
+
+Скасувати закупівлю
+    [Arguments]  @{ARGUMENTS}
+    prom.Пошук тендера по ідентифікатору  ${ARGUMENTS[0]}  ${ARGUMENTS[1]}
+    Wait Until Page Contains Element      xpath=//a[contains(@href, 'state_auction/cancel')]    30
+    Click Element      xpath=//a[contains(@href, 'state_auction/cancel')]
+    Wait Until Page Contains Element      css=.qa_state_offer_add_field    30
+    Choose File         css=.qa_state_offer_add_field       ${ARGUMENTS[3]}
+    Sleep   1
+    Click Element       xpath=//div[@id='reason_dd']
+    Sleep   1
+    ${reason}=    convert_document_type    ${ARGUMENTS[2]}
+    Click Element       id=reason_dd
+    sleep   1
+    Click Element       xpath=//ul[@id='reason_dd_ul']//li[contains(text(), "${reason}")]
+    Sleep   2
+    Click Element       id=submit_button
+    sleep   60
+    reload page
+    Wait Until Keyword Succeeds     30      30          Run Keywords
+    ...   Reload Page
+    ...   AND     Wait Until Element Is Visible       xpath=//span[contains(@data-href, 'state_auction/confirm_cancellation')]//span
+    Click Element               xpath=//span[contains(@data-href, 'state_auction/confirm_cancellation')]

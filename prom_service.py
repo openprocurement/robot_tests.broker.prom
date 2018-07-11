@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import os
 import pytz
 import dateutil.parser
 import urllib
@@ -10,8 +9,6 @@ from datetime import datetime, timedelta
 
 def move_uploaded_file(file_name, src_dir, dest_dir):
     src_path = '{path}/{file}'.format(path=src_dir, file=file_name)
-    if not os.path.exists(src_path):
-        src_path = '{path}/Downloads/{file}'.format(path=src_dir, file=file_name)
     dest_path = '{path}/{file}'.format(path=dest_dir, file=file_name)
     shutil.move(src_path, dest_path)
 
@@ -29,8 +26,8 @@ def convert_to_float(price):
 
 
 def iso_date(date):
-    next_date = datetime.now() + timedelta(days=10)
-    return next_date.strftime("%d.%m.%Y 00:00")
+    next_date = datetime.now() + timedelta(minutes=50)
+    return next_date.strftime("%d.%m.%Y %H:%M")
 
 
 def convert_iso_date_to_prom(date):
@@ -101,6 +98,9 @@ def convert_prom_string_to_common_string(string):
         u"Згідно рішення Організатора торгів": u"Згідно рішення виконавчої дирекції Замовника",
         u"Завершено": u"complete",
         u"Uri:": u"UA-EDR",
+        u"Продаж:": u"sellout.english",
+        u"Оренда:": u"sellout.english",
+        u"Аукціон скасований": u"cancelled",
     }.get(string, string)
 
 
@@ -161,7 +161,11 @@ def convert_prom_code_to_common_string(string):
         u"Виключений з переліку": u"deleted",
         u"Опубліковано. Очікування інформаційного повідомлення.": u"pending",
         u"Опубліковано": u"pending",
-        u"Аукціон": u"scheduled",
+        u"Аукціон": u"active.auction",
+        u"Аукціон завершено. Кваліфікація": u"active.contracting",
+        u"Аукціон скасований": u"active",
+        u"Аукціон завершено": u"pending.sold",
+        u"Аукціон завершено. Об'єкт не проданий": u"pending.dissolution",
         u"Аукціон із зниженням стартової ціни": u"scheduled",
         u"Аукціон за методом покрокового зниження стартової ціни та подальшого подання цінових пропозицій": u"scheduled",
         u"Англійський аукціон": u"scheduled",
@@ -170,6 +174,8 @@ def convert_prom_code_to_common_string(string):
         u"cavps": u"CAV-PS",
         u"cpv": u"CPV",
         u"notice": u"Рішення про затвердження переліку об'єктів, що підлягають приватизації",
+        u"Продаж": u"sellout.english",
+        u"Оренда": u"sellout.english",
     }.get(string, string)
 
 
@@ -181,6 +187,7 @@ def convert_document_type(string):
         u"Презентація": u"x_presentation",
         u"Інформація про об'єкт малої приватизації": u"technicalSpecifications",
         u"Ілюстрації": u"illustration",
+        u"Згідно рішення виконавчої дирекції Замовника": u"Згідно рішення Організатора торгів",
     }.get(string, string)
 
 
@@ -188,6 +195,7 @@ def revert_document_type(string):
     return {
         u"informationDetails": u"Додаткова інформація",
         u"cancellationDetails": u"Виключення з переліку",
+        # u"notice": u"Рішення про затвердження переліку об'єктів, що підлягають приватизації",
         u"notice": u"Рішення аукціонної комісії",
         u"x_presentation": u"Презентація",
         u"technicalSpecifications": u"Інформація про об'єкт малої приватизації",
@@ -211,10 +219,25 @@ def adapt_assetholder_owner(tender_data):
 
 
 def adapt_assetholder_viewer(tender_data):
+    tender_data['data']['assetCustodian']['identifier']['legalName'] = u'ТОВ "ЭТУ КОМПАНИЮ НЕ ТРОГАТЬ"'
     tender_data['data']['assetHolder']['identifier']['legalName'] = u'ТОВ "ЭТУ КОМПАНИЮ НЕ ТРОГАТЬ"'
     tender_data['data']['assetHolder']['identifier']['id'] = u'54353455'
+    tender_data['data']['assetCustodian']['identifier']['id'] = u'54353455'
     tender_data['data']['assetHolder']['contactPoint']['telephone'] = u'+380441112233'
+    tender_data['data']['assetCustodian']['contactPoint']['telephone'] = u'+380441112233'
     tender_data['data']['assetHolder']['contactPoint']['email'] = u'test@test13.com'
+    tender_data['data']['assetCustodian']['contactPoint']['email'] = u'test@test13.com'
     tender_data['data']['assetHolder']['contactPoint']['name'] = u'Рустам Коноплянка'
+    tender_data['data']['assetCustodian']['contactPoint']['name'] = u'Рустам Коноплянка'
     return tender_data
 
+
+def adapt_qualified(tender_data, username):
+    if username == 'Prom_Provider':
+        if 'qualified' in tender_data['data']:
+            return True
+    return False
+
+
+def download_file(url, file_name, output_dir):
+    urllib.urlretrieve(url, ('{}/{}'.format(output_dir, file_name)))

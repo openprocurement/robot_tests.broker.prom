@@ -210,6 +210,8 @@ Login
     ${return_value}=    Run Keyword If    '${field_name}' == 'assetID'
     ...  Get Text   css=[data-qa="qa_uid"]
     ...  ELSE IF  '${field_name}' == 'date'                                     Get Element Attribute   xpath=//div[contains(@class, 'qa_created_date')]@data-qa
+    ...  ELSE IF  '${field_name}' == 'rectificationPeriod.endDate'              Sleep  30
+    ...  ELSE IF  '${field_name}' == 'rectificationPeriod.endDate'              Reload page
     ...  ELSE IF  '${field_name}' == 'rectificationPeriod.endDate'              Get Element Attribute   xpath=//div[contains(@class, "qa_rectification_date")]@data-qa2
     ...  ELSE IF  '${field_name}' == 'dateModified'                             Get Element Attribute   xpath=//div[contains(@class, "qa_modified_date")]@data-qa
     ...  ELSE IF  '${field_name}' == 'status'                                   Get Text   css=[data-qa="qa_status_text"]
@@ -402,7 +404,6 @@ Login
     Click Element                        css=[data-qa="decision_title"]
     Sleep  2
     Click Element                        css=[data-qa="decision_form"] [data-qa="ok"]
-    ###########################################################################################################################################################
     prom.Пошук об’єкта МП по ідентифікатору   ${username}   ${tender_uaid}
     Wait Until Page Contains Element     css=[data-qa='link_lot']     20
     Click Element                        css=[data-qa='link_lot']
@@ -618,7 +619,6 @@ Login
 Завантажити ілюстрацію в лот
     [Arguments]  ${username}    ${tender_uaid}    ${filepath}
     capture page screenshot
-
     prom.Пошук лота МП по ідентифікатору    ${username}    ${tender_uaid}
     capture page screenshot
     Click Element     css=[data-qa="link_lot"]
@@ -717,7 +717,6 @@ Login
     ...  ELSE IF  '${field_name}' == 'decisions[0].decisionDate'                Click Element     css=[data-qa="link_lot"]
     ...  ELSE IF  '${field_name}' == 'decisions[0].decisionID'                  Click Element     css=[data-qa="link_lot"]
     capture page screenshot
-    ${return_value}=    Set Variable       Поправити тут!
     ${return_value}=    Run Keyword If    '${field_name}' == 'description'
     ...  Get Text       xpath=//div[contains(text(), '${item_id}')]//parent::*[@data-qa='item_descr'][last()]
     ...  ELSE IF  '${field_name}' == 'classification.scheme'                    Get Element Attribute       xpath=//div[contains(text(), '${item_id}')]//parent::*//span[@data-qa='primary_classifier'][last()]@data-type
@@ -805,7 +804,7 @@ Login
     Wait Until Page Contains Element      css=[data-qa="edit_button"]    30
     Click Element     css=[data-qa="edit_button"]
     Sleep   2
-    ${field_value}=       convert to string     ${field_value}=
+    ${field_value}=       convert to string     ${field_value}
     ${return_value}=    Run Keyword If    '${field_name}' == 'quantity'
     ...  Input Text       xpath=//*[contains(@value, '${item_id}')]//parent::*//parent::*//parent::*//*[@data-qa='item_quantity']     ${field_value}
     Sleep   2

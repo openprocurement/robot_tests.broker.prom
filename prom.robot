@@ -874,29 +874,29 @@ Login
     ...   ELSE      convert_prom_string_to_common_string     ${return_value}
     [Return]  ${return_value}
 
-#Отримати інформацію із предмету
-#    [Arguments]   ${username}   ${tender_uaid}   ${item_id}   ${field_name}
-#    ${return_value}=    Run Keyword If    '${field_name}' == 'description'
-#    ...  Get Text   xpath=//tr[contains(@class, 'table__row') and .//div[contains(text(), '${item_id}')]]//div[contains(@class, 'qa_item_short_descr')]
-#    ...  ELSE IF  '${field_name}' == 'classification.scheme'   Get Text   xpath=//tr[contains(@class, 'table__row') and .//div[contains(text(), '${item_id}')]]//span[@class='qa_classifier_scheme']
-#    ...  ELSE IF  '${field_name}' == 'classification.id'   Get Text   xpath=//tr[contains(@class, 'table__row') and .//div[contains(text(), '${item_id}')]]//span[@class='qa_classifier_code']
-#    ...  ELSE IF  '${field_name}' == 'classification.description'   Get Text   xpath=//tr[contains(@class, 'table__row') and .//div[contains(text(), '${item_id}')]]//span[@class='qa_classifier_name']
-#    ...  ELSE IF  '${field_name}' == 'additionalClassifications[0].scheme'   Get Text   xpath=//tr[contains(@class, 'table__row') and .//div[contains(text(), '${item_id}')]]//span[@class='qa_classifier_scheme']
-#    ...  ELSE IF  '${field_name}' == 'additionalClassifications[0].id'   Get Text   xpath=//tr[contains(@class, 'table__row') and .//div[contains(text(), '${item_id}')]]//span[@class='qa_classifier_code']
-#    ...  ELSE IF  '${field_name}' == 'additionalClassifications[0].description'   Get Text   //div[contains(@class, 'qa_rent_class')]
-#    ...  ELSE IF  '${field_name}' == 'contractPeriod.startDate'    Get Element Attribute   xpath=//tr[contains(@class, 'table__row') and .//div[contains(text(), '${item_id}')]]//time[@class='qa_contracting_start']@datetime
-#    ...  ELSE IF  '${field_name}' == 'contractPeriod.endDate'    Get Element Attribute   xpath=//tr[contains(@class, 'table__row') and .//div[contains(text(), '${item_id}')]]//time[@class='qa_contracting_end']@datetime
-#    ...  ELSE IF  '${field_name}' == 'unit.name'    Get Text   xpath=//tr[contains(@class, 'table__row') and .//div[contains(text(), '${item_id}')]]//span[@class='qa_item_unit']
-#    ...  ELSE IF  '${field_name}' == 'unit.code'    Get Text   xpath=//tr[contains(@class, 'table__row') and .//div[contains(text(), '${item_id}')]]//span[@class='qa_item_unit']
-#    ...  ELSE IF  '${field_name}' == 'quantity'     Get Text   xpath=//tr[contains(@class, 'table__row') and .//div[contains(text(), '${item_id}')]]//span[@class='qa_quantity']
-#    ${return_value}=  Run Keyword If  '${field_name}' == 'unit.code'   convert_prom_code_to_common_string   ${return_value}
-#    ...   ELSE IF   'quantity' in '${field_name}'   Convert To Number      ${return_value.replace(' ', '').replace(',', '.')}
-#    ...   ELSE IF   'description' in '${field_name}'   Convert To String      ${return_value}
-#    ...   ELSE IF   'additionalClassifications[0].description' in '${field_name}'   Convert To String     ${return_value.split(' ')[1].replace(':','')}
-#    ...   ELSE IF   'classification.scheme' in '${field_name}'   Convert To String     ${return_value.split(' ')[1].replace(':','')}
-#    ...   ELSE IF   'unit.name' in '${field_name}'   convert_prom_string_to_common_string      ${return_value}
-#    ...   ELSE      convert_prom_string_to_common_string     ${return_value}
-#    [Return]  ${return_value}
+Отримати інформацію із предмету
+    [Arguments]   ${username}   ${tender_uaid}   ${item_id}   ${field_name}
+    ${return_value}=    Run Keyword If    '${field_name}' == 'description'
+    ...  Get Text   xpath=//tr[contains(@class, 'table__row') and .//div[contains(text(), '${item_id}')]]//div[contains(@class, 'qa_item_short_descr')]
+    ...  ELSE IF  '${field_name}' == 'classification.scheme'   Get Text   xpath=//tr[contains(@class, 'table__row') and .//div[contains(text(), '${item_id}')]]//span[@class='qa_classifier_scheme']
+    ...  ELSE IF  '${field_name}' == 'classification.id'   Get Text   xpath=//tr[contains(@class, 'table__row') and .//div[contains(text(), '${item_id}')]]//span[@class='qa_classifier_code']
+    ...  ELSE IF  '${field_name}' == 'classification.description'   Get Text   xpath=//tr[contains(@class, 'table__row') and .//div[contains(text(), '${item_id}')]]//span[@class='qa_classifier_name']
+    ...  ELSE IF  '${field_name}' == 'additionalClassifications[0].scheme'   Get Text   xpath=//tr[contains(@class, 'table__row') and .//div[contains(text(), '${item_id}')]]//span[@class='qa_classifier_scheme']
+    ...  ELSE IF  '${field_name}' == 'additionalClassifications[0].id'   Get Text   xpath=//tr[contains(@class, 'table__row') and .//div[contains(text(), '${item_id}')]]//span[@class='qa_classifier_code']
+    ...  ELSE IF  '${field_name}' == 'additionalClassifications[0].description'   Get Text   //div[contains(@class, 'qa_rent_class')]
+    ...  ELSE IF  '${field_name}' == 'contractPeriod.startDate'    Get Element Attribute   xpath=//tr[contains(@class, 'table__row') and .//div[contains(text(), '${item_id}')]]//time[@class='qa_contracting_start']@datetime
+    ...  ELSE IF  '${field_name}' == 'contractPeriod.endDate'    Get Element Attribute   xpath=//tr[contains(@class, 'table__row') and .//div[contains(text(), '${item_id}')]]//time[@class='qa_contracting_end']@datetime
+    ...  ELSE IF  '${field_name}' == 'unit.name'    Get Text   xpath=//tr[contains(@class, 'table__row') and .//div[contains(text(), '${item_id}')]]//span[@class='qa_item_unit']
+    ...  ELSE IF  '${field_name}' == 'unit.code'    Get Text   xpath=//tr[contains(@class, 'table__row') and .//div[contains(text(), '${item_id}')]]//span[@class='qa_item_unit']
+    ...  ELSE IF  '${field_name}' == 'quantity'     Get Text   xpath=//tr[contains(@class, 'table__row') and .//div[contains(text(), '${item_id}')]]//span[@class='qa_quantity']
+    ${return_value}=  Run Keyword If  '${field_name}' == 'unit.code'   convert_prom_code_to_common_string   ${return_value}
+    ...   ELSE IF   'quantity' in '${field_name}'   Convert To Number      ${return_value.replace(' ', '').replace(',', '.')}
+    ...   ELSE IF   'description' in '${field_name}'   Convert To String      ${return_value}
+    ...   ELSE IF   'additionalClassifications[0].description' in '${field_name}'   Convert To String     ${return_value.split(' ')[1].replace(':','')}
+    ...   ELSE IF   'classification.scheme' in '${field_name}'   Convert To String     ${return_value.split(' ')[1].replace(':','')}
+    ...   ELSE IF   'unit.name' in '${field_name}'   convert_prom_string_to_common_string      ${return_value}
+    ...   ELSE      convert_prom_string_to_common_string     ${return_value}
+    [Return]  ${return_value}
 
 
 Активувати процедуру

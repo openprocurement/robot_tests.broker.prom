@@ -210,8 +210,6 @@ Login
     ${return_value}=    Run Keyword If    '${field_name}' == 'assetID'
     ...  Get Text   css=[data-qa="qa_uid"]
     ...  ELSE IF  '${field_name}' == 'date'                                     Get Element Attribute   xpath=//div[contains(@class, 'qa_created_date')]@data-qa
-    ...  ELSE IF  '${field_name}' == 'rectificationPeriod.endDate'              Sleep  30
-    ...  ELSE IF  '${field_name}' == 'rectificationPeriod.endDate'              Reload page
     ...  ELSE IF  '${field_name}' == 'rectificationPeriod.endDate'              Get Element Attribute   xpath=//div[contains(@class, "qa_rectification_date")]@data-qa2
     ...  ELSE IF  '${field_name}' == 'dateModified'                             Get Element Attribute   xpath=//div[contains(@class, "qa_modified_date")]@data-qa
     ...  ELSE IF  '${field_name}' == 'status'                                   Get Text   css=[data-qa="qa_status_text"]
@@ -233,10 +231,10 @@ Login
     ...  ELSE IF  '${field_name}' == 'decisions[1].title'                       Get Text   css=[data-qa="qa_solutions_text"]
     ...  ELSE IF  '${field_name}' == 'decisions[1].decisionDate'                Get Element Attribute   xpath=//div[contains(@class, "qa_decision_date")]@data-qa
     ...  ELSE IF  '${field_name}' == 'decisions[1].decisionID'                  Get Text   xpath=(//div[@data-qa="qa_numer_solutions"])[2]
-    ...  ELSE IF  '${field_name}' == 'rectificationPeriod.endDate'              Get Element Attribute       xpath=//div[contains(@class, "qa_rectification_date")]@data-qa2
     capture page screenshot
     ${return_value}=  Run Keyword If  '${field_name}' == 'status'   convert_prom_code_to_common_string   ${return_value}
     ...   ELSE IF   '${field_name}' == 'documents[0].documentType'   convert_document_type      ${return_value}
+    ...   ELSE IF   '${field_name}' == 'rectificationPeriod.endDate'   Get Element Attribute       xpath=//div[contains(@class, "qa_rectification_date")]@data-qa2
     ...   ELSE      convert_prom_string_to_common_string     ${return_value}
     [Return]  ${return_value}
 
@@ -586,12 +584,11 @@ Login
     ...  ELSE IF  '${field_name}' == 'auctions[0].auctionID'                    Get Text                    xpath=(//div[contains(@class, 'qa_auction_auid')])[1]
     ...  ELSE IF  '${field_name}' == 'auctions[1].auctionID'                    Get Text                    xpath=(//div[contains(@class, 'qa_auction_auid')])[2]
     ...  ELSE IF  '${field_name}' == 'auctions[2].auctionID'                    Get Text                    xpath=(//div[contains(@class, 'qa_auction_auid')])[3]
-    ${return_value}=    Run Keyword If   '${return_value}' == 'не вказано'    Run Keywords
-    ...    Sleep  20
-    ...    AND    Reload page
-    ...    AND    Sleep  3
+    Sleep  20
+    Reload page
     ${return_value}=  Run Keyword If  '${field_name}' == 'status'               convert_prom_code_to_common_string      ${return_value}
     ...   ELSE IF   '${field_name}' == 'auctions[0].auctionID'                  Get Text                    xpath=(//div[contains(@class, 'qa_auction_auid')])[1]
+    ...   ELSE IF   '${field_name}' == 'rectificationPeriod.endDate'            Get Element Attribute   xpath=//div[contains(@class, "qa_rectification_date")]@data-qa2
     ...   ELSE IF   '${field_name}' == 'documents[0].documentType'              convert_document_type                   ${return_value}
     ...   ELSE IF   '${field_name}' == 'auctions[0].status'                     convert_prom_code_to_common_string      ${return_value}
     ...   ELSE IF   '${field_name}' == 'auctions[1].status'                     convert_prom_code_to_common_string      ${return_value}

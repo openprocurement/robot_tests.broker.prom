@@ -95,7 +95,6 @@ def convert_prom_string_to_common_string(string):
         u"Вперше": u"Лот виставляється вперше",
         u"Вдруге": u"Лот виставляється повторно",
         u"Повторно": u"Лот виставляється повторно",
-        u"Згідно рішення Організатора торгів": u"Згідно рішення виконавчої дирекції Замовника",
         u"Завершено": u"complete",
         u"Uri:": u"UA-EDR",
         u"Продаж:": u"sellout.english",
@@ -195,7 +194,6 @@ def revert_document_type(string):
     return {
         u"informationDetails": u"Додаткова інформація",
         u"cancellationDetails": u"Виключення з переліку",
-        # u"notice": u"Рішення про затвердження переліку об'єктів, що підлягають приватизації",
         u"notice": u"Рішення аукціонної комісії",
         u"x_presentation": u"Презентація",
         u"technicalSpecifications": u"Інформація про об'єкт малої приватизації",

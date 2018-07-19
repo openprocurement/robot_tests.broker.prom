@@ -186,7 +186,6 @@ def convert_document_type(string):
         u"Презентація": u"x_presentation",
         u"Інформація про об'єкт малої приватизації": u"technicalSpecifications",
         u"Ілюстрації": u"illustration",
-        u"Згідно рішення виконавчої дирекції Замовника": u"Згідно рішення Організатора торгів",
     }.get(string, string)
 
 

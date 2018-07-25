@@ -405,7 +405,7 @@ Login
     prom.Пошук об’єкта МП по ідентифікатору   ${username}   ${tender_uaid}
     Wait Until Page Contains Element     css=[data-qa='link_lot']     20
     Click Element                        css=[data-qa='link_lot']
-    Sleep  5
+    Sleep  60
     ${tender_uaid}=              Get Text                   css=[data-qa="qa_uid"]
     log to console   ${tender_uaid}
     [Return]  ${tender_uaid}
@@ -897,7 +897,7 @@ Login
 
 Активувати процедуру
   [Arguments]  ${username}  ${tender_uaid}
-  Sleep  70
+  Sleep  260
   No Operation
 
 

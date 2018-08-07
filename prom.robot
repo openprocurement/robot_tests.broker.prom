@@ -581,10 +581,10 @@ Login
     ...  ELSE IF  '${field_name}' == 'auctions[0].tenderingDuration'            Get Element Attribute       xpath=(//div[contains(@class, 'qa_auction_period')])[1]@data-qa
     ...  ELSE IF  '${field_name}' == 'auctions[1].tenderingDuration'            Get Element Attribute       xpath=(//div[contains(@class, 'qa_auction_period')])[2]@data-qa
     ...  ELSE IF  '${field_name}' == 'auctions[2].tenderingDuration'            Get Element Attribute       xpath=(//div[contains(@class, 'qa_auction_period')])[3]@data-qa
-    ...  ELSE IF  '${field_name}' == 'auctions[0].auctionID'                    Get Text                    xpath=(//div[contains(@class, 'qa_auction_auid')])[1]
+    ...  ELSE IF  '${field_name}' == 'auctions[0].auctionID'                    Sleep    280
     ...  ELSE IF  '${field_name}' == 'auctions[1].auctionID'                    Get Text                    xpath=(//div[contains(@class, 'qa_auction_auid')])[2]
     ...  ELSE IF  '${field_name}' == 'auctions[2].auctionID'                    Get Text                    xpath=(//div[contains(@class, 'qa_auction_auid')])[3]
-    Sleep  20
+    Sleep  4
     Reload page
     ${return_value}=  Run Keyword If  '${field_name}' == 'status'               convert_prom_code_to_common_string      ${return_value}
     ...   ELSE IF   '${field_name}' == 'auctions[0].auctionID'                  Get Text                    xpath=(//div[contains(@class, 'qa_auction_auid')])[1]

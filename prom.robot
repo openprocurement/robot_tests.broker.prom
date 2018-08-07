@@ -897,7 +897,7 @@ Login
 
 Активувати процедуру
   [Arguments]  ${username}  ${tender_uaid}
-  Sleep  260
+  Sleep  200
   No Operation
 
 

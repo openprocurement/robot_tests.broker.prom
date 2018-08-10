@@ -24,10 +24,11 @@ ${password_sign_in}                                                name=password
 
 Підготувати дані для оголошення тендера
     [Arguments]  ${username}   ${tender_data}    ${role_name}
-    ${tender_data}=     Run keyword if    '${role_name}' == 'viewer'
+    ${adapted_data}=     Run keyword if    '${role_name}' == 'viewer'
     ...    adapt_assetholder_viewer   ${tender_data}
-    ...  ELSE IF  '${role_name}' == 'tender_owner'    adapt_assetholder_owner     ${tender_data}
-    [Return]  ${tender_data}
+    ...    ELSE IF  '${role_name}' == 'tender_owner'    adapt_assetholder_owner     ${tender_data}
+    ...    ELSE    Set Variable    ${tender_data}
+    [Return]  ${adapted_data}
 
 Підготувати дані для оголошення тендера користувачем
     [Arguments]   ${username}    ${tender_data}    ${role_name}

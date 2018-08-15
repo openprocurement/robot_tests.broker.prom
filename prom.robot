@@ -862,6 +862,7 @@ Login
     ...  ELSE IF  '${field_name}' == 'cancellations[0].status'      Get Text     css=.qa_auction_status
     ...  ELSE IF  '${field_name}' == 'status'                       Get Text     css=.qa_auction_status
     ...  ELSE IF  '${field_name}' == 'cancellations[0].reason'      Get Text     css=.qa_auction_cancel_reason
+    ...  ELSE IF  '${field_name}' == 'bids'                         Get Text     css=.qa_your_suggestion_block
     ${return_value}=  Run Keyword If  '${field_name}' == 'value.amount'   Convert To Number      ${return_value.replace(' ', '').replace(',', '.')}
     ...   ELSE IF   'minNumberOfQualifiedBids' in '${field_name}'   Convert To Number      ${return_value}
     ...   ELSE IF   'minimalStep.amount' in '${field_name}'   Convert To Number      ${return_value}

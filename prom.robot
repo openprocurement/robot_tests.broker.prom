@@ -1030,20 +1030,9 @@ Login
     [Return]    ${value}
 
 Скасувати цінову пропозицію
-    [Arguments]  @{ARGUMENTS}
-    [Documentation]
-    ...    ${ARGUMENTS[0]} ==  username
-    ...    ${ARGUMENTS[1]} ==  none
-    ...    ${ARGUMENTS[2]} ==  tender_uaid
+    [Arguments]  ${username}  ${tender_uaid}
     Switch Browser       my_custom_alias
-    Go to   ${USERS.users['${ARGUMENTS[0]}'].default_page}
-    Sleep  10
-    Input Text        id=search     ${ARGUMENTS[1]}
-    Sleep  2
-    Click Element     css=#js-cabinet_search_form button
-    Sleep  5
-    Click Element     xpath=(//div[contains(@class, 'qa_procurement_name_in_list')]//a)[1]
-    Sleep   20
+    prom.Пошук тендера по ідентифікатору  ${username}  ${tender_uaid}
     Wait Until Page Contains Element      css=.qa_your_suggestion_block     10
     Click Element        css=.qa_your_withdraw_offer
 

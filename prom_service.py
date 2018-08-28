@@ -100,6 +100,15 @@ def convert_prom_string_to_common_string(string):
         u"Продаж:": u"sellout.english",
         u"Оренда:": u"sellout.english",
         u"Аукціон скасований": u"cancelled",
+        u"Прийняття заяв на участь": u"active.qualification",
+        u"Аукціон відбувся (або 1 учасник)": u"complete",
+        u"Приймання заявок на участь": u"active.qualification",
+        u"Опубліковано. Очікування інформаційного повідомлення.": u"pending",
+        u"Опубліковано": u"pending",
+        u"очікується протокол": u"pending.admission",
+        u"Очікується протокол": u"pending",
+        u"Очікується рішення про викуп": u"pending.admission",
+        u"Переможець": u"active",
     }.get(string, string)
 
 
@@ -169,6 +178,9 @@ def convert_prom_code_to_common_string(string):
         u"Аукціон за методом покрокового зниження стартової ціни та подальшого подання цінових пропозицій": u"scheduled",
         u"Англійський аукціон": u"scheduled",
         u"Голландський аукціон": u"scheduled",
+        u"Приймання заявок на участь": u"active.qualification",
+        u"Прийняття заяв на участь": u"active.qualification",
+        u"Аукціон відбувся (або 1 учасник)": u"complete",
         u"Об’єкт виключено": u"deleted",
         u"cavps": u"CAV-PS",
         u"cpv": u"CPV",
@@ -221,6 +233,7 @@ def adapt_assetholder_viewer(tender_data):
 def adapt_assetholder_provider(tender_data):
     tender_data['data']['assetHolder']['identifier']['legalName'] = u'ТОВ "ЭТУ КОМПАНИЮ НЕ ТРОГАТЬ"'
     return tender_data
+
 
 def adapt_qualified(tender_data, username):
     if username == 'Prom_Provider':

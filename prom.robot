@@ -847,6 +847,7 @@ Login
 
 Отримати інформацію із тендера
     [Arguments]    ${username}    ${tender_uaid}    ${field_name}
+    prom.Пошук тендера по ідентифікатору    ${username}    ${tender_uaid}
     ${return_value}=    Run Keyword If    '${field_name}' == 'auctionID'
     ...  Get Text   css=.qa_ua_ea_id span
     ...  ELSE IF  '${field_name}' == 'title'                        Get Text   xpath=//dt[contains(@class, 'qa_auction_title')]
@@ -863,6 +864,7 @@ Login
     ...  ELSE IF  '${field_name}' == 'status'                       Get Text     css=.qa_auction_status
     ...  ELSE IF  '${field_name}' == 'cancellations[0].reason'      Get Text     css=.qa_auction_cancel_reason
     ...  ELSE IF  '${field_name}' == 'bids'                         Get Text     css=.qa_your_suggestion_block
+    ...  ELSE IF  '${field_name}' == 'awards[0].status'             Get Text     css=[data-qa='award_status']
     ${return_value}=  Run Keyword If  '${field_name}' == 'value.amount'   Convert To Number      ${return_value.replace(' ', '').replace(',', '.')}
     ...   ELSE IF   'minNumberOfQualifiedBids' in '${field_name}'   Convert To Number      ${return_value}
     ...   ELSE IF   'minimalStep.amount' in '${field_name}'   Convert To Number      ${return_value}
@@ -1121,3 +1123,77 @@ Login
     ...   Reload Page
     ...   AND     Wait Until Element Is Visible       xpath=//span[contains(@data-href, 'state_auction/confirm_cancellation')]//span
     Click Element               xpath=//span[contains(@data-href, 'state_auction/confirm_cancellation')]
+
+
+Завантажити протокол погодження в авард
+    [Arguments]    ${username}    ${tender_uaid}    ${filepath}    ${award_index}
+    prom.Пошук тендера по ідентифікатору  ${username}  ${tender_uaid}
+    Wait Until Page Contains Element    css=[data-qa="publish_button"]    20
+    Click Element    css=[data-qa="publish_button"]
+    Sleep  2
+    Wait Until Page Contains Element     css=[data-qa="upload_file"]    20
+    Choose File     css=[data-qa="upload_file"]     ${filepath}
+    Sleep  4
+    Click Element    css=[data-qa="ok"]
+    Sleep  3
+
+Завантажити протокол аукціону в авард
+    [Arguments]    ${username}    ${tender_uaid}    ${filepath}    ${award_index}
+    prom.Пошук тендера по ідентифікатору  ${username}  ${tender_uaid}
+    Wait Until Page Contains Element    css=[data-qa="upload_protocol"]    20
+    Click Element     css=[data-qa="upload_protocol"]
+    Wait Until Page Contains Element     css=[data-qa="upload_file"]     20
+    Choose File      css=[data-qa="upload_file"]     ${filepath}
+    Sleep  4
+    Click Element    css=[data-qa="ok"]
+    Sleep  2
+
+Підтвердити постачальника
+    [Arguments]    ${username}    ${tender_uaid}    ${award_num}
+    prom.Пошук тендера по ідентифікатору  ${username}  ${tender_uaid}
+    Wait Until Page Contains Element    css=[data-qa="protocol_approved"]    20
+    Click Element     css=[data-qa="protocol_approved"]
+    Sleep   2
+    Click Element    css=[data-qa="ok"]
+    Sleep   2
+
+Активувати кваліфікацію учасника
+    [Arguments]    ${username}    ${tender_uaid}
+    prom.Пошук тендера по ідентифікатору  ${username}  ${tender_uaid}
+
+Завантажити угоду до тендера
+    [Arguments]    ${username}    ${tender_uaid}    ${contract_num}    ${filepath}
+    prom.Пошук тендера по ідентифікатору  ${username}  ${tender_uaid}
+     Wait Until Page Contains Element    css=[data-qa="upload_contract"]    20
+
+Встановити дату підписання угоди
+    [Arguments]    ${username}    ${tender_uaid}    ${contract_num}    ${fieldvalue}
+    prom.Пошук тендера по ідентифікатору  ${username}  ${tender_uaid}
+    Wait Until Page Contains Element    css=[data-qa="upload_contract"]    20
+    Click Element     css=[data-qa="upload_contract"]
+    Sleep   2
+    ${filepath}=        create_random_file
+    Choose File      css=[data-qa="upload_file"]     ${filepath}
+    Sleep   3
+    ${conver_date}=             convert_iso_date_to_prom        ${fieldvalue}
+    input Text         css=[data-qa='contract_sign_date']    ${conver_date}
+    Sleep  2
+    Press Key          css=[data-qa='contract_sign_date']         \\13
+    sleep  2
+    Click Element      css=[data-qa="ok"]
+
+Підтвердити підписання контракту
+    [Arguments]    ${username}    ${tender_uaid}    ${contract_num}
+    prom.Пошук тендера по ідентифікатору  ${username}  ${tender_uaid}
+    Wait Until Page Contains Element    css=[data-qa="auction_finished"]    20
+    Click Element     css=[data-qa="auction_finished"]
+    Sleep   2
+    Click Element    css=[data-qa="ok"]
+    Sleep   2
+
+Отримати кількість авардів в тендері
+    [Arguments]    ${username}    ${tender_uaid}
+    prom.Пошук тендера по ідентифікатору     ${username}    ${tender_uaid}
+    ${count}=    Get matching xpath count  xpath=//tr[@data-qa='award_rows']
+    ${count_convert}=        Convert To Number      ${count}
+    [Return]    ${count_convert}

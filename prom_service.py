@@ -109,6 +109,7 @@ def convert_prom_string_to_common_string(string):
         u"Очікується протокол": u"pending",
         u"Очікується рішення про викуп": u"pending.admission",
         u"Переможець": u"active",
+        u"Очікується публікація протоколу": u"active.qualification",
     }.get(string, string)
 
 

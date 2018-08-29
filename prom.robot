@@ -1093,6 +1093,8 @@ Login
     sleep   1
     Click Element       id=oferta_agreement
     sleep   1
+    Click Element       id=sp_agreement
+    Sleep   1
     capture page screenshot
     Click Element       id=submit_button
     capture page screenshot

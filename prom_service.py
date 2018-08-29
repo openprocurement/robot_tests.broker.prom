@@ -187,6 +187,7 @@ def convert_prom_code_to_common_string(string):
         u"notice": u"Рішення про затвердження переліку об'єктів, що підлягають приватизації",
         u"Продаж": u"sellout.english",
         u"Оренда": u"sellout.english",
+        u"Очікується публікація протоколу": u"active.qualification",
     }.get(string, string)
 
 

@@ -1203,18 +1203,13 @@ Login
 Завантажити протокол скасування в контракт
     [Arguments]    ${username}    ${tender_uaid}    ${filepath}    ${contract_num}
     prom.Пошук тендера по ідентифікатору     ${username}    ${tender_uaid}
-    Wait Until Page Contains Element    css=[data-qa="upload_reject_protocol"]    20
+    Wait Until Page Contains Element    css=[data-qa="upload_reject"]    20
     capture page screenshot
-    Click Element     css=[data-qa="upload_reject_protocol"]
+    Click Element     css=[data-qa="upload_reject"]
     Sleep  2
     Wait Until Page Contains Element     css=[data-qa="upload_file"]     20
     Choose File      css=[data-qa="upload_file"]     ${filepath}
     Sleep  4
-    Wait Until Page Contains Element     xpath=//div[text()='-- Вибрати --']     20
-    Click Element     xpath=//div[text()='-- Вибрати --']
-    Sleep  2
-    Click Element     xpath//div[text()='Рішення про відмову затвердження протоколу']
-    Sleep  2
     Click Element    css=[data-qa="ok"]
     Sleep  2
 

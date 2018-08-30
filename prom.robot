@@ -1186,6 +1186,9 @@ Login
 
 Підтвердити підписання контракту
     [Arguments]    ${username}    ${tender_uaid}    ${contract_num}
+    ${fieldvalue}=  '30.08.2018'
+    prom.Встановити дату підписання угоди    ${username}    ${tender_uaid}    ${contract_num}   ${fieldvalue}
+    Sleep 10
     prom.Пошук тендера по ідентифікатору  ${username}  ${tender_uaid}
     Wait Until Page Contains Element    css=[data-qa="auction_finished"]    20
     Click Element     css=[data-qa="auction_finished"]

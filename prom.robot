@@ -1217,21 +1217,6 @@ Login
 Завантажити протокол дискваліфікації в авард
     [Arguments]    ${username}    ${tender_uaid}    ${filepath}    ${award_index}
     prom.Пошук тендера по ідентифікатору     ${username}    ${tender_uaid}
-    Sleep  2
-    Wait Until Page Contains Element    css=[data-qa="disqualification_button"]    20
-    capture page screenshot
-    Click Element     css=[data-qa="disqualification_button"]
-    Sleep  2
-    Wait Until Page Contains Element     css=[class*='dialog__open'] [data-qa="upload_file"]     20
-    Choose File       css=[class*='dialog__open'] [data-qa="upload_file"]     ${filepath}
-    Sleep  2
-    Wait Until Page Contains Element     css=[class*='dialog__open'] [data-qa='file_type']     20
-    Click Element     css=[class*='dialog__open'] [data-qa='file_type']
-    Sleep  2
-    Click Element     xpath=//div[contains(@class, 'dialog__open')]//div[text()='Рішення про відмову затвердження протоколу']
-    Sleep  2
-    Click Element     css=[class*='dialog__open'] [data-qa="ok"]
-    Sleep  2
 
 Дискваліфікувати постачальника
     [Arguments]    ${username}    ${tender_uaid}    ${award_num}    ${description}

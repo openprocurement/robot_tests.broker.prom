@@ -1225,6 +1225,9 @@ Login
     Wait Until Page Contains Element     css=[class*='dialog__open'] [data-qa="upload_file"]     20
     Choose File       css=[class*='dialog__open'] [data-qa="upload_file"]     ${filepath}
     Sleep  2
+    Wait Until Page Contains Element     css=[class*='dialog__open'] [data-qa='file_type']     20
+    Click Element     css=[class*='dialog__open'] [data-qa='file_type']
+    Sleep  2
     Click Element     xpath=//div[contains(@class, 'dialog__open')]//div[text()='Рішення про відмову затвердження протоколу']
     Sleep  2
     Click Element     css=[class*='dialog__open'] [data-qa="ok"]

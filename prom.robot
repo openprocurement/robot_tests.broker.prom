@@ -1133,10 +1133,10 @@ Login
     Wait Until Page Contains Element    css=[data-qa="publish_button"]    20
     Click Element    css=[data-qa="publish_button"]
     Sleep  2
-    Wait Until Page Contains Element     css=[data-qa="upload_file"]    20
-    Choose File     css=[data-qa="upload_file"]     ${filepath}
+    Wait Until Page Contains Element     css=[class*='dialog__open'] [data-qa="upload_file"]    20
+    Choose File     css=[class*='dialog__open'] [data-qa="upload_file"]     ${filepath}
     Sleep  4
-    Click Element    css=[data-qa="ok"]
+    Click Element    css=[class*='dialog__open'] [data-qa="ok"]
     Sleep  3
 
 Завантажити протокол аукціону в авард
@@ -1144,10 +1144,10 @@ Login
     prom.Пошук тендера по ідентифікатору  ${username}  ${tender_uaid}
     Wait Until Page Contains Element    css=[data-qa="upload_protocol"]    20
     Click Element     css=[data-qa="upload_protocol"]
-    Wait Until Page Contains Element     css=[data-qa="upload_file"]     20
-    Choose File      css=[data-qa="upload_file"]     ${filepath}
+    Wait Until Page Contains Element     css=[class*='dialog__open'] [data-qa="upload_file"]     20
+    Choose File      css=[class*='dialog__open'] [data-qa="upload_file"]     ${filepath}
     Sleep  4
-    Click Element    css=[data-qa="ok"]
+    Click Element    css=[class*='dialog__open'] [data-qa="ok"]
     Sleep  2
 
 Підтвердити постачальника
@@ -1156,7 +1156,7 @@ Login
     Wait Until Page Contains Element    css=[data-qa="protocol_approved"]    20
     Click Element     css=[data-qa="protocol_approved"]
     Sleep   2
-    Click Element    css=[data-qa="ok"]
+    Click Element    css=[class*='dialog__open'] [data-qa="ok"]
     Sleep   2
 
 Активувати кваліфікацію учасника
@@ -1182,7 +1182,7 @@ Login
     Sleep  2
     Press Key          css=[data-qa='contract_sign_date']         \\13
     sleep  2
-    Click Element      css=[data-qa="ok"]
+    Click Element      css=[class*='dialog__open'] [data-qa="ok"]
 
 Підтвердити підписання контракту
     [Arguments]    ${username}    ${tender_uaid}    ${contract_num}
@@ -1190,7 +1190,7 @@ Login
     Wait Until Page Contains Element    css=[data-qa="auction_finished"]    20
     Click Element     css=[data-qa="auction_finished"]
     Sleep   2
-    Click Element    css=[data-qa="ok"]
+    Click Element    css=[class*='dialog__open'] [data-qa="ok"]
     Sleep   2
 
 Отримати кількість авардів в тендері
@@ -1203,30 +1203,72 @@ Login
 Завантажити протокол скасування в контракт
     [Arguments]    ${username}    ${tender_uaid}    ${filepath}    ${contract_num}
     prom.Пошук тендера по ідентифікатору     ${username}    ${tender_uaid}
+    sleep  2
     Wait Until Page Contains Element    css=[data-qa="upload_reject"]    20
     capture page screenshot
     Click Element     css=[data-qa="upload_reject"]
     Sleep  2
-    Wait Until Page Contains Element     css=[data-qa="upload_file"]     20
-    Choose File      css=[data-qa="upload_file"]     ${filepath}
+    Wait Until Page Contains Element     css=[class*='dialog__open'] [data-qa="upload_file"]     20
+    Choose File      css=[class*='dialog__open'] [data-qa="upload_file"]     ${filepath}
     Sleep  4
-    Click Element    css=[data-qa="ok"]
+    Click Element    css=[class*='dialog__open'] [data-qa="ok"]
     Sleep  2
 
 Завантажити протокол дискваліфікації в авард
     [Arguments]    ${username}    ${tender_uaid}    ${filepath}    ${award_index}
     prom.Пошук тендера по ідентифікатору     ${username}    ${tender_uaid}
+    Sleep  2
     Wait Until Page Contains Element    css=[data-qa="disqualification_button"]    20
     capture page screenshot
     Click Element     css=[data-qa="disqualification_button"]
     Sleep  2
-    Wait Until Page Contains Element     css=[data-qa="upload_file"]     20
-    Choose File      css=[data-qa="upload_file"]     ${filepath}
+    Wait Until Page Contains Element     css=[class*='dialog__open'] [data-qa="upload_file"]     20
+    Choose File       css=[class*='dialog__open'] [data-qa="upload_file"]     ${filepath}
+    Sleep  2
+    Click Element     xpath=//div[contains(@class, 'dialog__open')]//div[text()='Рішення про відмову затвердження протоколу']
+    Sleep  2
+    Click Element     css=[class*='dialog__open'] [data-qa="ok"]
+    Sleep  2
+
+Дискваліфікувати постачальника
+    [Arguments]    ${username}    ${tender_uaid}    ${award_num}    ${description}
+    prom.Пошук тендера по ідентифікатору     ${username}    ${tender_uaid}
+    Sleep  2
+    Wait Until Page Contains Element    css=[data-qa="disqualification_button"]    20
+    Click Element     css=[data-qa="disqualification_button"]
+    Sleep  2
+    Wait Until Page Contains Element     css=[class*='dialog__open'] [data-qa="upload_file"]     20
+    ${filepath}=        create_random_file
+    Choose File      css=[class*='dialog__open'] [data-qa="upload_file"]     ${filepath}
     Sleep  4
-    Wait Until Page Contains Element     xpath=//div[text()='-- Вибрати --']     20
-    Click Element     xpath=//div[text()='-- Вибрати --']
+    Wait Until Page Contains Element     css=[class*='dialog__open'] [data-qa='file_type']     20
+    Click Element     css=[class*='dialog__open'] [data-qa='file_type']
     Sleep  2
-    Click Element     xpath//div[text()='Рішення про відмову затвердження протоколу']
+    Click Element     xpath=//div[contains(@class, 'dialog__open')]//div[text()='Рішення про відмову затвердження протоколу']
     Sleep  2
-    Click Element    css=[data-qa="ok"]
+    Click Element    css=[class*='dialog__open'] [data-qa="ok"]
+    Sleep  2
+
+Скасування рішення кваліфікаційної комісії
+    [Arguments]    ${username}    ${tender_uaid}    ${award_num}
+    prom.Пошук тендера по ідентифікатору     ${username}    ${tender_uaid}
+    Sleep   2
+    Wait Until Page Contains Element     css=.qa_your_withdraw_offer    20
+    Click Element    css=.qa_your_withdraw_offer
+    Sleep   3
+    Wait Until Page Contains Element     id=submit_button     20
+    Click Element    id=submit_button
+    Sleep   2
+
+Скасувати контракт
+    [Arguments]    ${username}    ${tender_uaid}    ${contract_num}
+    prom.Пошук тендера по ідентифікатору     ${username}    ${tender_uaid}
+    Sleep   2
+    Wait Until Page Contains Element    css=[data-qa='upload_reject']    20
+    Click Element   css=[data-qa='upload_reject']
+    Sleep   2
+    ${filepath}=        create_random_file
+    Choose File      css=[class*='dialog__open'] [data-qa="upload_file"]     ${filepath}
+    Sleep   3
+    Click Element    css=[class*='dialog__open'] [data-qa="ok"]
     Sleep  2

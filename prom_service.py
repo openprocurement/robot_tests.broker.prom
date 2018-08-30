@@ -105,11 +105,17 @@ def convert_prom_string_to_common_string(string):
         u"Приймання заявок на участь": u"active.qualification",
         u"Опубліковано. Очікування інформаційного повідомлення.": u"pending",
         u"Опубліковано": u"pending",
-        u"очікується протокол": u"pending.admission",
         u"Очікується протокол": u"pending",
         u"Очікується рішення про викуп": u"pending.admission",
         u"Переможець": u"active",
         u"Очікується публікація протоколу": u"active.qualification",
+        u"Публікація інформаційного повідомлення": u"composing",
+        u"Перевірка доступності об’єкту": u"verification",
+        u"Об’єкт виставлено на продаж": u"active.salable",
+        u"Об’єкт не продано": u"dissolved",
+        u"Об’єкт продано": u"sold",
+        u"Об’єкт виключено": u"pending.deleted",
+        u"Аукціон завершено. Об’єкт не продано": u"pending.dissolutio",
     }.get(string, string)
 
 
@@ -174,6 +180,7 @@ def convert_prom_code_to_common_string(string):
         u"Аукціон завершено. Кваліфікація": u"active.contracting",
         u"Аукціон скасований": u"active",
         u"Аукціон завершено": u"pending.sold",
+        u"Аукціон відмінено": u"cancelled",
         u"Аукціон завершено. Об'єкт не проданий": u"pending.dissolution",
         u"Аукціон із зниженням стартової ціни": u"scheduled",
         u"Аукціон за методом покрокового зниження стартової ціни та подальшого подання цінових пропозицій": u"scheduled",
@@ -189,6 +196,8 @@ def convert_prom_code_to_common_string(string):
         u"Продаж": u"sellout.english",
         u"Оренда": u"sellout.english",
         u"Очікується публікація протоколу": u"active.qualification",
+        u"Об’єкт не продано": u"dissolved",
+        u"Об’єкт продано": u"sold",
     }.get(string, string)
 
 

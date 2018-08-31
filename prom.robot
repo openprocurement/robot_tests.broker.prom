@@ -404,6 +404,7 @@ Login
     Click Element                        css=[data-qa="decision_title"]
     Sleep  2
     Click Element                        css=[data-qa="decision_form"] [data-qa="ok"]
+    Sleep  40
     prom.Пошук об’єкта МП по ідентифікатору   ${username}   ${tender_uaid}
     Wait Until Page Contains Element     css=[data-qa='link_lot']     20
     Click Element                        css=[data-qa='link_lot']

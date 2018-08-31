@@ -1167,7 +1167,7 @@ Login
 Завантажити угоду до тендера
     [Arguments]    ${username}    ${tender_uaid}    ${contract_num}    ${filepath}
     prom.Пошук тендера по ідентифікатору  ${username}  ${tender_uaid}
-     Wait Until Page Contains Element    css=[data-qa="upload_contract"]    20
+    Wait Until Page Contains Element    css=[data-qa="upload_contract"]    20
 
 Встановити дату підписання угоди
     [Arguments]    ${username}    ${tender_uaid}    ${contract_num}    ${fieldvalue}
@@ -1176,21 +1176,23 @@ Login
     Click Element     css=[data-qa="upload_contract"]
     Sleep   2
     ${filepath}=        create_random_file
-    Choose File      css=[data-qa="upload_file"]     ${filepath}
+    Choose File      css=[class*='dialog__open'] [data-qa="upload_file"]     ${filepath}
     Sleep   3
     ${conver_date}=             convert_iso_date_to_prom        ${fieldvalue}
-    input Text         css=[data-qa='contract_sign_date']    ${conver_date}
+    input Text         css=[class*='dialog__open'] [data-qa='contract_sign_date']    ${conver_date}
     Sleep  2
     Press Key          css=[data-qa='contract_sign_date']         \\13
     sleep  2
+    capture page screenshot
     Click Element      css=[class*='dialog__open'] [data-qa="ok"]
+    capture page screenshot
 
 Підтвердити підписання контракту
     [Arguments]    ${username}    ${tender_uaid}    ${contract_num}
     prom.Пошук тендера по ідентифікатору  ${username}  ${tender_uaid}
     Sleep   2
-    Wait Until Page Contains Element    css=[data-qa="upload_protocol"]    20
-    Click Element     css=[data-qa="upload_protocol"]
+    Wait Until Page Contains Element    css=[data-qa="auction_finished"]    20
+    Click Element     css=[data-qa="auction_finished"]
     Sleep   3
     Click Element    css=[class*='dialog__open'] [data-qa="ok"]
     Sleep   2

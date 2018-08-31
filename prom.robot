@@ -1188,9 +1188,10 @@ Login
 Підтвердити підписання контракту
     [Arguments]    ${username}    ${tender_uaid}    ${contract_num}
     prom.Пошук тендера по ідентифікатору  ${username}  ${tender_uaid}
-    Wait Until Page Contains Element    css=[data-qa="auction_finished"]    20
-    Click Element     css=[data-qa="auction_finished"]
     Sleep   2
+    Wait Until Page Contains Element    css=[data-qa="upload_protocol"]    20
+    Click Element     css=[data-qa="upload_protocol"]
+    Sleep   3
     Click Element    css=[class*='dialog__open'] [data-qa="ok"]
     Sleep   2
 

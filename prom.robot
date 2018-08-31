@@ -1194,6 +1194,12 @@ Login
     Sleep   3
     Click Element    css=[class*='dialog__open'] [data-qa="ok"]
     Sleep   2
+    prom.Пошук тендера по ідентифікатору  ${username}  ${tender_uaid}
+    Wait Until Page Contains Element    css=[data-qa="protocol_approved"]    20
+    Click Element     css=[data-qa="protocol_approved"]
+    Sleep   3
+    Click Element    css=[class*='dialog__open'] [data-qa="ok"]
+    Sleep   2
 
 Отримати кількість авардів в тендері
     [Arguments]    ${username}    ${tender_uaid}

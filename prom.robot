@@ -866,6 +866,7 @@ Login
     ...  ELSE IF  '${field_name}' == 'cancellations[0].reason'      Get Text     css=.qa_auction_cancel_reason
     ...  ELSE IF  '${field_name}' == 'bids'                         Get Text     css=.qa_your_suggestion_block
     ...  ELSE IF  '${field_name}' == 'awards[0].status'             Get Text     css=[data-qa='award_status']
+    ...  ELSE IF  '${field_name}' == 'awards[1].status'             Get Text     xpath=(//div[@data-qa='award_status'])[2]
     ${return_value}=  Run Keyword If  '${field_name}' == 'value.amount'   Convert To Number      ${return_value.replace(' ', '').replace(',', '.')}
     ...   ELSE IF   'minNumberOfQualifiedBids' in '${field_name}'   Convert To Number      ${return_value}
     ...   ELSE IF   'minimalStep.amount' in '${field_name}'   Convert To Number      ${return_value}
@@ -1158,7 +1159,7 @@ Login
     Click Element     css=[data-qa="protocol_approved"]
     Sleep   2
     Click Element    css=[class*='dialog__open'] [data-qa="ok"]
-    Sleep   2
+    Sleep   60
 
 Активувати кваліфікацію учасника
     [Arguments]    ${username}    ${tender_uaid}
@@ -1208,15 +1209,6 @@ Login
     [Arguments]    ${username}    ${tender_uaid}    ${filepath}    ${contract_num}
     prom.Пошук тендера по ідентифікатору     ${username}    ${tender_uaid}
     sleep  2
-    Wait Until Page Contains Element    css=[data-qa="upload_reject"]    20
-    capture page screenshot
-    Click Element     css=[data-qa="upload_reject"]
-    Sleep  2
-    Wait Until Page Contains Element     css=[class*='dialog__open'] [data-qa="upload_file"]     20
-    Choose File      css=[class*='dialog__open'] [data-qa="upload_file"]     ${filepath}
-    Sleep  4
-    Click Element    css=[class*='dialog__open'] [data-qa="ok"]
-    Sleep  2
 
 Завантажити протокол дискваліфікації в авард
     [Arguments]    ${username}    ${tender_uaid}    ${filepath}    ${award_index}
@@ -1226,20 +1218,15 @@ Login
     [Arguments]    ${username}    ${tender_uaid}    ${award_num}    ${description}
     prom.Пошук тендера по ідентифікатору     ${username}    ${tender_uaid}
     Sleep  2
-    Wait Until Page Contains Element    css=[data-qa="disqualification_button"]    20
-    Click Element     css=[data-qa="disqualification_button"]
+    Wait Until Page Contains Element    css=[data-qa="upload_reject_protocol"]    20
+    Click Element     css=[data-qa="upload_reject_protocol"]
     Sleep  2
     Wait Until Page Contains Element     css=[class*='dialog__open'] [data-qa="upload_file"]     20
     ${filepath}=        create_random_file
     Choose File      css=[class*='dialog__open'] [data-qa="upload_file"]     ${filepath}
     Sleep  4
-    Wait Until Page Contains Element     css=[class*='dialog__open'] [data-qa='file_type']     20
-    Click Element     css=[class*='dialog__open'] [data-qa='file_type']
-    Sleep  2
-    Click Element     xpath=//div[contains(@class, 'dialog__open')]//div[text()='Рішення про відмову затвердження протоколу']
-    Sleep  2
     Click Element    css=[class*='dialog__open'] [data-qa="ok"]
-    Sleep  2
+    Sleep  200
 
 Скасування рішення кваліфікаційної комісії
     [Arguments]    ${username}    ${tender_uaid}    ${award_num}
@@ -1263,4 +1250,4 @@ Login
     Choose File      css=[class*='dialog__open'] [data-qa="upload_file"]     ${filepath}
     Sleep   3
     Click Element    css=[class*='dialog__open'] [data-qa="ok"]
-    Sleep  2
+    Sleep  300

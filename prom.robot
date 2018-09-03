@@ -1187,6 +1187,7 @@ Login
     capture page screenshot
     Click Element      css=[class*='dialog__open'] [data-qa="ok"]
     capture page screenshot
+    Sleep  300
 
 Підтвердити підписання контракту
     [Arguments]    ${username}    ${tender_uaid}    ${contract_num}
@@ -1195,8 +1196,10 @@ Login
     Wait Until Page Contains Element    css=[data-qa="auction_finished"]    20
     Click Element     css=[data-qa="auction_finished"]
     Sleep   3
+    capture page screenshot
     Click Element    css=[class*='dialog__open'] [data-qa="ok"]
-    Sleep   2
+    Sleep   5
+    capture page screenshot
 
 Отримати кількість авардів в тендері
     [Arguments]    ${username}    ${tender_uaid}

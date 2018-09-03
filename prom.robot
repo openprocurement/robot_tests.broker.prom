@@ -1175,19 +1175,20 @@ Login
     prom.Пошук тендера по ідентифікатору  ${username}  ${tender_uaid}
     Wait Until Page Contains Element    css=[data-qa="upload_contract"]    20
     Click Element     css=[data-qa="upload_contract"]
-    Sleep   2
+    Sleep   1
     ${filepath}=        create_random_file
     Choose File      css=[class*='dialog__open'] [data-qa="upload_file"]     ${filepath}
-    Sleep   3
+    Sleep   2
     ${conver_date}=             convert_iso_date_to_prom        ${fieldvalue}
     input Text         css=[class*='dialog__open'] [data-qa='contract_sign_date']    ${conver_date}
-    Sleep  2
-    Press Key          css=[data-qa='contract_sign_date']         \\13
-    sleep  2
+    Sleep  1
+    Press Key          css=[class*='dialog__open'] [data-qa='contract_sign_date']         \\13
+    sleep  1
     capture page screenshot
     Click Element      css=[class*='dialog__open'] [data-qa="ok"]
     capture page screenshot
-    Sleep  300
+    Sleep  20
+    capture page screenshot
 
 Підтвердити підписання контракту
     [Arguments]    ${username}    ${tender_uaid}    ${contract_num}

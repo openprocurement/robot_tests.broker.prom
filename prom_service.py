@@ -31,7 +31,7 @@ def iso_date(date):
 
 
 def convert_iso_date_to_prom(date):
-    a = dateutil.parser.parse(date) + timedelta(hours=-2)
+    a = dateutil.parser.parse(date)
     return a.strftime("%d.%m.%Y %H:%M")
 
 

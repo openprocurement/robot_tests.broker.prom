@@ -513,7 +513,9 @@ Login
     Input Text         css=[data-qa="search_form_input"]     ${tender_uaid}
     log to console    ${tender_uaid}
     Sleep  2
+    capture page screenshot
     Click Element     css=[data-qa="search_form_search_button"]
+    capture page screenshot
     Wait Until Keyword Succeeds     180      10          Run Keywords
     ...   Sleep  2
     ...   AND     Reload Page
@@ -1056,6 +1058,8 @@ Login
     Input Text              id=offer-amount        ${value}
     Sleep   3
     Click Element       id=reglament_agreement
+    Sleep   1
+    Click Element       id=sp_agreement
     Sleep   1
     Click Element       id=oferta_agreement
     Sleep   1

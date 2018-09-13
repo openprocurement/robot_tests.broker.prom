@@ -1063,6 +1063,8 @@ Login
     Sleep   1
     Click Element       id=oferta_agreement
     Sleep   1
+    Click Element       id=sp_agreement
+    Sleep   1
     capture page screenshot
     Click Element       id=submit_button
 
@@ -1075,7 +1077,11 @@ Login
     Choose File         xpath=//input[contains(@class, 'qa_state_offer_add_field')]   ${filePath}
     Sleep   10
     Click Element       id=reglament_agreement
+    Sleep   1
     Click Element       id=oferta_agreement
+    Sleep   1
+    Click Element       id=sp_agreement
+    Sleep   1
     Click Element       id=submit_button
 
 

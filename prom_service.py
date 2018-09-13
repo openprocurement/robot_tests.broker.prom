@@ -109,6 +109,7 @@ def convert_prom_string_to_common_string(string):
         u"Очікується рішення про викуп": u"pending.admission",
         u"Переможець": u"active",
         u"Очікується публікація протоколу": u"active.qualification",
+        u"Очікується опублікування протоколу": u"active.qualification",
         u"Публікація інформаційного повідомлення": u"composing",
         u"Перевірка доступності об’єкту": u"verification",
         u"Об’єкт виставлено на продаж": u"active.salable",

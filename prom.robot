@@ -1066,6 +1066,7 @@ Login
 
 Завантажити документ в ставку
     [Arguments]  ${username}  ${filePath}  ${tender_uaid}  ${doc_type}=documents
+    prom.Пошук тендера по ідентифікатору  ${username}  ${tender_uaid}
     Wait Until Page Contains Element      css=.qa_your_suggestion_block     10
     Sleep   5
     Click Element       css=.qa_your_modify_offer

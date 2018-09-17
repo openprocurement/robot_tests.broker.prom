@@ -1247,6 +1247,10 @@ Login
     Click Element    css=.qa_your_withdraw_offer
     Sleep   3
     capture page screenshot
+    Wait Until Page Contains Element     css=.qa_state_offer_add_field     20
+    ${filepath}=        create_random_file
+    Choose File      css=.qa_state_offer_add_field     ${filepath}
+    Sleep  4
     Wait Until Page Contains Element     id=submit_button     20
     Click Element    id=submit_button
     Sleep   2

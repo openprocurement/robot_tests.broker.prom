@@ -1246,9 +1246,11 @@ Login
     Wait Until Page Contains Element     css=.qa_your_withdraw_offer    20
     Click Element    css=.qa_your_withdraw_offer
     Sleep   3
+    capture page screenshot
     Wait Until Page Contains Element     id=submit_button     20
     Click Element    id=submit_button
     Sleep   2
+    capture page screenshot
 
 Скасувати контракт
     [Arguments]    ${username}    ${tender_uaid}    ${contract_num}

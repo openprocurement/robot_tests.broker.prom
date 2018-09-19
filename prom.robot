@@ -1187,6 +1187,7 @@ Login
     Choose File      css=[class*='dialog__open'] [data-qa="upload_file"]     ${filepath}
     Sleep   2
     ${conver_date}=             convert_iso_date_to_prom        ${fieldvalue}
+    Sleep  120
     input Text         css=[class*='dialog__open'] [data-qa='contract_sign_date']    ${conver_date}
     Sleep  1
     Press Key          css=[class*='dialog__open'] [data-qa='contract_sign_date']         \\13

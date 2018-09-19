@@ -31,7 +31,7 @@ def iso_date(date):
 
 
 def convert_iso_date_to_prom(date):
-    a = dateutil.parser.parse(date) + timedelta(hours=-2)
+    a = dateutil.parser.parse(date) + timedelta(minutes=-2)
     return a.strftime("%d.%m.%Y %H:%M")
 
 
@@ -71,7 +71,7 @@ def convert_date_to_prom_tender_enddate(date):
 def convert_prom_string_to_common_string(string):
     return {
         u"грн": u"UAH",
-        u"шт.": u"штука",
+        u"шт.": u"штуки",
         u"кв.м.": u"метри квадратні",
         u"м2": u"метри квадратні",
         u"м²": u"метри квадратні",

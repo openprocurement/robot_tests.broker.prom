@@ -116,7 +116,10 @@ def convert_prom_string_to_common_string(string):
         u"Об’єкт не продано": u"dissolved",
         u"Об’єкт продано": u"sold",
         u"Об’єкт виключено": u"pending.deleted",
-        u"Аукціон завершено. Об’єкт не продано": u"pending.dissolutio",
+        u"Аукціон завершено. Об’єкт не продано": u"pending.dissolution",
+        u"Приватизація об’єкта неуспішна": u"pending.unsuccessful",
+        u"Приватизация объекта неуспешна": u"pending.unsuccessful",
+
     }.get(string, string)
 
 
@@ -199,6 +202,8 @@ def convert_prom_code_to_common_string(string):
         u"Очікується публікація протоколу": u"active.qualification",
         u"Об’єкт не продано": u"dissolved",
         u"Об’єкт продано": u"sold",
+        u"Приватизація об’єкта неуспішна": u"pending.unsuccessful",
+        u"Приватизация объекта неуспешна": u"pending.unsuccessful",
     }.get(string, string)
 
 

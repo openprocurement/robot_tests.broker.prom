@@ -1273,3 +1273,122 @@ Login
     Sleep   3
     Click Element    css=[class*='dialog__open'] [data-qa="ok"]
     Sleep  300
+
+Активувати контракт
+    [Arguments]   ${username}   ${contract_uaid}
+    No Operation
+
+Підтвердити відсутність оплати
+    [Arguments]    ${username}    ${contract_uaid}    ${milestone_index}
+    prom.Пошук тендера по ідентифікатору   ${username}   ${contract_uaid}
+    Wait Until Page Contains Element    css=[href*="/state_privatization_contracting/view/"]    20
+    Sleep  1
+    Click Element   css=[href*="/state_privatization_contracting/view/"]
+    Sleep  2
+    Wait Until Page Contains Element    css=[data-qa="qa_financing_decline"]    20
+    Sleep  1
+    Click Element     css=[data-qa="qa_financing_decline"]
+    Sleep  2
+    ${filepath}=        create_random_file
+    Choose File       css=[data-qa="upload_file"]     ${filepath}
+    Sleep  3
+    Click Element     css=[data-qa="qa_file_save_financing_decline"]
+    Sleep  2
+
+Отримати інформацію з активу в договорі
+    [Arguments]    ${username}    ${contract_uaid}    ${item_id}    ${field_name}
+    Sleep  240
+    prom.Пошук тендера по ідентифікатору   ${username}   ${contract_uaid}
+    Wait Until Keyword Succeeds     300      10          Run Keywords
+    ...   Sleep  2
+    ...   AND     Reload Page
+    ...   AND     Sleep  2
+    ...   AND     Wait Until Element Is Visible       css=[href*="/state_privatization_contracting/view/"]
+    Sleep  1
+    Click Element   css=[href*="/state_privatization_contracting/view/"]
+    Sleep  2
+    Wait Until Page Contains Element   css=[data-qa='details']    20
+    Sleep  1
+    Click Element   css=[data-qa='details']
+    ${return_value}=    Run Keyword If    '${field_name}' == 'description'
+    ...  Get Text    css=[data-qa="item_descr"]
+    [Return]  ${return_value}
+
+
+Отримати інформацію із договору
+    [Arguments]    ${username}    ${contract_uaid}    ${field_name}
+    prom.Пошук тендера по ідентифікатору   ${username}   ${contract_uaid}
+    Wait Until Page Contains Element    css=[href*="/state_privatization_contracting/view/"]    20
+    Sleep  1
+    Click Element   css=[href*="/state_privatization_contracting/view/"]
+    Sleep  2
+    Wait Until Page Contains Element   css=[data-qa='details']    20
+    Sleep  1
+    Click Element   css=[data-qa='details']
+    ${return_value}=    Run Keyword If    '${field_name}' == 'description'
+    ...  Get Text    css=[data-qa="item_descr"]
+    ...  ELSE IF  '${field_name}' == 'status'   Get Text   css=[data-qa="contracting_status"]
+    ${return_value}=    Run Keyword If  '${field_name}' == 'status'   convert_prom_code_to_common_string   ${return_value}
+    ...   ELSE      convert_prom_string_to_common_string     ${return_value}
+    [Return]  ${return_value}
+
+Вказати дату прийняття наказу
+    [Arguments]    ${username}    ${contract_uaid}    ${dateMet}
+    prom.Пошук тендера по ідентифікатору   ${username}   ${contract_uaid}
+    Wait Until Page Contains Element    css=[href*="/state_privatization_contracting/view/"]    20
+    Sleep  1
+    Click Element   css=[href*="/state_privatization_contracting/view/"]
+    Sleep  3
+    Wait Until Page Contains Element    css=[data-qa="qa_financing_accept"]    20
+    Sleep  1
+    Click Element   css=[data-qa="qa_financing_accept"]
+    Sleep  2
+    Wait Until Page Contains Element    css=    20
+    Sleep  1
+    ${date}=     convert_dgf_date_prom      ${dateMet}
+    Input Text         css=[data-qa="qa_payment_date"]           ${dateMet}
+    Sleep  2
+    Press Key          css=[data-qa="qa_payment_date"]         \\13
+    Sleep  2
+    Click Element   css=[data-qa="qa_file_save_financing_accept"]
+
+
+Підтвердити відсутність наказу про приватизацію
+    [Arguments]    ${username}    ${contract_uaid}    ${filepath}
+    prom.Пошук тендера по ідентифікатору   ${username}   ${contract_uaid}
+    Wait Until Page Contains Element    css=[href*="/state_privatization_contracting/view/"]    20
+    Sleep  1
+    Click Element     css=[href*="/state_privatization_contracting/view/"]
+    Wait Until Page Contains Element    css=[data-qa="qa_financing_decline"]    20
+    Sleep  1
+    Click Element     css=[data-qa="qa_financing_decline"]
+    Sleep  2
+    Choose File       css=[data-qa="upload_file"]     ${filepath}
+    Sleep  3
+    Click Element     css=[data-qa="qa_file_save_financing_decline"]
+
+Вказати дату виконання умов контракту
+    [Arguments]    ${username}    ${contract_uaid}    ${dateMet}
+    Wait Until Page Contains Element    css=[data-qa="qa_approval_date"]    20
+    Input Text         css=[data-qa="qa_approval_date"]          ${dateMet}
+    Sleep  2
+    Press Key          css=[data-qa="qa_approval_date"]         \\13
+    Sleep  2
+
+Завантажити наказ про завершення приватизації
+    [Arguments]    ${username}    ${contract_uaid}    ${filepath}
+    prom.Пошук тендера по ідентифікатору   ${username}   ${contract_uaid}
+    Wait Until Page Contains Element    css=[href*="/state_privatization_contracting/view/"]    20
+    Sleep  1
+    Click Element     css=[href*="/state_privatization_contracting/view/"]
+    Sleep  1
+    Wait Until Page Contains Element    css=[data-qa="qa_approval_accept"]    20
+    Sleep  1
+    Click Element      css=[data-qa="qa_approval_accept"]
+    Sleep  2
+    Choose File        css=[data-qa="upload_file"]     ${filepath}
+    Sleep  2
+    prom.Вказати дату виконання умов контракту
+    Click Element      css=[data-qa="qa_file_save_approval_accept"]
+
+

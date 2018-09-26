@@ -1343,7 +1343,7 @@ Login
     Sleep  1
     Click Element   css=[data-qa="qa_financing_accept"]
     Sleep  2
-    Wait Until Page Contains Element    css=    20
+    Wait Until Page Contains Element    css=[data-qa="qa_payment_date"]     20
     Sleep  1
     ${date}=     convert_dgf_date_prom      ${dateMet}
     Input Text         css=[data-qa="qa_payment_date"]           ${dateMet}

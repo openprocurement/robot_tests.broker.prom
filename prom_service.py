@@ -31,8 +31,13 @@ def iso_date(date):
 
 
 def convert_iso_date_to_prom(date):
-    a = dateutil.parser.parse(date) + timedelta(minutes=-2)
-    return a.strftime("%d.%m.%Y %H:%M")
+    convert_date = dateutil.parser.parse(date) + timedelta(minutes=-2)
+    return convert_date.strftime("%d.%m.%Y %H:%M")
+
+
+def convert_iso_date_to_prom_without_time(date):
+    convert_date = dateutil.parser.parse(date) + timedelta(days=2)
+    return convert_date.strftime("%d.%m.%Y")
 
 
 def convert_date_prom(date):
@@ -119,6 +124,7 @@ def convert_prom_string_to_common_string(string):
         u"Аукціон завершено. Об’єкт не продано": u"pending.dissolution",
         u"Приватизація об’єкта неуспішна": u"unsuccessful",
         u"Приватизация объекта неуспешна": u"unsuccessful",
+        u"Приватизация объекта завершена": u"terminated",
 
     }.get(string, string)
 
@@ -204,6 +210,7 @@ def convert_prom_code_to_common_string(string):
         u"Об’єкт продано": u"sold",
         u"Приватизація об’єкта неуспішна": u"unsuccessful",
         u"Приватизация объекта неуспешна": u"unsuccessful",
+        u"Приватизация объекта завершена": u"terminated",
     }.get(string, string)
 
 

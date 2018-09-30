@@ -1379,9 +1379,11 @@ Login
     Wait Until Page Contains Element    css=[data-qa="qa_reporting_accept"]    20
     Sleep  1
     Click Element     css=[data-qa="qa_reporting_accept"]
-    Sleep  2
+    Sleep
     ${date}=     convert_iso_date_to_prom_without_time      ${dateMet}
     Input Text         css=[data-qa='accepting_date']           ${date}
+    Sleep  2
+    Press Key          css=[data-qa="accepting_date"]         \\13
     Sleep  2
     Click Element     css=[data-qa="qa_file_save_reporting_accept"]
 

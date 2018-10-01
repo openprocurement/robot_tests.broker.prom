@@ -1346,7 +1346,7 @@ Login
     Choose File        css=[data-qa="upload_file"]     ${filepath}
     Sleep  2
     Wait Until Page Contains Element    css=[data-qa="qa_approval_date"]    20
-    ${date}=     convert_iso_date_to_prom_without_time      ${dateMet}
+    ${date}=     convert_iso_date_to_prom_without_time_two      ${dateMet}
     Sleep  1
     Input Text         css=[data-qa="qa_approval_date"]          ${date}
     Sleep  2
@@ -1380,7 +1380,7 @@ Login
     Sleep  1
     Click Element     css=[data-qa="qa_reporting_accept"]
     Sleep
-    ${date}=     convert_iso_date_to_prom_without_time      ${dateMet}
+    ${date}=     convert_iso_date_to_prom_without_time_three      ${dateMet}
     Input Text         css=[data-qa='accepting_date']           ${date}
     Sleep  2
     Press Key          css=[data-qa="accepting_date"]         \\13
@@ -1406,7 +1406,7 @@ Login
     Sleep  2
     Wait Until Page Contains Element    css=[data-qa="qa_payment_date"]     20
     Sleep  1
-    ${date}=     convert_iso_date_to_prom_without_time      ${dateMet}
+    ${date}=     convert_iso_date_to_prom_without_time_one      ${dateMet}
     Input Text         css=[data-qa="qa_payment_date"]           ${date}
     Sleep  2
     Press Key          css=[data-qa="qa_payment_date"]         \\13

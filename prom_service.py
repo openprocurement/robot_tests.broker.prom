@@ -35,8 +35,18 @@ def convert_iso_date_to_prom(date):
     return convert_date.strftime("%d.%m.%Y %H:%M")
 
 
-def convert_iso_date_to_prom_without_time(date):
-    convert_date = dateutil.parser.parse(date) + timedelta(days=2)
+def convert_iso_date_to_prom_without_time_one(date):
+    convert_date = dateutil.parser.parse(date) + timedelta(days=3)
+    return convert_date.strftime("%d.%m.%Y")
+
+
+def convert_iso_date_to_prom_without_time_two(date):
+    convert_date = dateutil.parser.parse(date) + timedelta(days=4)
+    return convert_date.strftime("%d.%m.%Y")
+
+
+def convert_iso_date_to_prom_without_time_three(date):
+    convert_date = dateutil.parser.parse(date) + timedelta(days=5)
     return convert_date.strftime("%d.%m.%Y")
 
 

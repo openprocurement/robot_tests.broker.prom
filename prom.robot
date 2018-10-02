@@ -1361,13 +1361,13 @@ Login
     Wait Until Page Contains Element    css=[href*="/state_privatization_contracting/view/"]    20
     Sleep  1
     Click Element     css=[href*="/state_privatization_contracting/view/"]
-    Wait Until Page Contains Element    css=[data-qa="qa_financing_decline"]    20
+    Wait Until Page Contains Element    css=[data-qa="qa_approval_decline"]    20
     Sleep  1
-    Click Element     css=[data-qa="qa_financing_decline"]
+    Click Element     css=[data-qa="qa_approval_decline"]
     Sleep  2
     Choose File       css=[data-qa="upload_file"]     ${filepath}
     Sleep  3
-    Click Element     css=[data-qa="qa_file_save_financing_decline"]
+    Click Element     css=[data-qa="qa_file_save_approval_decline"]
 
 Вказати дату виконання умов контракту
     [Arguments]    ${username}    ${contract_uaid}    ${dateMet}

@@ -83,6 +83,169 @@ def convert_date_to_prom_tender_enddate(date):
     return localized_date.strftime("%Y-%m-%d %H:%M:%S.%f%z")
 
 
+def convert_prom_string_to_common_string(string):
+    return {
+        u"грн": u"UAH",
+        u"шт.": u"штуки",
+        u"кв.м.": u"метри квадратні",
+        u"м2": u"метри квадратні",
+        u"м²": u"метри квадратні",
+        u"метры квадратные": u"метри квадратні",
+        u"метр квадратний": u"метри квадратні",
+        u"Рівненська область": u"Ровненская",
+        u"с НДС": True,
+        u"з ПДВ": True,
+        u"Класифікатор:": u"CAV-PS",
+        u"Оголошення аукціону з Найму": u"Оренда",
+        u"Період уточнень": u"active.enquiries",
+        u"Прийом пропозицій": u"active.tendering",
+        u"Аукціон": u"active.auction",
+        u"Кваліфікація": u"active.qualification",
+        u"Скасована": u"cancelled",
+        u"Аукціон не відбувся": u"unsuccessful",
+        u"Аукцион не состоялся": u"unsuccessful",
+        u"Завершена": u"complete",
+        u"Подписанный": u"active",
+        u"Впервые": u"Лот виставляється вперше",
+        u"Вперше": u"Лот виставляється вперше",
+        u"Вдруге": u"Лот виставляється повторно",
+        u"Повторно": u"Лот виставляється повторно",
+        u"Завершено": u"complete",
+        u"Uri:": u"UA-EDR",
+        u"Продаж:": u"sellout.english",
+        u"Оренда:": u"sellout.english",
+        u"Аукціон скасований": u"cancelled",
+        u"Прийняття заяв на участь": u"active.qualification",
+        u"Аукціон відбувся (або 1 учасник)": u"complete",
+        u"Приймання заявок на участь": u"active.qualification",
+        u"Опубліковано. Очікування інформаційного повідомлення.": u"pending",
+        u"Опубліковано": u"pending",
+        u"Очікується протокол": u"pending",
+        u"Очікується рішення про викуп": u"pending.admission",
+        u"Переможець": u"active",
+        u"Очікується публікація протоколу": u"active.qualification",
+        u"Очікується опублікування протоколу": u"active.qualification",
+        u"Публікація інформаційного повідомлення": u"composing",
+        u"Перевірка доступності об’єкту": u"verification",
+        u"Об’єкт виставлено на продаж": u"active.salable",
+        u"Об’єкт не продано": u"dissolved",
+        u"Об’єкт продано": u"sold",
+        u"Об’єкт виключено": u"pending.deleted",
+        u"Аукціон завершено. Об’єкт не продано": u"pending.dissolution",
+        u"Приватизація об’єкта неуспішна": u"unsuccessful",
+        u"Приватизация объекта неуспешна": u"unsuccessful",
+        u"Приватизация объекта завершена": u"terminated",
+
+    }.get(string, string)
+
+
+def convert_cancellations_status(string):
+    return {
+        u"Скасована": u"active",
+        u"Аукціон": u"active.tendering",
+    }.get(string, string)
+
+
+def convert_registration_details(string):
+    return {
+        u"complete": u"Об'єкт зареєстровано",
+        u"registering": u"Об'єкт реєструється",
+        u"unknown": u"За замовчуванням",
+    }.get(string, string)
+
+
+def revert_registration_details(string):
+    return {
+        u"Об'єкт зареєстровано": u"complete",
+        u"Об'єкт реєструється": u"registering",
+        u"За замовчуванням": u"unknown",
+    }.get(string, string)
+
+
+def convert_procurement_method_type(string):
+    return {
+        u"МАЙНО": u"dgfOtherAssets",
+        u"ФІНАНСОВІ АКТИВИ": u"dgfFinancialAssets",
+        u"ГОЛЛАНДСКИЙ АУКЦИОН": u"dgfInsider",
+        u"ГОЛЛАНДСЬКИЙ АУКЦІОН": u"dgfInsider",
+        u"Державне майно": u"dgfOtherAssets",
+        u"Государственное имущество": u"dgfOtherAssets",
+    }.get(string, string)
+
+
+def convert_prom_code_to_common_string(string):
+    return {
+        u"кв.м.": u"MTK",
+        u"м2": u"MTK",
+        u"м²": u"MTK",
+        u"послуга": u"E48",
+        u"послуги": u"E48",
+        u"шт.": u"H87",
+        u"Класифікатор:": u"CPV",
+        u"метри квадратні": u"метр квадратний",
+        u"Очікує протокол": u"pending.verification",
+        u"очікується протокол": u"pending.verification",
+        u"Очікує рішення": u"pending.waiting",
+        u"очікується кінець кваліфікації": u"pending.waiting",
+        u"Пропозицію відхилено": u"unsuccessful",
+        u"Очікується підписання договору": u"pending.payment",
+        u"Оплачено, очікується підписання договору": u"active",
+        u"Очікує розгляду": u"cancelled",
+        u"Не розглядався": u"cancelled",
+        u"Завершено": u"complete",
+        u"Виключений з переліку": u"deleted",
+        u"Опубліковано. Очікування інформаційного повідомлення.": u"pending",
+        u"Опубліковано": u"pending",
+        u"Аукціон": u"active.auction",
+        u"Аукціон завершено. Кваліфікація": u"active.contracting",
+        u"Аукціон скасований": u"active",
+        u"Аукціон завершено": u"pending.sold",
+        u"Аукціон відмінено": u"cancelled",
+        u"Аукціон завершено. Об'єкт не проданий": u"pending.dissolution",
+        u"Аукціон із зниженням стартової ціни": u"scheduled",
+        u"Аукціон за методом покрокового зниження стартової ціни та подальшого подання цінових пропозицій": u"scheduled",
+        u"Англійський аукціон": u"scheduled",
+        u"Голландський аукціон": u"scheduled",
+        u"Приймання заявок на участь": u"active.qualification",
+        u"Прийняття заяв на участь": u"active.qualification",
+        u"Аукціон відбувся (або 1 учасник)": u"complete",
+        u"Об’єкт виключено": u"deleted",
+        u"cavps": u"CAV-PS",
+        u"cpv": u"CPV",
+        u"notice": u"Рішення про затвердження переліку об'єктів, що підлягають приватизації",
+        u"Продаж": u"sellout.english",
+        u"Оренда": u"sellout.english",
+        u"Очікується публікація протоколу": u"active.qualification",
+        u"Об’єкт не продано": u"dissolved",
+        u"Об’єкт продано": u"sold",
+        u"Приватизація об’єкта неуспішна": u"unsuccessful",
+        u"Приватизация объекта неуспешна": u"unsuccessful",
+        u"Приватизация объекта завершена": u"terminated",
+    }.get(string, string)
+
+
+def convert_document_type(string):
+    return {
+        u"Додаткова інформація": u"informationDetails",
+        u"Виключення з переліку": u"cancellationDetails",
+        u"Рішення про затвердження переліку об'єктів, що підлягають приватизації": u"notice",
+        u"Презентація": u"x_presentation",
+        u"Інформація про об'єкт малої приватизації": u"technicalSpecifications",
+        u"Ілюстрації": u"illustration",
+    }.get(string, string)
+
+
+def revert_document_type(string):
+    return {
+        u"informationDetails": u"Додаткова інформація",
+        u"cancellationDetails": u"Виключення з переліку",
+        u"notice": u"Рішення аукціонної комісії",
+        u"x_presentation": u"Презентація",
+        u"technicalSpecifications": u"Інформація про об'єкт малої приватизації",
+        u"illustration": u"Ілюстрації",
+    }.get(string, string)
+
+
 def adapt_owner(tender_data):
     tender_data['data']['procuringEntity']['identifier']['legalName'] = u'ТОВ "Prom_Owner"'
     tender_data['data']['procuringEntity']['identifier']['id'] = u'13313462'

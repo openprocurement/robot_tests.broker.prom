@@ -125,6 +125,8 @@ Login
     ...    AND    Reload page
     ...    AND    Sleep  3
     ${tender_uaid}=     get text     css=.qa_plan_uid
+    ${plan_id}=     get text     css=.qa_plan_uid
+    set global variable    ${plan_id}
     ${access_token}=    Get Variable Value    ${tender_uaid.access.token}
     Set To Dictionary   ${USERS.users['${username}']}    access_token=${access_token}
     log to console  *******plan_id*********
@@ -229,6 +231,12 @@ Login
     Reload Page
     sleep  2
 
+Додати айди плана   ${plan_id}
+    SLEEP  1
+    input text   css=.qa_plan_tuid    ${plan_id}
+    sleep  1
+    capture page screenshot
+
 Створити тендер
     [Arguments]   ${username}    ${tender_data}
     log to console      @@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -293,6 +301,8 @@ Login
     sleep  2
     click element  css=.qa_procurement_category_choices
     sleep  2
+#    input text   css=.qa_plan_tuid    ${plan_id}
+
     log to console  !!!!!!!!!!!!!!!!!!!!!!
     log to console  ${mainprocurementcategory}
     log to console  !!!!!!!!!!!!!!!!!!!!!!
@@ -319,6 +329,10 @@ Login
 #    Run Keyword If          '${availableLanguage}' == 'en'              Click Element    xpath=(//li[text()='English'])[2]
 #    ...      ELSE IF        '${availableLanguage}' == 'ru'              Click Element    xpath=(//li[text()='русский'])[2]
 
+    Clear Element Text  css=.qa_phone_in_en
+    input text  css=.qa_phone_in_en    ${telephone_en}
+    sleep  1
+    input text  css=.qa_email_in_en    ${email_en}
 
     #################Інформація про закупівлю на разных языках #############################
 
@@ -384,6 +398,9 @@ Login
     ${type}=            Get From Dictionary    ${milestones.duration}       type
     ${percentage}=      Get From Dictionary    ${milestones}                percentage
 
+    ${KeyIsPresent}=    Run Keyword And Return Status       Dictionary Should Contain Key       ${milestones}      description
+    ${description}=           Run Keyword If      ${KeyIsPresent}     Get From Dictionary             ${milestones}      description
+
     Click Element         xpath=(//div[contains(@class, 'qa_milestone_title')])[last()]
     sleep  2
 
@@ -411,6 +428,9 @@ Login
     sleep  1
     input text  xpath=(//input[contains(@class, 'qa_milestone_percentage')])[last()]    ${percentage}
     sleep  1
+    Run Keyword If   '${description}' != 'None'     input text    xpath=(//textarea[contains(@class, 'qa_milestone_description')])[last()]    ${description}
+
+
 
 Додати айтем тендера
     [Arguments]   ${items}
@@ -425,7 +445,9 @@ Login
     ${delivery_region}=                         Get From Dictionary             ${items.deliveryAddress}          region
     ${delivery_street}=                         Get From Dictionary             ${items.deliveryAddress}          streetAddress
     ${delivery_end}=                            Get From Dictionary             ${items.deliveryDate}             endDate
+    ${delivery_end}=                            convert_iso_date_to_prom_without_time_two     ${delivery_end}
     ${delivery_start}=                          Get From Dictionary             ${items.deliveryDate}             startDate
+    ${delivery_start}=                          convert_iso_date_to_prom_without_time_two     ${delivery_start}
     ${item_description}=                        Get From Dictionary             ${items}                          description
     ${item_description_en}=                     Get From Dictionary             ${items}                          description_en
     ${item_description_ru}=                     Get From Dictionary             ${items}                          description_ru
@@ -459,6 +481,10 @@ Login
     sleep  1
     CLICK ELEMENT   css=.qa_classifier_popup .qa_submit span
     sleep  1
+    input text     css=.qa_multilot_tender_start_period_delivery    ${delivery_start}
+    sleep  2
+    input text     css=.qa_multilot_tender_end_period_delivery      ${delivery_end}
+    sleep  2
     input text      xpath=(//input[contains(@class, 'qa_multilot_tender_address')])[last()]         ${delivery_street}
     sleep  1
     input text      xpath=(//input[contains(@class, 'qa_multilot_tender_locality')])[last()]        ${delivery_locality}
@@ -467,18 +493,14 @@ Login
     sleep  1
     click element   xpath=(//div[contains(@class, 'qa_multilot_tender_drop_down_region')])[last()]
     sleep  1
-    log to console  ~~~~~~~1~~~~~~
-    log to console  ${delivery_region}
-    log to console  ~~~~~~~~~~~~~
-    ${delivery_region}=   Run Keyword If   '${delivery_region}' != 'місто Київ'    remove string     ${delivery_region}  ' область'
-    ...    ELSE IF  '${delivery_region}' != 'містоКиїв'    remove string     ${delivery_region}    'місто'
-    ...    ELSE    remove string     ${delivery_region}    'місто '
-    log to console  ~~~~~~2~~~~~~~
-    log to console  ${delivery_region}
-    log to console  ~~~~~~~~~~~~~
+    ${delivery_region}=   Run Keyword If   '${delivery_region}' != 'містоКиїв'    remove string     ${delivery_region}  область
+    ...    ELSE IF  '${delivery_region}' == 'містоКиїв'    remove string     ${delivery_region}    місто
+    ...    ELSE iF   remove string     ${delivery_region}   місто
+    ${delivery_region}=    Replace String   ${delivery_region}   ${space}  ${empty}
     Click Element   xpath=(//div[contains(@class, 'qa_multilot_tender_drop_down_region')])[last()]//li[contains(text(), '${delivery_region}')]
     sleep  1
     click element   css=.qa_submit_tender
+    sleep  10000
 
 
 Можливість знайти тендер по ідентифікатору

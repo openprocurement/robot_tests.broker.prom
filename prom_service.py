@@ -1,72 +1,109 @@
 # -*- coding: utf-8 -*-
+import pytz
 import dateutil.parser
-from datetime import datetime
+import urllib
+import shutil
+
+from datetime import datetime, timedelta
 
 
-def get_all_prom_dates(initial_tender_data, key):
-    tender_period = initial_tender_data.data.tenderPeriod
-    start_dt = dateutil.parser.parse(tender_period['startDate'])
-    end_dt = dateutil.parser.parse(tender_period['endDate'])
-    data = {
-        'EndPeriod': start_dt.strftime("%d.%m.%Y %H:%M"),
-        'StartDate': start_dt.strftime("%d.%m.%Y %H:%M"),
-        'EndDate': end_dt.strftime("%d.%m.%Y %H:%M"),
-    }
-    return data.get(key, '')
+def move_uploaded_file(file_name, src_dir, dest_dir):
+    src_path = '{path}/{file}'.format(path=src_dir, file=file_name)
+    dest_path = '{path}/{file}'.format(path=dest_dir, file=file_name)
+    shutil.move(src_path, dest_path)
 
 
-def get_delivery_date_prom(initial_tender_data):
-    delivery_end_date = initial_tender_data.data['items'][0]['deliveryDate']['endDate']
-    endDate = dateutil.parser.parse(delivery_end_date)
-    return endDate.strftime("%d.%m.%Y")
+def create_random_file():
+    index = datetime.now().strftime("%s%f")
+    file_path = '/tmp/tmp_file_%s' % index
+    files = open(file_path, 'w')
+    files.close()
+    return file_path
 
 
-def return_delivery_endDate(initial_tender_data, input_date):
-    init_delivery_end_date = initial_tender_data.data['items'][0]['deliveryDate']['endDate']
-    if input_date in init_delivery_end_date:
-        return init_delivery_end_date
-    else:
-        return input_date
+def convert_to_float(price):
+    return float(price.replace(',', '.'))
 
 
-def convert_date_prom(isodate):
-    return datetime.strptime(isodate, "%d.%m.%y %H:%M").isoformat()
+def iso_date(date):
+    next_date = datetime.now() + timedelta(minutes=50)
+    return next_date.strftime("%d.%m.%Y %H:%M")
 
 
-def convert_date_to_prom_tender_startdate(isodate):
-    first_date = isodate.split(' - ')[0]
-    first_iso = datetime.strptime(first_date, "%d.%m.%y %H:%M").isoformat()
-    return first_iso
+def convert_iso_date_to_prom(date):
+    convert_date = dateutil.parser.parse(date) + timedelta(minutes=-2)
+    return convert_date.strftime("%d.%m.%Y %H:%M")
 
 
-def convert_date_to_prom_tender_enddate(isodate):
-    second_date = isodate.split(' - ')[1]
-    second_iso = datetime.strptime(second_date, "%d.%m.%y %H:%M").isoformat()
-    return second_iso
+def convert_iso_date_to_prom_without_time_one(date):
+    convert_date = dateutil.parser.parse(date) + timedelta(days=3)
+    return convert_date.strftime("%d.%m.%Y")
 
 
-def convert_prom_string_to_common_string(string):
-    return {
-        u"кілограми": u"кілограм",
-        u"кг.": u"кілограми",
-        u"грн.": u"UAH",
-        u" з ПДВ": True,
-        u"Картонки": u"Картонні коробки",
-        u"Період уточнень": u"active.enquiries",
-        u"Прийом пропозицій": u"active.tendering",
-        u"Аукціон": u"active.auction",
-    }.get(string, string)
+def convert_iso_date_to_prom_without_time_two(date):
+    convert_date = dateutil.parser.parse(date) + timedelta(days=4)
+    return convert_date.strftime("%d.%m.%Y")
 
 
-def adapt_procuringEntity(tender_data):
-    tender_data['data']['procuringEntity']['name'] = u'ДП "autotest"'
-    tender_data['data']['procuringEntity']['address']['countryName'] = u"Украина"
+def convert_iso_date_to_prom_without_time_three(date):
+    convert_date = dateutil.parser.parse(date) + timedelta(days=5)
+    return convert_date.strftime("%d.%m.%Y")
+
+
+def convert_date_prom(date):
+    date_obj = datetime.strptime(date, "%d.%m.%y %H:%M")
+    time_zone = pytz.timezone('Europe/Kiev')
+    localized_date = time_zone.localize(date_obj)
+    return localized_date.strftime("%Y-%m-%d %H:%M:%S.%f%z")
+
+
+def convert_dgf_date_prom(date_str):
+    date_obj = datetime.strptime(date_str, "%Y-%m-%d")
+    return date_obj.strftime("%d.%m.%Y")
+
+
+def revert_dgf_date_prom(date_str):
+    date_obj = datetime.strptime(date_str, "%d.%m.%Y")
+    return date_obj.strftime("%Y-%m-%d")
+
+
+def convert_date_to_prom_tender_startdate(date):
+    first_date = date.split(' - ')[0]
+    date_obj = datetime.strptime(first_date, "%d.%m.%y %H:%M")
+    time_zone = pytz.timezone('Europe/Kiev')
+    localized_date = time_zone.localize(date_obj)
+    return localized_date.strftime("%Y-%m-%d %H:%M:%S.%f%z")
+
+
+def convert_date_to_prom_tender_enddate(date):
+    second_date = date.split(' - ')[1]
+    date_obj = datetime.strptime(second_date, "%d.%m.%y %H:%M")
+    time_zone = pytz.timezone('Europe/Kiev')
+    localized_date = time_zone.localize(date_obj)
+    return localized_date.strftime("%Y-%m-%d %H:%M:%S.%f%z")
+
+
+def adapt_owner(tender_data):
+    tender_data['data']['procuringEntity']['identifier']['legalName'] = u'ТОВ "Prom_Owner"'
+    tender_data['data']['procuringEntity']['identifier']['id'] = u'13313462'
+    tender_data['data']['procuringEntity']['identifier']['scheme'] = u'UA-EDR'
+    tender_data['data']['procuringEntity']['name'] = u'тест тест'
     return tender_data
 
 
-def adapt_item(tender_data):
-    if tender_data['data']['items'][0]['unit']['name'] == u"кг":
-        tender_data['data']['items'][0]['unit']['name'] = u"килограммы"
+def adapt_viewer(tender_data):
+    tender_data['data']['procuringEntity']['identifier']['legalName'] = u'ТОВ "Prom_Viewer"'
+    tender_data['data']['procuringEntity']['identifier']['id'] = u'13313462'
+    tender_data['data']['procuringEntity']['identifier']['scheme'] = u'UA-EDR'
+    tender_data['data']['procuringEntity']['name'] = u'тест тест'
+    return tender_data
+
+
+def adapt_provider(tender_data):
+    tender_data['data']['procuringEntity']['identifier']['legalName'] = u'ТОВ "Prom_Provider1"'
+    tender_data['data']['procuringEntity']['identifier']['id'] = u'13313462'
+    tender_data['data']['procuringEntity']['identifier']['scheme'] = u'UA-EDR'
+    tender_data['data']['procuringEntity']['name'] = u'test test'
     return tender_data
 
 
@@ -77,3 +114,13 @@ def adapt_test_mode(tender_data):
         pass
     return tender_data
 
+
+def adapt_qualified(tender_data, username):
+    if username == 'Prom_Provider':
+        if 'qualified' in tender_data['data']:
+            return True
+    return False
+
+
+def download_file(url, file_name, output_dir):
+    urllib.urlretrieve(url, ('{}/{}'.format(output_dir, file_name)))

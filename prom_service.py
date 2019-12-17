@@ -29,8 +29,8 @@ def return_delivery_endDate(initial_tender_data, input_date):
         return input_date
 
 
-def convert_delivery_date_prom(isodate):
-    return datetime.strptime(isodate, '%d.%m.%y').date().isoformat()
+def convert_date_prom(isodate):
+    return datetime.strptime(isodate, "%d.%m.%y %H:%M").isoformat()
 
 
 def convert_date_to_prom_tender_startdate(isodate):
@@ -45,18 +45,35 @@ def convert_date_to_prom_tender_enddate(isodate):
     return second_iso
 
 
-def procuringEntity_name_prom(initial_tender_data):
-    initial_tender_data.data.procuringEntity['name'] = u"Test_company_from_Prozorro"
-    return initial_tender_data
-
-
 def convert_prom_string_to_common_string(string):
     return {
-        u"Украина": u"Україна",
-        u"Киевская область": u"м. Київ",
-        u"килограммы": u"кілограм",
-        u"кг.": u"кілограм",
+        u"кілограми": u"кілограм",
+        u"кг.": u"кілограми",
         u"грн.": u"UAH",
         u" з ПДВ": True,
         u"Картонки": u"Картонні коробки",
+        u"Період уточнень": u"active.enquiries",
+        u"Прийом пропозицій": u"active.tendering",
+        u"Аукціон": u"active.auction",
     }.get(string, string)
+
+
+def adapt_procuringEntity(tender_data):
+    tender_data['data']['procuringEntity']['name'] = u'ДП "autotest"'
+    tender_data['data']['procuringEntity']['address']['countryName'] = u"Украина"
+    return tender_data
+
+
+def adapt_item(tender_data):
+    if tender_data['data']['items'][0]['unit']['name'] == u"кг":
+        tender_data['data']['items'][0]['unit']['name'] = u"килограммы"
+    return tender_data
+
+
+def adapt_test_mode(tender_data):
+    try:
+        del tender_data['data']['mode']
+    except KeyError:
+        pass
+    return tender_data
+

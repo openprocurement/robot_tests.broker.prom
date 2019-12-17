@@ -399,7 +399,7 @@ Login
     ${percentage}=      Get From Dictionary    ${milestones}                percentage
 
     ${KeyIsPresent}=    Run Keyword And Return Status       Dictionary Should Contain Key       ${milestones}      description
-    ${description}=           Run Keyword If      ${KeyIsPresent}     Get From Dictionary             ${milestones}      description
+    ${description}=     Run Keyword If      ${KeyIsPresent}     Get From Dictionary             ${milestones}      description
 
     Click Element         xpath=(//div[contains(@class, 'qa_milestone_title')])[last()]
     sleep  2

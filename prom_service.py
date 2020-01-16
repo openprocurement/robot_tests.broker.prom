@@ -3,6 +3,7 @@ import pytz
 import dateutil.parser
 import urllib
 import shutil
+import os
 
 from datetime import datetime, timedelta
 
@@ -21,23 +22,14 @@ def create_random_file():
     return file_path
 
 
-def convert_to_float(price):
-    return float(price.replace(',', '.'))
-
-
-def iso_date(date):
-    next_date = datetime.now() + timedelta(minutes=50)
-    return next_date.strftime("%d.%m.%Y %H:%M")
-
-
-def convert_iso_date_to_prom(date):
-    convert_date = dateutil.parser.parse(date) + timedelta(minutes=-2)
+def tender_end_date(date):
+    convert_date = dateutil.parser.parse(date) + timedelta(minutes=20)
     return convert_date.strftime("%d.%m.%Y %H:%M")
 
 
-def convert_iso_date_to_prom_without_time_one(date):
-    convert_date = dateutil.parser.parse(date) + timedelta(days=3)
-    return convert_date.strftime("%d.%m.%Y")
+def convert_iso_date_to_prom(date):
+    convert_date = dateutil.parser.parse(date)
+    return convert_date.strftime("%d.%m.%Y %H:%M")
 
 
 def convert_iso_date_to_prom_without_time_two(date):
@@ -45,55 +37,97 @@ def convert_iso_date_to_prom_without_time_two(date):
     return convert_date.strftime("%d.%m.%Y")
 
 
-def convert_iso_date_to_prom_without_time_three(date):
-    convert_date = dateutil.parser.parse(date) + timedelta(days=5)
-    return convert_date.strftime("%d.%m.%Y")
+def get_milestones_duration_type(string):
+    return {
+        u'(робочих)': u'working',
+        u'(робочі)': u'working',
+        u'(банківськіх)': u'banking',
+        u'(банківські)': u'banking',
+        u'(календарних)': u'calendar',
+        u'(календарні)': u'calendar',
+    }.get(string, string)
 
 
-def convert_date_prom(date):
-    date_obj = datetime.strptime(date, "%d.%m.%y %H:%M")
-    time_zone = pytz.timezone('Europe/Kiev')
-    localized_date = time_zone.localize(date_obj)
-    return localized_date.strftime("%Y-%m-%d %H:%M:%S.%f%z")
+def get_milestones_code(string):
+    return {
+        u'аванс': u'prepayment',
+        u'післяоплата': u'postpayment',
+    }.get(string, string)
 
 
-def convert_dgf_date_prom(date_str):
-    date_obj = datetime.strptime(date_str, "%Y-%m-%d")
-    return date_obj.strftime("%d.%m.%Y")
+def get_milestones_title(string):
+    return {
+        u'підписання договору': 'signingTheContract',
+        u'поставка товару': 'deliveryOfGoods',
+        u'дата подання заявки': 'submissionDateOfApplications',
+        u'дата закінчення звітного періоду': 'endDateOfTheReportingPeriod',
+        u'дата виставлення рахунку': 'dateOfInvoicing',
+        u'виконання робіт': 'executionOfWorks',
+        u'надання послуг': 'submittingServices',
+        u'інша подія': 'anotherEvent',
+    }.get(string, string)
 
 
-def revert_dgf_date_prom(date_str):
-    date_obj = datetime.strptime(date_str, "%d.%m.%Y")
-    return date_obj.strftime("%Y-%m-%d")
+def convert_prom_string_to_common_string(string):
+    return {
+        u"послуги": u"services",
+        u"роботи": u"works",
+        u"товари": u"goods",
+        u"ДК 021": u"ДК021",
+        u"грн": u"UAH",
+        u"шт.": u"штуки",
+        u"кв.м.": u"метри квадратні",
+        u"м2": u"метри квадратні",
+        u"м²": u"метри квадратні",
+        u"метры квадратные": u"метри квадратні",
+        u"метр квадратний": u"метри квадратні",
+        u"Рівненська область": u"Ровненская",
+        u"с НДС": True,
+        u"з ПДВ": True,
+        u"без ПДВ": False,
+    }.get(string, string)
 
 
-def convert_date_to_prom_tender_startdate(date):
-    first_date = date.split(' - ')[0]
-    date_obj = datetime.strptime(first_date, "%d.%m.%y %H:%M")
-    time_zone = pytz.timezone('Europe/Kiev')
-    localized_date = time_zone.localize(date_obj)
-    return localized_date.strftime("%Y-%m-%d %H:%M:%S.%f%z")
+def convert_tender_status(string):
+    return {
+        u"Період уточнень": u"active.enquiries",
+        u"Прийом пропозицій": u"active.tendering",
+        u"Аукціон": u"active.auction",
+        u"Прекваліфікація": u"active.pre-qualification",
+        u"Кваліфікація": u"active.qualification",
+        u"Скасована": u"cancelled",
+        u"Аукціон не відбувся": u"unsuccessful",
+        u"Аукцион не состоялся": u"unsuccessful",
+        u"Завершена": u"complete",
+        u"Подписанный": u"active",
+        u"неактивно": u"invalid",
+        u"Кандидат, очікує рішення": u"pending",
+        u"Прекваліфікація: період оскарження": u"active.pre-qualification.stand-still",
+    }.get(string, string)
 
 
-def convert_date_to_prom_tender_enddate(date):
-    second_date = date.split(' - ')[1]
-    date_obj = datetime.strptime(second_date, "%d.%m.%y %H:%M")
-    time_zone = pytz.timezone('Europe/Kiev')
-    localized_date = time_zone.localize(date_obj)
-    return localized_date.strftime("%Y-%m-%d %H:%M:%S.%f%z")
+def convert_negotiation_cause_type(string):
+    return {
+        u"twiceUnsuccessful": u"ст. 35, п. 4 Закупівля проведена попередньо двічі невдало",
+        u"artContestIP": u"cт. 35, п. 1 Закупівля творів мистецтва",
+        u"stateLegalServices": u"cт. 35, п. 7 Закупівля юридичних послуг",
+        u"additionalPurchase": u"cт. 35, п. 5 Додаткова закупівля",
+        u"additionalConstruction": u"cт. 35, п. 6 Додаткові будівельні роботи",
+        u"noCompetition": u"cт. 35, п. 2 Відсутність конкуренції ",
+
+    }.get(string, string)
 
 
 def adapt_owner(tender_data):
     tender_data['data']['procuringEntity']['identifier']['legalName'] = u'ТОВ "Prom_Owner"'
     tender_data['data']['procuringEntity']['identifier']['id'] = u'13313462'
     tender_data['data']['procuringEntity']['identifier']['scheme'] = u'UA-EDR'
-    tender_data['data']['procuringEntity']['name'] = u'тест тест'
+    tender_data['data']['procuringEntity']['name'] = u'ТОВ "Prom_Owner"'
     return tender_data
 
 
 def adapt_viewer(tender_data):
     tender_data['data']['procuringEntity']['identifier']['legalName'] = u'ТОВ "Prom_Viewer"'
-    tender_data['data']['procuringEntity']['identifier']['id'] = u'13313462'
     tender_data['data']['procuringEntity']['identifier']['scheme'] = u'UA-EDR'
     tender_data['data']['procuringEntity']['name'] = u'тест тест'
     return tender_data
@@ -101,26 +135,25 @@ def adapt_viewer(tender_data):
 
 def adapt_provider(tender_data):
     tender_data['data']['procuringEntity']['identifier']['legalName'] = u'ТОВ "Prom_Provider1"'
-    tender_data['data']['procuringEntity']['identifier']['id'] = u'13313462'
     tender_data['data']['procuringEntity']['identifier']['scheme'] = u'UA-EDR'
-    tender_data['data']['procuringEntity']['name'] = u'test test'
+    tender_data['data']['procuringEntity']['name'] = u'тест тест'
     return tender_data
 
 
-def adapt_test_mode(tender_data):
-    try:
-        del tender_data['data']['mode']
-    except KeyError:
-        pass
-    return tender_data
-
-
-def adapt_qualified(tender_data, username):
-    if username == 'Prom_Provider':
-        if 'qualified' in tender_data['data']:
-            return True
-    return False
+def get_ecp_key(path):
+    return os.path.join(os.getcwd(), path)
 
 
 def download_file(url, file_name, output_dir):
     urllib.urlretrieve(url, ('{}/{}'.format(output_dir, file_name)))
+
+
+def covert_features(features):
+    return int(features * 100)
+
+
+def convert_delivery_address(address):
+    if u'обла' in address:
+        return ''.join(address.split(' ')[:-1])
+    else:
+        return address

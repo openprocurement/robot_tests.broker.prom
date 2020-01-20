@@ -22,6 +22,16 @@ def create_random_file():
     return file_path
 
 
+def delivery_date_start():
+    next_date = datetime.now()
+    return next_date.strftime("%d.%m.%Y")
+
+
+def delivery_date_end():
+    next_date = datetime.now() + timedelta(days=2)
+    return next_date.strftime("%d.%m.%Y")
+
+
 def tender_end_date(date):
     convert_date = dateutil.parser.parse(date) + timedelta(minutes=20)
     return convert_date.strftime("%d.%m.%Y %H:%M")
@@ -76,6 +86,7 @@ def convert_prom_string_to_common_string(string):
         u"ДК 021": u"ДК021",
         u"грн": u"UAH",
         u"шт.": u"штуки",
+        u"нб.": u"набір",
         u"кв.м.": u"метри квадратні",
         u"м2": u"метри квадратні",
         u"м²": u"метри квадратні",
@@ -92,6 +103,7 @@ def convert_tender_status(string):
     return {
         u"Період уточнень": u"active.enquiries",
         u"Прийом пропозицій": u"active.tendering",
+        u"Пропозицію прийнято": u"active",
         u"Аукціон": u"active.auction",
         u"Прекваліфікація": u"active.pre-qualification",
         u"Кваліфікація": u"active.qualification",
@@ -114,14 +126,29 @@ def convert_negotiation_cause_type(string):
         u"additionalPurchase": u"cт. 35, п. 5 Додаткова закупівля",
         u"additionalConstruction": u"cт. 35, п. 6 Додаткові будівельні роботи",
         u"noCompetition": u"cт. 35, п. 2 Відсутність конкуренції ",
-
     }.get(string, string)
 
 
+def revert_negotiation_cause_type(string):
+    return {
+         u"ст. 35, п. 4 Закупівля проведена попередньо двічі невдало": u"twiceUnsuccessful",
+         u"cт. 35, п. 1 Закупівля творів мистецтва": u"artContestIP",
+         u"cт. 35, п. 7 Закупівля юридичних послуг": u"stateLegalServices",
+         u"cт. 35, п. 5 Додаткова закупівля": u"additionalPurchase",
+         u"cт. 35, п. 6 Додаткові будівельні роботи": u"additionalConstruction",
+         u"cт. 35, п. 2 Відсутність конкуренції": u"noCompetition",
+    }.get(string, string)
+
 def adapt_owner(tender_data):
     tender_data['data']['procuringEntity']['identifier']['legalName'] = u'ТОВ "Prom_Owner"'
-    tender_data['data']['procuringEntity']['identifier']['id'] = u'13313462'
+    tender_data['data']['procuringEntity']['identifier']['id'] = u'5555555'
     tender_data['data']['procuringEntity']['identifier']['scheme'] = u'UA-EDR'
+    tender_data['data']['procuringEntity']['contactPoint']['url'] = u'http://www.mysite1.com/'
+    tender_data['data']['procuringEntity']['contactPoint']['telephone'] = u'+380501234578'
+    tender_data['data']['procuringEntity']['contactPoint']['name'] = u'тест тест'
+    tender_data['data']['procuringEntity']['address']['postalCode'] = u'00000'
+    tender_data['data']['procuringEntity']['address']['region'] = u'Київ'
+    tender_data['data']['procuringEntity']['address']['streetAddress'] = u'вулиця Тестова, 2'
     tender_data['data']['procuringEntity']['name'] = u'ТОВ "Prom_Owner"'
     return tender_data
 
@@ -164,3 +191,9 @@ def convert_delivery_address(address):
         return ''.join(address.split(' ')[:-1])
     else:
         return address
+
+
+def convert_complaints_status(string):
+    return {
+        u"скасована": u"cancelled"
+    }.get(string, string)

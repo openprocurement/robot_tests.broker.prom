@@ -51,7 +51,8 @@ Login
     Sleep   2
 
 Подписание ЕЦП
-    sleep  5
+    sleep  60
+    capture page screenshot
     click element    css=#CAsServersSelect
     sleep  3
     CLICK ELEMENT    xpath=//*[contains(text(), 'АЦСК ТОВ "КС"')]
@@ -154,6 +155,7 @@ Login
     ...   AND     Wait Until Element Is Visible       css=.qa_ecp_button
     sleep  1
     Click Element     css=.qa_ecp_button
+    capture page screenshot
     prom.Подписание ЕЦП
     ${tender_uaid}=     get text     css=.qa_plan_uid
     ${access_token}=    Get Variable Value    ${tender_uaid.access.token}
@@ -1891,8 +1893,10 @@ Login
     ...   AND     Reload Page
     ...   AND     Sleep  2
     ...   AND     Wait Until Element Is Visible       xpath=//button[contains(@data-sign-process-url, 'state_purchase/process_signature')]
+    sleep  60
+    reload page
     Click Element     xpath=//button[contains(@data-sign-process-url, 'state_purchase/process_signature')]
-    sleep  5
+    sleep  8
     prom.Подписание ЕЦП
     sleep  5
     click element   css=.qa_lot_button
@@ -2024,20 +2028,24 @@ Login
 
 Отримати інформацію із скарги
     [Arguments]   ${username}   ${tender_uaid}   ${complaintID}    ${field_name}  ${award_index}=None
-    log to console  ^^@@&&######>>>>)()(
-    log to console   ${tender_uaid}
-    log to console   ${complaintID}
-    log to console   ${field_name}
+    log to console  _%$_%$_%_$%_$@_#_@$_@$
+    log to console  ${tender_uaid}
+    log to console  _%$_%$_%_$%_$@_#_@$_@$
+    log to console  ${complaintID}
+    log to console  _%$_%$_%_$%_$@_#_@$_@$
+    log to console  ${field_name}
+    log to console  _%$_%$_%_$%_$@_#_@$_@$
     click element        xpath=//a[contains(@href,'/state_purchase_complaint/purchase_claims')]
     Wait Until Page Contains Element     xpath=//a[@data-qa="qa_apply_requirement"]    4
     reload page
     ${return_value}=   Run Keyword If  '${field_name}' == 'status'   Get Text  xpath=(//td[@data-qa="status"])[last()]
     ${return_value}=   Run Keyword If  '${field_name}' == 'status'   convert_complaints_status   ${return_value}
+    log to console  _%$_%$_%_$%_$@_#_@$_@$
     log to console  ${return_value}
+    log to console  _%$_%$_%_$%_$@_#_@$_@$
     click element  xpath=(//a[contains(@href,'cabinet/purchases/state_purchase/view')])[1]
     sleep  3
     capture page screenshot
-    log to console  ^^@@&&######>>>>)()(
     [Return]  ${return_value}
 
 Створити вимогу про виправлення умов лоту

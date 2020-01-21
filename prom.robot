@@ -51,7 +51,9 @@ Login
     Sleep   2
 
 Подписание ЕЦП
-    sleep  60
+    Wait Until Keyword Succeeds     100      5          Run Keywords
+    ...   Sleep  2
+    ...   AND     Wait Until Element Is Visible       css=#CAsServersSelect
     capture page screenshot
     click element    css=#CAsServersSelect
     sleep  3
@@ -65,12 +67,14 @@ Login
     Input Text    css=#PKeyPassword    1234
     sleep  3
     Click Element  css=#PKeyReadButton
-    sleep  4
+    sleep  5
     Wait Until Element Is Visible   xpath=//p[@id='PKStatusInfo' and contains(text(), 'Ключ успішно завантажено')]
     sleep  2
+    capture page screenshot
     Click Element  css=#SignDataButton
     sleep  40
     reload page
+    capture page screenshot
 
 Створити план
     [Arguments]   ${username}    ${plan_data}

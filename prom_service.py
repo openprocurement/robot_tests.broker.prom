@@ -33,7 +33,7 @@ def delivery_date_end():
 
 
 def tender_end_date(date):
-    convert_date = dateutil.parser.parse(date) + timedelta(minutes=20)
+    convert_date = dateutil.parser.parse(date)
     return convert_date.strftime("%d.%m.%Y %H:%M")
 
 
@@ -88,11 +88,6 @@ def convert_prom_string_to_common_string(string):
         u"шт.": u"штуки",
         u"нб.": u"набір",
         u"кв.м.": u"метри квадратні",
-        u"м2": u"метри квадратні",
-        u"м²": u"метри квадратні",
-        u"метры квадратные": u"метри квадратні",
-        u"метр квадратний": u"метри квадратні",
-        u"Рівненська область": u"Ровненская",
         u"с НДС": True,
         u"з ПДВ": True,
         u"без ПДВ": False,
@@ -156,6 +151,7 @@ def adapt_owner(tender_data):
 def adapt_viewer(tender_data):
     tender_data['data']['procuringEntity']['identifier']['legalName'] = u'ТОВ "Prom_Viewer"'
     tender_data['data']['procuringEntity']['identifier']['scheme'] = u'UA-EDR'
+    tender_data['data']['procuringEntity']['contactPoint']['url'] = u'http://webpage.org.ua/'
     tender_data['data']['procuringEntity']['name'] = u'тест тест'
     return tender_data
 
@@ -186,6 +182,10 @@ def covert_features(features):
     return int(features * 100)
 
 
+def value_percentage(value):
+    return int(value * 0.9)
+
+
 def convert_delivery_address(address):
     if u'обла' in address:
         return ''.join(address.split(' ')[:-1])
@@ -195,5 +195,26 @@ def convert_delivery_address(address):
 
 def convert_complaints_status(string):
     return {
-        u"скасована": u"cancelled"
+        u"скасована": u"cancelled",
+        u"розглянута замовником": u"answered",
+        u"розглядається замовником": u"claim",
+        u"задовільнена": u"answered",
+        u"відхилена": u"declined",
+        u"розглянута": u"resolved",
+        u"недійсна": u"invalid"
+    }.get(string, string)
+
+
+def convert_complaints_resolutiontype(string):
+    return {
+        u"відхилена": u"declined",
+        u"скасована": u"resolved",
+        u"Відхилили як недійсне": u"invalid",
+        u"задовільнена": u"resolved"
+    }.get(string, string)
+
+
+def convert_complaints_satisfied_status(string):
+    return {
+        u"задовільнена": True
     }.get(string, string)

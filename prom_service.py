@@ -22,6 +22,11 @@ def create_random_file():
     return file_path
 
 
+def date_now():
+    next_date = datetime.now()
+    return next_date.strftime("%d.%m.%Y %H:%M")
+
+
 def delivery_date_start():
     next_date = datetime.now()
     return next_date.strftime("%d.%m.%Y")
@@ -33,7 +38,7 @@ def delivery_date_end():
 
 
 def tender_end_date(date):
-    convert_date = dateutil.parser.parse(date)
+    convert_date = dateutil.parser.parse(date) + timedelta(minutes=1)
     return convert_date.strftime("%d.%m.%Y %H:%M")
 
 
@@ -87,6 +92,7 @@ def convert_prom_string_to_common_string(string):
         u"грн": u"UAH",
         u"шт.": u"штуки",
         u"нб.": u"набір",
+        u"уп.": u"упаковка",
         u"кв.м.": u"метри квадратні",
         u"с НДС": True,
         u"з ПДВ": True,

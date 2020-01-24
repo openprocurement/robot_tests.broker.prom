@@ -192,6 +192,10 @@ def value_percentage(value):
     return int(value * 0.9)
 
 
+def value_percentage_sum(value):
+    return int(value / 0.9)
+
+
 def convert_delivery_address(address):
     if u'обла' in address:
         return ''.join(address.split(' ')[:-1])

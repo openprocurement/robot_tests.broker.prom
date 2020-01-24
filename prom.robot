@@ -82,11 +82,7 @@ Login
     sleep  1
     Click Element   xpath=(//a[contains(@href, 'state_plan/add')])[1]
     Sleep  2
-
-    ${procurement_method_type}=         Get From Dictionary             ${plan_data.data.tender}                        procurementMethodType
-    ${description}=                     Get From Dictionary             ${plan_data.data.budget}                        description
-    ${amount}=                          Get From Dictionary             ${plan_data.data.budget}                        amount
-    ${classification}=                  Get From Dictionary             ${plan_data.data.classification}                id
+    ${procurement_method_type}=         Get From Dictionary             ${plan_data.data.tender}           procurementMethodType
 
     Wait Until Page Contains Element        css=#state_plan_purchase_method_type_dd    20
     CLICK ELEMENT       css=#state_plan_purchase_method_type_dd
@@ -94,7 +90,48 @@ Login
     log to console  ------------------------------
     log to console  ${procurement_method_type}
     log to console  ------------------------------
-    ${name}=   Run Keyword If   '${procurement_method_type}' == 'aboveThresholdEU'          Click Element    xpath=(//li[@data-value="aboveThresholdEU"])[last()]
+    ${name}=   Run Keyword If   '${procurement_method_type}' == 'aboveThresholdEU'          створити план для процедури    ${username}    ${plan_data}      ${procurement_method_type}
+    ...      ELSE IF        '${procurement_method_type}' == 'belowThreshold'                створити план для процедури    ${username}    ${plan_data}      ${procurement_method_type}
+    ...      ELSE IF        '${procurement_method_type}' == 'openeu'                        створити план для процедури    ${username}    ${plan_data}      ${procurement_method_type}
+    ...      ELSE IF        '${procurement_method_type}' == 'aboveThresholdUA'              створити план для процедури    ${username}    ${plan_data}      ${procurement_method_type}
+    ...      ELSE IF        '${procurement_method_type}' == 'aboveThresholdUA.defense'      створити план для процедури    ${username}    ${plan_data}      ${procurement_method_type}
+    ...      ELSE IF        '${procurement_method_type}' == 'reporting'                     створити план для процедури    ${username}    ${plan_data}      ${procurement_method_type}
+    ...      ELSE IF        '${procurement_method_type}' == 'negotiation'                   створити план для процедури    ${username}    ${plan_data}      ${procurement_method_type}
+    ...      ELSE IF        '${procurement_method_type}' == 'negotiation_quick'             створити план для процедури    ${username}    ${plan_data}      ${procurement_method_type}
+    ...      ELSE IF        '${procurement_method_type}' == 'competitiveDialogueUA'         створити план для процедури    ${username}    ${plan_data}      ${procurement_method_type}
+    ...      ELSE IF        '${procurement_method_type}' == 'competitiveDialogueEU'         створити план для процедури    ${username}    ${plan_data}      ${procurement_method_type}
+    ...      ELSE IF        '${procurement_method_type}' == 'closeFrameworkAgreementUA'     Click Element    xpath=(//li[@data-value="closeFrameworkAgreementUA"])[last()]
+    ...      ELSE IF        '${procurement_method_type}' == 'esco'                          створити план esco             ${username}    ${plan_data}
+    ...      ELSE IF        '${procurement_method_type}' == 'centralizedProcurement'        Click Element    xpath=(//li[@data-value="centralizedProcurement"])[last()]
+
+    CLICK ELEMENT  css=#submit_button
+    sleep  10
+    ${tender_uaid}=      Очікування tuid    очікування...    css=.qa_plan_uid
+    Wait Until Keyword Succeeds     40      5          Run Keywords
+    ...   Sleep  2
+    ...   AND     Reload Page
+    ...   AND     Sleep  2
+    ...   AND     Wait Until Element Is Visible       css=.qa_ecp_button
+    sleep  1
+    Click Element     css=.qa_ecp_button
+    capture page screenshot
+    prom.Подписание ЕЦП
+    ${tender_uaid}=     get text     css=.qa_plan_uid
+    ${access_token}=    Get Variable Value    ${tender_uaid.access.token}
+    Set To Dictionary   ${USERS.users['${username}']}    access_token=${access_token}
+
+    log to console  ****plan_id*****
+    log to console  ${tender_uaid}
+    log to console  ****************
+    [Return]    ${tender_uaid}
+
+створити план для процедури
+    [Arguments]   ${username}    ${plan_data}   ${procurement_method_type}
+    ${description}=                     Get From Dictionary             ${plan_data.data.budget}                        description
+    ${amount}=                          Get From Dictionary             ${plan_data.data.budget}                        amount
+    ${classification}=                  Get From Dictionary             ${plan_data.data.classification}                id
+
+    Run Keyword If          '${procurement_method_type}' == 'aboveThresholdEU'              Click Element    xpath=(//li[@data-value="aboveThresholdEU"])[last()]
     ...      ELSE IF        '${procurement_method_type}' == 'belowThreshold'                Click Element    xpath=(//li[@data-value="belowThreshold"])[last()]
     ...      ELSE IF        '${procurement_method_type}' == 'openeu'                        Click Element    xpath=(//li[@data-value="aboveThresholdEU"])[last()]
     ...      ELSE IF        '${procurement_method_type}' == 'aboveThresholdUA'              Click Element    xpath=(//li[@data-value="aboveThresholdUA"])[last()]
@@ -105,7 +142,6 @@ Login
     ...      ELSE IF        '${procurement_method_type}' == 'competitiveDialogueUA'         Click Element    xpath=(//li[@data-value="competitiveDialogueUA"])[last()]
     ...      ELSE IF        '${procurement_method_type}' == 'competitiveDialogueEU'         Click Element    xpath=(//li[@data-value="competitiveDialogueEU"])[last()]
     ...      ELSE IF        '${procurement_method_type}' == 'closeFrameworkAgreementUA'     Click Element    xpath=(//li[@data-value="closeFrameworkAgreementUA"])[last()]
-    ...      ELSE IF        '${procurement_method_type}' == 'centralizedProcurement'        Click Element    xpath=(//li[@data-value="centralizedProcurement"])[last()]
     ...      ELSE IF        '${procurement_method_type}' == 'centralizedProcurement'        Click Element    xpath=(//li[@data-value="centralizedProcurement"])[last()]
 
     SLEEP  1
@@ -143,29 +179,7 @@ Login
     :FOR  ${index}  IN RANGE  ${number_of_breakdowns}
     \  Run Keyword If  '${index}' != '0'   Click Element    xpath=(//span[contains(text(), 'Додати джерело')])[last()]
     \  Додати джерело плана    ${breakdowns[${index}]}
-
     SLEEP  1
-
-    CLICK ELEMENT  css=#submit_button
-    sleep  10
-    ${tender_uaid}=      Очікування tuid    очікування...    css=.qa_plan_uid
-    Wait Until Keyword Succeeds     40      5          Run Keywords
-    ...   Sleep  2
-    ...   AND     Reload Page
-    ...   AND     Sleep  2
-    ...   AND     Wait Until Element Is Visible       css=.qa_ecp_button
-    sleep  1
-    Click Element     css=.qa_ecp_button
-    capture page screenshot
-    prom.Подписание ЕЦП
-    ${tender_uaid}=     get text     css=.qa_plan_uid
-    ${access_token}=    Get Variable Value    ${tender_uaid.access.token}
-    Set To Dictionary   ${USERS.users['${username}']}    access_token=${access_token}
-
-    log to console  ****plan_id*****
-    log to console  ${tender_uaid}
-    log to console  ****************
-    [Return]    ${tender_uaid}
 
 Очікування tuid
     [Arguments]   ${old_status}   ${locator}
@@ -267,9 +281,6 @@ Login
 
 Пошук плану по ідентифікатору
     [Arguments]    ${username}    ${tender_uaid}
-    log to console  '''''''''''''''''''''''''''
-    log to console  ${username}
-    log to console  '''''''''''''''''''''''''''
     log to console  ${tender_uaid}
     Switch Browser    my_custom_alias
     Go to   ${USERS.users['${username}'].state_plan_page}
@@ -297,13 +308,14 @@ Login
     ...      ELSE IF        '${procurement_method_type}' == 'aboveThresholdUA'              Створити aboveThresholdUA                           ${username}     ${tender_data}     ${plan_id}
     ...      ELSE IF        '${procurement_method_type}' == 'belowThreshold'                Створити belowThreshold                             ${username}     ${tender_data}     ${plan_id}
     ...      ELSE IF        '${procurement_method_type}' == 'aboveThresholdUA.defense'      Створити aboveThresholdUA.defense                   ${username}     ${tender_data}     ${plan_id}
-    ...      ELSE IF        '${procurement_method_type}' == 'reporting'                     Створити тендер для типу закупівлі                  ${username}     ${tender_data}     ${plan_id}
+    ...      ELSE IF        '${procurement_method_type}' == 'reporting'                     Створити reporting                                  ${username}     ${tender_data}     ${plan_id}
     ...      ELSE IF        '${procurement_method_type}' == 'negotiation'                   Створити negotiation                                ${username}     ${tender_data}     ${plan_id}
     ...      ELSE IF        '${procurement_method_type}' == 'negotiation_quick'             Створити тендер для типу закупівлі                  ${username}     ${tender_data}     ${plan_id}
     ...      ELSE IF        '${procurement_method_type}' == 'competitiveDialogueUA'         Створити competitiveDialogueUA                      ${username}     ${tender_data}     ${plan_id}
     ...      ELSE IF        '${procurement_method_type}' == 'competitiveDialogueEU'         Створити competitiveDialogueEU                      ${username}     ${tender_data}     ${plan_id}
     ...      ELSE IF        '${procurement_method_type}' == 'closeFrameworkAgreementUA'     Створити тендер для типу закупівлі                  ${username}     ${tender_data}     ${plan_id}
     ...      ELSE IF        '${procurement_method_type}' == 'centralizedProcurement'        Створити тендер для типу закупівлі                  ${username}     ${tender_data}     ${plan_id}
+    ...      ELSE IF        '${procurement_method_type}' == 'esco'                          Створити esco                                       ${username}     ${tender_data}     ${plan_id}
 
     sleep  3
     click element     css=.qa_submit_tender
@@ -572,21 +584,12 @@ Login
     ${description_en}=                  Get From Dictionary         ${tender_data.data}                                         description_en
     ${description_ru}=                  Get From Dictionary         ${tender_data.data}                                         description_ru
     ${cause}=                           Get From Dictionary         ${tender_data.data}                                         cause
-    log to console  =-=-=-=-=-=--=-=-
-    log to console  ${cause}
-    log to console  =-=-=-=-=-=--=-=-
     ${cause}=                           convert_negotiation_cause_type      ${cause}
-    log to console  =-=-=-=-=-=--=-=-
-    log to console  ${cause}
-    log to console  =-=-=-=-=-=--=-=-
     ${cause_description}=               Get From Dictionary         ${tender_data.data}                                         causeDescription
     ${value_amount}=                    Get From Dictionary         ${tender_data.data.value}                                   amount
     ${value_amount}=                    Convert To String           ${value_amount}
     ${currency}=                        Get From Dictionary         ${tender_data.data.value}                                   currency
     ${tax}=                             Get From Dictionary         ${tender_data.data.value}                                   valueAddedTaxIncluded
-    log to console  3247462364
-    log to console  ${tax}
-    log to console  3247462364
     ${procurement_method_type}=         Get From Dictionary         ${tender_data.data}                                         procurementMethodType
     ${email}=                           Get From Dictionary         ${tender_data.data.procuringEntity.contactPoint}            email
     ${telephone}=                       Get From Dictionary         ${tender_data.data.procuringEntity.contactPoint}            telephone
@@ -665,18 +668,11 @@ Login
     input text  css=.qa_input_winner_srn   ${identifier_id}
     sleep  1
     input text  css=.qa_input_winner_company_name   ${legal_name}
-
     sleep  1
     input text  css=.qa_input_winner_zip   ${zip_code}
     sleep  1
     click element  css=.qa_drop_down_winner_region
-    log to console  ~~~~~~~~~~~~~~~~
-    log to console  ${region}
-    log to console  ~~~~~~~~~~~~~~~~
     ${region}=   Run Keyword If   '${region}'      convert_delivery_address     ${region}
-    log to console  ~~~~~~~~~~~~~~~~
-    log to console  ${region}
-    log to console  ~~~~~~~~~~~~~~~~
     Click Element   xpath=(//li[contains(text(), '${region}')])[last()]
     sleep  1
     input text  css=.qa_input_winner_locality   ${locality}
@@ -694,6 +690,120 @@ Login
     input text  css=.qa_winner_phone  ${telephone}
     sleep  1
     click element  css=.qa_qualification
+    sleep  1
+    capture page screenshot
+
+Створити reporting
+    [Arguments]    ${username}    ${tender_data}    ${plan_id}
+    log to console  ---------------------
+    log to console  ${tender_data}
+    log to console  ---------------------
+    log to console  ---------------------
+    log to console  ${plan_id}
+    log to console  ---------------------
+    ${mainprocurementcategory}          Get From Dictionary         ${tender_data.data}                                         mainProcurementCategory
+    ${title}=                           Get From Dictionary         ${tender_data.data}                                         title
+    ${title_en}=                        Get From Dictionary         ${tender_data.data}                                         title_en
+    ${title_ru}=                        Get From Dictionary         ${tender_data.data}                                         title_ru
+    ${description}=                     Get From Dictionary         ${tender_data.data}                                         description
+    ${description_en}=                  Get From Dictionary         ${tender_data.data}                                         description_en
+    ${description_ru}=                  Get From Dictionary         ${tender_data.data}                                         description_ru
+    ${value_amount}=                    Get From Dictionary         ${tender_data.data.value}                                   amount
+    ${value_amount}=                    Convert To String           ${value_amount}
+    ${currency}=                        Get From Dictionary         ${tender_data.data.value}                                   currency
+    ${tax}=                             Get From Dictionary         ${tender_data.data.value}                                   valueAddedTaxIncluded
+    ${procurement_method_type}=         Get From Dictionary         ${tender_data.data}                                         procurementMethodType
+    ${email}=                           Get From Dictionary         ${tender_data.data.procuringEntity.contactPoint}            email
+    ${telephone}=                       Get From Dictionary         ${tender_data.data.procuringEntity.contactPoint}            telephone
+    ${contact_name}=                    Get From Dictionary         ${tender_data.data.procuringEntity.contactPoint}            name
+
+    ${identifier_id}=                   Get From Dictionary         ${tender_data.data.procuringEntity.identifier}              id
+    ${legal_name}=                      Get From Dictionary         ${tender_data.data.procuringEntity.identifier}              legalName
+    ${zip_code}=                        Get From Dictionary         ${tender_data.data.procuringEntity.address}                 postalCode
+    ${region}=                          Get From Dictionary         ${tender_data.data.procuringEntity.address}                 region
+    ${locality}=                        Get From Dictionary         ${tender_data.data.procuringEntity.address}                 locality
+    ${street_address}=                  Get From Dictionary         ${tender_data.data.procuringEntity.address}                 streetAddress
+
+    ${milestones}=                      Get From Dictionary         ${tender_data.data}                                         milestones
+
+    ${items}=                           Get From Dictionary         ${tender_data.data}                                         items
+
+    Go to                                ${USERS.users['${username}'].default_page}
+    Sleep  1
+    Wait Until Page Contains Element     css=.qa_button_add_new_purchase     20
+    Click Element                        css=.qa_button_add_new_purchase
+    Wait Until Page Contains Element     css=.qa_multilot_type_drop_down     20
+    Click Element                        css=.qa_multilot_type_drop_down
+    sleep  2
+
+    Click Element    xpath=//span[text()='Звіт про укладений договір']
+    sleep  2
+    input text   css=.qa_plan_tuid    ${plan_id}
+    sleep  2
+    click element  css=.qa_procurement_category_choices
+    sleep  2
+    Run Keyword If          '${mainprocurementcategory}' == 'goods'             Click Element    xpath=//span[text()='товари']
+    ...      ELSE IF        '${mainprocurementcategory}' == 'services'          Click Element    xpath=//span[text()='послуги']
+    ...      ELSE IF        '${mainprocurementcategory}' == 'works'             Click Element    xpath=//span[text()='роботи']
+    sleep  2
+    input text    css=.qa_input_name    ${title}
+    sleep  1
+    input text    css=.qa_textarea_description     ${description}
+    capture page screenshot
+    sleep  1
+    log to console  --0-0-0-0-0-0-0-=-0=-09-898098
+    log to console   ${tax}
+    log to console  --0-0-0-0-0-0-0-=-0=-09-898098
+
+    input text   css=.qa_input_cost     ${value_amount}
+    sleep  1
+    Run Keyword If  '${tax}' == 'True'     click element   xpath=(//input[contains(@class, 'qa_checkbox_pdv')])[1]
+
+    #############################Добавление milestones(Додати умови оплати)#######################################
+
+    ${number_of_milestones}=      Get Length                      ${milestones}
+    set global variable                                           ${number_of_milestones}
+    :FOR  ${index}  IN RANGE  ${number_of_milestones}
+    \  Run Keyword If  '${index}' != '0'   Click Element     xpath=(//a[contains(@class, 'qa_add_new_milestone')])[last()]
+    \  Додати умови оплати    ${milestones[${index}]}
+
+    sleep  2
+
+    #############################Добавление Items#######################################
+
+    ${number_of_items}=  Get Length  ${items}
+    set global variable    ${number_of_items}
+    :FOR  ${index}  IN RANGE  ${number_of_items}
+    \  Run Keyword If  '${index}' != '0'   Click Element     css=.qa_add_button
+    \  Додати айтем тендера    ${items[${index}]}   ${tender_data}
+
+    sleep  1
+
+    ################## Інформація про учасника переговорів #########################
+
+    input text  css=.qa_input_winner_srn   ${identifier_id}
+    sleep  1
+    input text  css=.qa_input_winner_company_name   ${legal_name}
+    sleep  1
+    input text  css=.qa_input_winner_zip   ${zip_code}
+    sleep  1
+    click element  css=.qa_drop_down_winner_region
+    ${region}=   Run Keyword If   '${region}'      convert_delivery_address     ${region}
+    Click Element   xpath=(//li[contains(text(), '${region}')])[last()]
+    sleep  1
+    input text  css=.qa_input_winner_locality   ${locality}
+    sleep  1
+    input text  css=.qa_winner_address   ${street_address}
+    sleep  1
+    click element  css=.qa_checkbox_data_verified
+    sleep  1
+    input text  css=.qa_winner_amount   ${value_amount}
+    sleep  1
+    Run Keyword If  '${tax}' == 'True'   click element  xpath=(//input[contains(@class, 'qa_checkbox_pdv')])[2]
+    sleep  1
+    input text  css=.qa_winner_name   ${contact_name}
+    sleep  1
+    input text  css=.qa_winner_phone  ${telephone}
     sleep  1
     capture page screenshot
 
@@ -767,6 +877,557 @@ Login
 
     Додати умови оплати     ${milestones[0]}
     Додати айтем тендера    ${items[0]}         ${tender_data}
+
+Створити aboveThresholdUA.defense
+    [Arguments]   ${username}     ${tender_data}     ${plan_id}
+    log to console  Створити aboveThresholdUA
+    log to console  ${tender_data}
+    log to console  ${plan_id}
+    log to console  ---------------------
+    ${mainprocurementcategory}=         Get From Dictionary         ${tender_data.data}                                         mainProcurementCategory
+    ${title}=                           Get From Dictionary         ${tender_data.data}                                         title
+    ${title_en}=                        Get From Dictionary         ${tender_data.data}                                         title_en
+    ${description}=                     Get From Dictionary         ${tender_data.data}                                         description
+    ${description_en}=                  Get From Dictionary         ${tender_data.data}                                         description_en
+    ${value_amount}=                    Get From Dictionary         ${tender_data.data.value}                                   amount
+    ${currency}=                        Get From Dictionary         ${tender_data.data.value}                                   currency
+    ${tax}=                             Get From Dictionary         ${tender_data.data.value}                                   valueAddedTaxIncluded
+    ${lots_title}=                      Get From Dictionary         ${tender_data.data.lots[0]}                                 title
+    ${lots_description}=                Get From Dictionary         ${tender_data.data.lots[0]}                                 description
+    ${lots_amount}=                     Get From Dictionary         ${tender_data.data.lots[0].value}                           amount
+    ${lots_amount}=                     Convert To String           ${lots_amount}
+    ${lots_minimalStep}=                Get From Dictionary         ${tender_data.data.lots[0].minimalStep}                     amount
+    ${lots_minimalstep}=                Convert To String           ${lots_minimalstep}
+    ${milestones}=                      Get From Dictionary         ${tender_data.data}                                         milestones
+    ${items}=                           Get From Dictionary         ${tender_data.data}                                         items
+    ${tender_end}                       Get From Dictionary         ${tender_data.data.tenderPeriod}                            endDate
+    ${tender_end}                       convert_iso_date_to_prom    ${tender_end}
+    ${telephone_en}=                    Get From Dictionary         ${tender_data.data.procuringEntity.contactPoint}            telephone
+    ${email_en}=                        Get From Dictionary         ${tender_data.data.procuringEntity.contactPoint}            email
+
+    Go to                                ${USERS.users['${username}'].default_page}
+    Sleep  1
+    Wait Until Page Contains Element     css=.qa_button_add_new_purchase     20
+    Click Element                        css=.qa_button_add_new_purchase
+    Wait Until Page Contains Element     css=.qa_multilot_type_drop_down     20
+    Click Element                        css=.qa_multilot_type_drop_down
+    sleep  2
+
+    Run Keyword If          '${procurement_method_type}' == 'aboveThresholdUA.defense'       Click Element    xpath=(//span[text()='Переговорна процедура для потреб оборони'])[last()]
+    sleep  4
+    click element  xpath=(//input[@type='checkbox'])[1]
+    sleep  2
+    input text   css=.qa_plan_tuid    ${plan_id}
+    sleep  1
+    click element  css=.qa_procurement_category_choices
+    sleep  2
+    Run Keyword If          '${mainprocurementcategory}' == 'goods'             Click Element    xpath=//span[text()='товари']
+    ...      ELSE IF        '${mainprocurementcategory}' == 'services'          Click Element    xpath=//span[text()='послуги']
+    ...      ELSE IF        '${mainprocurementcategory}' == 'works'             Click Element    xpath=//span[text()='роботи']
+    sleep  3
+
+ #######################заповнюємо контактні дані###############################
+    click element  xpath=//div[contains(@class, 'qa_contact_lis')]//div[contains(@class, 'qa_language')]
+    sleep  2
+    ${test_name}=   set variable    'test test'
+    input text     css=.qa_contact_name             ${test_name}
+    sleep  1
+    input text  css=.qa_name_in_en                  ${test_name}
+    sleep  1
+    Clear Element Text  css=.qa_phone_in_en
+    input text  css=.qa_phone_in_en                 ${telephone_en}
+    sleep  1
+    input text  css=.qa_email_in_en                 ${email_en}
+
+    ######################заповнюємо тендер#####################################
+    input text     css=.qa_tender_title                                                     ${title}
+    sleep  2
+    click element  xpath=(//div[contains(@class, 'qa_language_qa_tender_title')])[last()]
+    sleep  3
+    input text     xpath=//textarea[contains(@class, 'qa_tender_title undefined')]          ${title_en}
+    sleep  1
+    input text     css=.qa_tender_description                                               ${description}
+    sleep  1
+    click element  xpath=(//div[contains(@class, 'qa_language_qa_tender_description')])[last()]
+    sleep  3
+    input text     xpath=//textarea[contains(@class, 'qa_tender_description undefined')]    ${description_en}
+    sleep  1
+    Run Keyword If  '${tax}' == 'True'   click element  css=.qa_multilot_tax_included
+    SLEEP  1
+    input text     css=.qa_multilot_end_period_adjustments                                  ${tender_end}
+    sleep  2
+    click element   css=.qa_multilot_end_period_adjustments
+    sleep  2
+    ############################заповнюємо лот##################################
+    input text  css=.qa_lot_title                                                           ${lots_title}
+    sleep  1
+    click element  xpath=(//div[contains(@class, 'qa_language_qa_lot_title')])[last()]
+    sleep  2
+    input text  xpath=//textarea[contains(@class, 'qa_lot_title undefined')]                ${lots_title}
+    sleep  2
+    input text  css=.qa_lot_description                                                     ${lots_description}
+    sleep  1
+    click element  xpath=(//div[contains(@class, 'qa_language_qa_lot_description')])[last()]
+    sleep  1
+    input text  xpath=//textarea[contains(@class, 'qa_lot_description undefined')]          ${lots_description}
+    sleep  1
+    input text  css=.qa_multilot_tender_lot_bugdet                                          ${lots_amount}
+    sleep  1
+    input text  css=.qa_multilot_tender_step_auction_rate                                   ${lots_minimalstep}
+
+    #####################Добавление features(Нецінові критерії)#################
+
+    ${KeyIsfeatures}=    Run Keyword And Return Status          Dictionary Should Contain Key           ${tender_data.data}            features
+    ${features}=   Run Keyword If    ${KeyIsfeatures}           Get From Dictionary                     ${tender_data.data}            features
+    Run Keyword If   '${KeyIsfeatures}' == 'True'               Нецінові критерії                       ${features}
+
+    ################Добавление milestones(Додати умови оплати)##################
+
+    ${number_of_milestones}=      Get Length                      ${milestones}
+    set global variable                                           ${number_of_milestones}
+    :FOR  ${index}  IN RANGE  ${number_of_milestones}
+    \  Run Keyword If  '${index}' != '0'   Click Element     xpath=(//a[contains(@class, 'qa_add_new_milestone')])[last()]
+    \  Додати умови оплати    ${milestones[${index}]}
+    sleep  2
+
+    #############################Добавление Items###############################
+
+    ${number_of_items}=  Get Length  ${items}
+    set global variable    ${number_of_items}
+    :FOR  ${index}  IN RANGE  ${number_of_items}
+    \  Run Keyword If  '${index}' != '0'   Click Element     css=.qa_add_button
+    \  Додати айтем тендера    ${items[${index}]}   ${tender_data}
+
+Створити competitiveDialogueUA
+    [Arguments]   ${username}     ${tender_data}     ${plan_id}
+    log to console  Створити competitiveDialogueUA
+    log to console  ${tender_data}
+    log to console  ${plan_id}
+    log to console  ---------------------
+    ${mainprocurementcategory}=         Get From Dictionary         ${tender_data.data}                                         mainProcurementCategory
+    ${title}=                           Get From Dictionary         ${tender_data.data}                                         title
+    ${description}=                     Get From Dictionary         ${tender_data.data}                                         description
+    ${value_amount}=                    Get From Dictionary         ${tender_data.data.value}                                   amount
+    ${currency}=                        Get From Dictionary         ${tender_data.data.value}                                   currency
+    ${tax}=                             Get From Dictionary         ${tender_data.data.value}                                   valueAddedTaxIncluded
+    ${lots_title}=                      Get From Dictionary         ${tender_data.data.lots[0]}                                 title
+    ${lots_description}=                Get From Dictionary         ${tender_data.data.lots[0]}                                 description
+    ${lots_amount}=                     Get From Dictionary         ${tender_data.data.lots[0].value}                           amount
+    ${lots_amount}=                     Convert To String           ${lots_amount}
+    ${lots_minimalStep}=                Get From Dictionary         ${tender_data.data.lots[0].minimalStep}                     amount
+    ${lots_minimalstep}=                Convert To String           ${lots_minimalstep}
+    ${milestones}=                      Get From Dictionary         ${tender_data.data}                                         milestones
+    ${items}=                           Get From Dictionary         ${tender_data.data}                                         items
+    ${tender_end}                       Get From Dictionary         ${tender_data.data.tenderPeriod}                            endDate
+    ${tender_end}                       convert_iso_date_to_prom    ${tender_end}
+    ${telephone_en}=                    Get From Dictionary         ${tender_data.data.procuringEntity.contactPoint}            telephone
+    ${email_en}=                        Get From Dictionary         ${tender_data.data.procuringEntity.contactPoint}            email
+
+    Go to                                ${USERS.users['${username}'].default_page}
+    Sleep  1
+    Wait Until Page Contains Element     css=.qa_button_add_new_purchase     20
+    Click Element                        css=.qa_button_add_new_purchase
+    Wait Until Page Contains Element     css=.qa_multilot_type_drop_down     20
+    Click Element                        css=.qa_multilot_type_drop_down
+    sleep  2
+
+    Run Keyword If          '${procurement_method_type}' == 'competitiveDialogueUA'       Click Element    xpath=(//span[text()='Конкурентний діалог'])[last()]
+    sleep  4
+    click element  xpath=(//input[@type='checkbox'])[1]
+    sleep  2
+    input text   css=.qa_plan_tuid    ${plan_id}
+    sleep  1
+    click element  css=.qa_procurement_category_choices
+    sleep  2
+    Run Keyword If          '${mainprocurementcategory}' == 'goods'             Click Element    xpath=//span[text()='товари']
+    ...      ELSE IF        '${mainprocurementcategory}' == 'services'          Click Element    xpath=//span[text()='послуги']
+    ...      ELSE IF        '${mainprocurementcategory}' == 'works'             Click Element    xpath=//span[text()='роботи']
+    sleep  3
+
+    ######################заповнюємо тендер#####################################
+    input text     css=.qa_multilot_title                                               ${title}
+    sleep  1
+    input text     css=.qa_multilot_descr                                               ${description}
+    sleep  1
+    Run Keyword If  '${tax}' == 'True'   click element  css=.qa_multilot_tax_included
+    sleep  1
+    input text     css=.qa_multilot_end_period_adjustments                              ${tender_end}
+    sleep  2
+    click element   css=.qa_multilot_end_period_adjustments
+    sleep  2
+    ############################заповнюємо лот##################################
+    input text  css=.qa_multilot_tender_lot_name                                        ${lots_title}
+    sleep  1
+    input text  css=.qa_multilot_tender_lot_descr                                       ${lots_description}
+    sleep  1
+    input text  css=.qa_multilot_tender_lot_bugdet                                      ${lots_amount}
+    sleep  1
+    input text  css=.qa_multilot_tender_step_auction_rate                               ${lots_minimalstep}
+
+    #####################Добавление features(Нецінові критерії)#################
+
+    ${KeyIsfeatures}=    Run Keyword And Return Status          Dictionary Should Contain Key           ${tender_data.data}            features
+    ${features}=   Run Keyword If    ${KeyIsfeatures}           Get From Dictionary                     ${tender_data.data}            features
+    Run Keyword If   '${KeyIsfeatures}' == 'True'               Нецінові критерії                       ${features}
+
+    ################Добавление milestones(Додати умови оплати)##################
+
+    ${number_of_milestones}=      Get Length                      ${milestones}
+    set global variable                                           ${number_of_milestones}
+    :FOR  ${index}  IN RANGE  ${number_of_milestones}
+    \  Run Keyword If  '${index}' != '0'   Click Element     xpath=(//a[contains(@class, 'qa_add_new_milestone')])[last()]
+    \  Додати умови оплати    ${milestones[${index}]}
+    sleep  2
+
+    #############################Добавление Items###############################
+
+    ${number_of_items}=  Get Length  ${items}
+    set global variable    ${number_of_items}
+    :FOR  ${index}  IN RANGE  ${number_of_items}
+    \  Run Keyword If  '${index}' != '0'   Click Element     css=.qa_add_button
+    \  Додати айтем тендера    ${items[${index}]}   ${tender_data}
+
+Створити competitiveDialogueEU
+    [Arguments]   ${username}     ${tender_data}     ${plan_id}
+    log to console  Створити competitiveDialogueEU
+    log to console  ${tender_data}
+    log to console  ${plan_id}
+    log to console  ---------------------
+    ${mainprocurementcategory}=         Get From Dictionary         ${tender_data.data}                                         mainProcurementCategory
+    ${title}=                           Get From Dictionary         ${tender_data.data}                                         title
+    ${title_en}=                        Get From Dictionary         ${tender_data.data}                                         title_en
+    ${description}=                     Get From Dictionary         ${tender_data.data}                                         description
+    ${description_en}=                  Get From Dictionary         ${tender_data.data}                                         description_en
+    ${value_amount}=                    Get From Dictionary         ${tender_data.data.value}                                   amount
+    ${currency}=                        Get From Dictionary         ${tender_data.data.value}                                   currency
+    ${tax}=                             Get From Dictionary         ${tender_data.data.value}                                   valueAddedTaxIncluded
+    ${lots_title}=                      Get From Dictionary         ${tender_data.data.lots[0]}                                 title
+    ${lots_description}=                Get From Dictionary         ${tender_data.data.lots[0]}                                 description
+    ${lots_amount}=                     Get From Dictionary         ${tender_data.data.lots[0].value}                           amount
+    ${lots_amount}=                     Convert To String           ${lots_amount}
+    ${lots_minimalStep}=                Get From Dictionary         ${tender_data.data.lots[0].minimalStep}                     amount
+    ${lots_minimalstep}=                Convert To String           ${lots_minimalstep}
+    ${milestones}=                      Get From Dictionary         ${tender_data.data}                                         milestones
+    ${items}=                           Get From Dictionary         ${tender_data.data}                                         items
+    ${tender_end}                       Get From Dictionary         ${tender_data.data.tenderPeriod}                            endDate
+    ${tender_end}                       convert_iso_date_to_prom    ${tender_end}
+    ${telephone_en}=                    Get From Dictionary         ${tender_data.data.procuringEntity.contactPoint}            telephone
+    ${email_en}=                        Get From Dictionary         ${tender_data.data.procuringEntity.contactPoint}            email
+
+    Go to                                ${USERS.users['${username}'].default_page}
+    Sleep  1
+    Wait Until Page Contains Element     css=.qa_button_add_new_purchase     20
+    Click Element                        css=.qa_button_add_new_purchase
+    Wait Until Page Contains Element     css=.qa_multilot_type_drop_down     20
+    Click Element                        css=.qa_multilot_type_drop_down
+    sleep  2
+
+    Run Keyword If          '${procurement_method_type}' == 'competitiveDialogueEU'       Click Element    xpath=(//span[text()='Конкурентний діалог з публікацією англійською мовою'])[last()]
+    sleep  4
+    click element  xpath=(//input[@type='checkbox'])[1]
+    sleep  2
+    input text   css=.qa_plan_tuid    ${plan_id}
+    sleep  1
+    click element  css=.qa_procurement_category_choices
+    sleep  2
+    Run Keyword If          '${mainprocurementcategory}' == 'goods'             Click Element    xpath=//span[text()='товари']
+    ...      ELSE IF        '${mainprocurementcategory}' == 'services'          Click Element    xpath=//span[text()='послуги']
+    ...      ELSE IF        '${mainprocurementcategory}' == 'works'             Click Element    xpath=//span[text()='роботи']
+    sleep  3
+
+ #######################заповнюємо контактні дані###############################
+    click element  xpath=//div[contains(@class, 'qa_contact_lis')]//div[contains(@class, 'qa_language')]
+    sleep  2
+    ${test_name}=   set variable    'test test'
+    input text     css=.qa_contact_name             ${test_name}
+    sleep  1
+    input text  css=.qa_name_in_en                  ${test_name}
+    sleep  1
+    Clear Element Text  css=.qa_phone_in_en
+    input text  css=.qa_phone_in_en                 ${telephone_en}
+    sleep  1
+    input text  css=.qa_email_in_en                 ${email_en}
+
+    ######################заповнюємо тендер#####################################
+    input text     css=.qa_tender_title                                                     ${title}
+    sleep  2
+    click element  xpath=(//div[contains(@class, 'qa_language_qa_tender_title')])[last()]
+    sleep  3
+    input text     xpath=//textarea[contains(@class, 'qa_tender_title undefined')]          ${title_en}
+    sleep  1
+    input text     css=.qa_tender_description                                               ${description}
+    sleep  1
+    click element  xpath=(//div[contains(@class, 'qa_language_qa_tender_description')])[last()]
+    sleep  3
+    input text     xpath=//textarea[contains(@class, 'qa_tender_description undefined')]    ${description_en}
+    sleep  1
+    Run Keyword If  '${tax}' == 'True'   click element  css=.qa_multilot_tax_included
+    sleep  1
+    input text     css=.qa_multilot_end_period_adjustments                                  ${tender_end}
+    sleep  2
+    click element   css=.qa_multilot_end_period_adjustments
+    sleep  2
+    ############################заповнюємо лот##################################
+    input text  css=.qa_lot_title                                                           ${lots_title}
+    sleep  1
+    click element  xpath=(//div[contains(@class, 'qa_language_qa_lot_title')])[last()]
+    sleep  2
+    input text  xpath=//textarea[contains(@class, 'qa_lot_title undefined')]                ${lots_title}
+    sleep  2
+    input text  css=.qa_lot_description                                                     ${lots_description}
+    sleep  1
+    click element  xpath=(//div[contains(@class, 'qa_language_qa_lot_description')])[last()]
+    sleep  1
+    input text  xpath=//textarea[contains(@class, 'qa_lot_description undefined')]          ${lots_description}
+    sleep  1
+    input text  css=.qa_multilot_tender_lot_bugdet                                          ${lots_amount}
+    sleep  1
+    input text  css=.qa_multilot_tender_step_auction_rate                                   ${lots_minimalstep}
+
+    #####################Добавление features(Нецінові критерії)#################
+
+    ${KeyIsfeatures}=    Run Keyword And Return Status          Dictionary Should Contain Key           ${tender_data.data}            features
+    ${features}=   Run Keyword If    ${KeyIsfeatures}           Get From Dictionary                     ${tender_data.data}            features
+    Run Keyword If   '${KeyIsfeatures}' == 'True'               Нецінові критерії                       ${features}
+
+    ################Добавление milestones(Додати умови оплати)##################
+
+    ${number_of_milestones}=      Get Length                      ${milestones}
+    set global variable                                           ${number_of_milestones}
+    :FOR  ${index}  IN RANGE  ${number_of_milestones}
+    \  Run Keyword If  '${index}' != '0'   Click Element     xpath=(//a[contains(@class, 'qa_add_new_milestone')])[last()]
+    \  Додати умови оплати    ${milestones[${index}]}
+    sleep  2
+
+    #############################Добавление Items###############################
+
+    ${number_of_items}=  Get Length  ${items}
+    set global variable    ${number_of_items}
+    :FOR  ${index}  IN RANGE  ${number_of_items}
+    \  Run Keyword If  '${index}' != '0'   Click Element     css=.qa_add_button
+    \  Додати айтем тендера    ${items[${index}]}   ${tender_data}
+
+Створити esco
+    [Arguments]   ${username}     ${tender_data}     ${plan_id}
+    log to console  ${tender_data}
+    log to console  ${plan_id}
+    log to console  ---------------------
+    ${mainprocurementcategory}=         Get From Dictionary         ${tender_data.data}                                         mainProcurementCategory
+    ${title}=                           Get From Dictionary         ${tender_data.data}                                         title
+    ${title_en}=                        Get From Dictionary         ${tender_data.data}                                         title_en
+    ${description}=                     Get From Dictionary         ${tender_data.data}                                         description
+    ${description_en}=                  Get From Dictionary         ${tender_data.data}                                         description_en
+    ${lots_title}=                      Get From Dictionary         ${tender_data.data.lots[0]}                                 title
+    ${lots_description}=                Get From Dictionary         ${tender_data.data.lots[0]}                                 description
+    ${items}=                           Get From Dictionary         ${tender_data.data}                                         items
+    ${tender_end}                       Get From Dictionary         ${tender_data.data.tenderPeriod}                            endDate
+    ${tender_end}                       convert_iso_date_to_prom    ${tender_end}
+    ${telephone_en}=                    Get From Dictionary         ${tender_data.data.procuringEntity.contactPoint}            telephone
+    ${email_en}=                        Get From Dictionary         ${tender_data.data.procuringEntity.contactPoint}            email
+    ${mbudiscountrate}=                 Get From Dictionary         ${tender_data.data}                                         NBUdiscountRate
+    ${mbudiscountrate}=                 Convert To String           ${mbudiscountrate}
+    ${fundingkind}=                     Get From Dictionary         ${tender_data.data}                                         fundingKind
+    ${minimalsteppercentage}=           Get From Dictionary         ${tender_data.data.lots[0]}                                 minimalStepPercentage
+    ${minimalsteppercentage}=           Convert To String           ${minimalsteppercentage}
+    ${yearlyPaymentsPercentageRange}=   Get From Dictionary         ${tender_data.data.lots[0]}                                 yearlyPaymentsPercentageRange
+    ${yearlyPaymentsPercentageRange}=   Convert To String           ${yearlyPaymentsPercentageRange}
+
+    Go to                                ${USERS.users['${username}'].default_page}
+    Sleep  1
+    Wait Until Page Contains Element     css=.qa_button_add_new_purchase     20
+    Click Element                        css=.qa_button_add_new_purchase
+    Wait Until Page Contains Element     css=.qa_multilot_type_drop_down     20
+    Click Element                        css=.qa_multilot_type_drop_down
+    sleep  2
+
+    Run Keyword If          '${procurement_method_type}' == 'esco'   Click Element    xpath=(//span[text()='Публічні закупівлі енергосервісу'])[last()]
+    sleep  4
+    click element  xpath=(//input[@type='checkbox'])[1]
+    sleep  2
+    input text   css=.qa_plan_tuid    ${plan_id}
+    sleep  1
+    click element  css=.qa_procurement_category_choices
+    sleep  2
+    Run Keyword If          '${mainprocurementcategory}' == 'goods'             Click Element    xpath=//span[text()='товари']
+    ...      ELSE IF        '${mainprocurementcategory}' == 'services'          Click Element    xpath=//span[text()='послуги']
+    ...      ELSE IF        '${mainprocurementcategory}' == 'works'             Click Element    xpath=//span[text()='роботи']
+    sleep  3
+
+ #######################заповнюємо контактні дані###############################
+    click element  xpath=//div[contains(@class, 'qa_contact_lis')]//div[contains(@class, 'qa_language')]
+    sleep  2
+    ${test_name}=   set variable    'test test'
+    input text     css=.qa_contact_name             ${test_name}
+    sleep  1
+    input text  css=.qa_name_in_en                  ${test_name}
+    sleep  1
+    Clear Element Text  css=.qa_phone_in_en
+    input text  css=.qa_phone_in_en                 ${telephone_en}
+    sleep  1
+    input text  css=.qa_email_in_en                 ${email_en}
+
+    ######################заповнюємо тендер#####################################
+    input text      css=.qa_tender_title                                                        ${title}
+    sleep  2
+    click element   xpath=(//div[contains(@class, 'qa_language_qa_tender_title')])[last()]
+    sleep  3
+    input text      xpath=//textarea[contains(@class, 'qa_tender_title undefined')]             ${title_en}
+    sleep  1
+    input text      css=.qa_tender_description                                                  ${description}
+    sleep  1
+    click element   xpath=(//div[contains(@class, 'qa_language_qa_tender_description')])[last()]
+    sleep  3
+    input text      xpath=//textarea[contains(@class, 'qa_tender_description undefined')]       ${description_en}
+    sleep  1
+    input text      css=.qa_singlelot_tender_nbu_discount_rate                                  ${mbudiscountrate}
+    sleep  1
+    click element   css=.qa_singlelot_tender_funding_kind
+    sleep  1
+    Run Keyword If  '${fundingkind}' == 'budget'   click element   xpath=//li[text()= 'фінансування з бюджетних коштів']
+    ...  ELSE    click element   xpath=//li[text()= 'фінансування виключно за рахунок Учасника']
+    sleep  2
+    input text      css=.qa_multilot_end_period_adjustments                                     ${tender_end}
+    sleep  2
+    click element   css=.qa_multilot_end_period_adjustments
+    sleep  2
+    #####################Добавление features(Нецінові критерії)#################
+
+    ${KeyIsfeatures}=    Run Keyword And Return Status          Dictionary Should Contain Key           ${tender_data.data}            features
+    ${features}=   Run Keyword If    ${KeyIsfeatures}           Get From Dictionary                     ${tender_data.data}            features
+    Run Keyword If   '${KeyIsfeatures}' == 'True'               Нецінові критерії                       ${features}
+
+    ############################заповнюємо лот##################################
+    input text  css=.qa_lot_title                                                               ${lots_title}
+    sleep  1
+    click element  xpath=(//div[contains(@class, 'qa_language_qa_lot_title')])[last()]
+    sleep  2
+    input text  xpath=//textarea[contains(@class, 'qa_lot_title undefined')]                    ${lots_title}
+    sleep  2
+    input text  css=.qa_lot_description                                                         ${lots_description}
+    sleep  1
+    click element  xpath=(//div[contains(@class, 'qa_language_qa_lot_description')])[last()]
+    sleep  1
+    input text  xpath=//textarea[contains(@class, 'qa_lot_description undefined')]              ${lots_description}
+    input text   css=.qa_singlelot_tender_minimal_step_percentage                               ${minimalsteppercentage}
+    sleep  1
+    input text     css=.qa_singlelot_tender_yearly_payments_percentage_range                    ${yearlyPaymentsPercentageRange}
+    click element   css=.qa_delete_link_milestone
+    sleep  2
+
+#    #####################Добавление features(Нецінові критерії)#################
+#
+#    ${KeyIsfeatures}=    Run Keyword And Return Status          Dictionary Should Contain Key           ${tender_data.data}            features
+#    ${features}=   Run Keyword If    ${KeyIsfeatures}           Get From Dictionary                     ${tender_data.data}            features
+#    Run Keyword If   '${KeyIsfeatures}' == 'True'               Нецінові критерії                       ${features}
+
+    #############################Добавление Items###############################
+
+    ${number_of_items}=  Get Length  ${items}
+    set global variable    ${number_of_items}
+    :FOR  ${index}  IN RANGE  ${number_of_items}
+    \  Run Keyword If  '${index}' != '0'   Click Element     css=.qa_add_button
+    \  Додати айтем тендера еско   ${items[${index}]}   ${tender_data}
+
+Додати айтем тендера еско
+    [Arguments]   ${items}   ${tender_data}
+    ${procurement_method_type}=                 Get From Dictionary                         ${tender_data.data}               procurementMethodType
+
+    ${item_classification_description}=         Get From Dictionary                         ${items.classification}           description
+    ${item_classification_id}=                  Get From Dictionary                         ${items.classification}           id
+    ${item_classification_scheme}=              Get From Dictionary                         ${items.classification}           scheme
+    ${delivery_country}=                        Get From Dictionary                         ${items.deliveryAddress}          countryName
+    ${delivery_country_en}=                     Get From Dictionary                         ${items.deliveryAddress}          countryName_en
+    ${delivery_country_ru}=                     Get From Dictionary                         ${items.deliveryAddress}          countryName_ru
+    ${delivery_locality}=                       Get From Dictionary                         ${items.deliveryAddress}          locality
+    ${delivery_postalCode}=                     Get From Dictionary                         ${items.deliveryAddress}          postalCode
+    ${delivery_region}=                         Get From Dictionary                         ${items.deliveryAddress}          region
+    ${delivery_street}=                         Get From Dictionary                         ${items.deliveryAddress}          streetAddress
+    ${item_description}=                        Get From Dictionary                         ${items}                          description
+    ${item_description_en}=                     Get From Dictionary                         ${items}                          description_en
+    ${item_description_ru}=                     Get From Dictionary                         ${items}                          description_ru
+
+    input text    xpath=(//textarea[contains(@class, 'qa_item_description')])[last()]               ${item_description}
+    sleep  1
+    click element  xpath=(//div[contains(@class, 'qa_language_qa_item_description')])[last()]
+    sleep   1
+    input text    xpath=(//textarea[contains(@class, 'qa_item_description undefined')])[last()]     ${item_description_en}
+    sleep  1
+    click element   xpath=(//a[contains(@class, 'qa_multilot_tender_dk_classifier')])[last()]
+    sleep  1
+    input text      css=.qa_classifier_popup .qa_search_input                                       ${item_classification_id}
+    sleep  1
+    click element   css=.qa_classifier_popup [type="checkbox"]
+    sleep  1
+    CLICK ELEMENT   css=.qa_classifier_popup .qa_submit span
+    sleep  2
+    input text      xpath=(//input[contains(@class, 'qa_multilot_tender_address')])[last()]         ${delivery_street}
+    sleep  1
+    input text      xpath=(//input[contains(@class, 'qa_multilot_tender_locality')])[last()]        ${delivery_locality}
+    sleep  1
+    input text      xpath=(//input[contains(@class, 'qa_multilot_tender_zip_code')])[last()]        ${delivery_postalCode}
+    sleep  1
+    click element   xpath=(//div[contains(@class, 'qa_multilot_tender_drop_down_region')])[last()]
+    sleep  1
+    ${delivery_region}=   Run Keyword If   '${delivery_region}'      convert_delivery_address     ${delivery_region}
+    Click Element   xpath=(//div[contains(@class, 'qa_multilot_tender_drop_down_region')])[last()]//li[contains(text(), '${delivery_region}')]
+
+створити план esco
+    [Arguments]    ${username}    ${plan_data}
+    log to console  ${plan_data}
+    ${description}=                     Get From Dictionary             ${plan_data.data.budget}                description
+    ${classification}=                  Get From Dictionary             ${plan_data.data.classification}        id
+
+    Click Element    xpath=(//li[@data-value="esco"])[last()]
+    sleep  4
+    Input Text          css=[id="description"]                 ${description}
+    Click Element       css=div[data-classifier-form-input-name*='primary_classifier_id'] a
+    sleep  1
+    input text          css=.qa_search_input                   ${classification}
+    sleep  1
+    Click Element       css=[class="b-checkbox__input"]
+    sleep  2
+    Click Element       css=.qa_submit
+    sleep  1
+    Click Element    xpath=(//span[contains(text(), 'Додати джерело')])[last()]
+    sleep  1
+    Click Element       xpath=(//a[contains(@data-url, '/add_esco_item')])[last()]
+    sleep  1
+
+    #Добавление айтемов их обычно 2
+    ${items}=   Get From Dictionary    ${plan_data.data}    items
+    ${number_of_items}=  Get Length  ${items}
+    set global variable    ${number_of_items}
+    :FOR  ${index}  IN RANGE  ${number_of_items}
+    \  Run Keyword If  '${index}' != '0'   Click Element     xpath=(//a[contains(@data-url, '/add_esco_item')])[last()]
+    \  Додати айтем плана еско    ${items[${index}]}
+
+    #Добавление Джерала их обычно 3
+    ${breakdowns}=                Get From Dictionary             ${plan_data.data.budget}     breakdown
+    ${number_of_breakdowns}=  Get Length  ${breakdowns}
+    set global variable    ${number_of_breakdowns}
+    :FOR  ${index}  IN RANGE  ${number_of_breakdowns}
+    \  Run Keyword If  '${index}' != '0'   Click Element    xpath=(//span[contains(text(), 'Додати джерело')])[last()]
+    \  Додати джерело плана    ${breakdowns[${index}]}
+
+Додати айтем плана еско
+    [Arguments]   ${items}
+    ${item_classification_description}=                 Get From Dictionary             ${items.classification}             description
+    ${item_classification_id}=                          Get From Dictionary             ${items.classification}             id
+    ${item_classification_scheme}=                      Get From Dictionary             ${items.classification}             scheme
+    ${item_description}=                                Get From Dictionary             ${items}                            description
+    capture page screenshot
+    #Заполнение тела айтема
+    sleep  1
+    Input Text    xpath=(//input[contains(@id, 'descr')])[last()]    ${item_description}
+    sleep  1
+    Click Element     xpath=(//div[@data-classifier-code="dk021"]//span)[last()]
+    sleep  1
+    input text  css=.qa_search_input                        ${item_classification_id}
+    sleep  1
+    Click Element  css=[class="b-checkbox__input"]
+    sleep  2
+    Click Element  css=.qa_submit
+    sleep  1
 
 Створити тендер для типу закупівлі
     [Arguments]    ${username}    ${tender_data}    ${plan_id}
@@ -902,24 +1563,24 @@ Login
     Click Element     xpath=(//div[@class='qa_all_block']//a[contains(@class, 'qa_multilot_add_one_more_feature')])[last()]
     capture page screenshot
     sleep  4
-    Run Keyword If  '${procurement_method_type}' in ['aboveThresholdEU', 'aboveThresholdUA.defense', 'competitiveDialogueEU']    Wait Until Page Contains Element    xpath=(//input[contains(@class, 'qa_feature_title ')])[last()]
+    Run Keyword If  '${procurement_method_type}' in ['aboveThresholdEU', 'aboveThresholdUA.defense', 'competitiveDialogueEU', 'esco']    Wait Until Page Contains Element    xpath=(//input[contains(@class, 'qa_feature_title ')])[last()]
     ...  ELSE     Wait Until Page Contains Element     xpath=(//input[contains(@class, 'qa_multilot_feature_input_name')])[last()]
     sleep  1
-    Run Keyword If  '${procurement_method_type}' in ['aboveThresholdEU', 'aboveThresholdUA.defense', 'competitiveDialogueEU']   input text    xpath=(//input[contains(@class, 'qa_feature_title ')])[last()]  ${title}
+    Run Keyword If  '${procurement_method_type}' in ['aboveThresholdEU', 'aboveThresholdUA.defense', 'competitiveDialogueEU', 'esco']   input text    xpath=(//input[contains(@class, 'qa_feature_title ')])[last()]  ${title}
     ...  ELSE    input text    xpath=(//input[contains(@class, 'qa_multilot_feature_input_name')])[last()]   ${title}
     sleep   1
     capture page screenshot
-    Run Keyword If  '${procurement_method_type}' in ['aboveThresholdEU', 'aboveThresholdUA.defense', 'competitiveDialogueEU']  sleep   2
-    Run Keyword If  '${procurement_method_type}' in ['aboveThresholdEU', 'aboveThresholdUA.defense', 'competitiveDialogueEU']  click element    xpath=(//div[contains(@class, 'qa_language_qa_feature_title')])[last()]
+    Run Keyword If  '${procurement_method_type}' in ['aboveThresholdEU', 'aboveThresholdUA.defense', 'competitiveDialogueEU', 'esco']  sleep   2
+    Run Keyword If  '${procurement_method_type}' in ['aboveThresholdEU', 'aboveThresholdUA.defense', 'competitiveDialogueEU', 'esco']  click element    xpath=(//div[contains(@class, 'qa_language_qa_feature_title')])[last()]
     capture page screenshot
-    Run Keyword If  '${procurement_method_type}' in ['aboveThresholdEU', 'aboveThresholdUA.defense', 'competitiveDialogueEU']  sleep   2
-    Run Keyword If  '${procurement_method_type}' in ['aboveThresholdEU', 'aboveThresholdUA.defense', 'competitiveDialogueEU']  input text    xpath=(//input[contains(@class, 'qa_feature_title ')])[last()]  ${title_en}
-    Run Keyword If  '${procurement_method_type}' in ['aboveThresholdEU', 'aboveThresholdUA.defense', 'competitiveDialogueEU']  sleep   2
-    Run Keyword If  '${procurement_method_type}' in ['aboveThresholdEU', 'aboveThresholdUA.defense', 'competitiveDialogueEU']  input text    xpath=(//textarea[contains(@class, 'qa_feature_description ')])[last()]   ${description}
+    Run Keyword If  '${procurement_method_type}' in ['aboveThresholdEU', 'aboveThresholdUA.defense', 'competitiveDialogueEU', 'esco']  sleep   2
+    Run Keyword If  '${procurement_method_type}' in ['aboveThresholdEU', 'aboveThresholdUA.defense', 'competitiveDialogueEU', 'esco']  input text    xpath=(//input[contains(@class, 'qa_feature_title ')])[last()]  ${title_en}
+    Run Keyword If  '${procurement_method_type}' in ['aboveThresholdEU', 'aboveThresholdUA.defense', 'competitiveDialogueEU', 'esco']  sleep   2
+    Run Keyword If  '${procurement_method_type}' in ['aboveThresholdEU', 'aboveThresholdUA.defense', 'competitiveDialogueEU', 'esco']  input text    xpath=(//textarea[contains(@class, 'qa_feature_description ')])[last()]   ${description}
     ...  ELSE   input text    xpath=(//input[contains(@class, 'qa_multilot_feature_input_hint')])[last()]   ${description}
     sleep   1
-    Run Keyword If  '${procurement_method_type}' in ['aboveThresholdEU', 'aboveThresholdUA.defense', 'competitiveDialogueEU']   click element    xpath=(//div[contains(@class, 'qa_language_qa_feature_description')])[last()]
-    Run Keyword If  '${procurement_method_type}' in ['aboveThresholdEU', 'aboveThresholdUA.defense', 'competitiveDialogueEU']   input text    xpath=(//textarea[contains(@class, 'qa_feature_description ')])[last()]   ${description}
+    Run Keyword If  '${procurement_method_type}' in ['aboveThresholdEU', 'aboveThresholdUA.defense', 'competitiveDialogueEU', 'esco']   click element    xpath=(//div[contains(@class, 'qa_language_qa_feature_description')])[last()]
+    Run Keyword If  '${procurement_method_type}' in ['aboveThresholdEU', 'aboveThresholdUA.defense', 'competitiveDialogueEU', 'esco']   input text    xpath=(//textarea[contains(@class, 'qa_feature_description ')])[last()]   ${description}
     sleep  4
     capture page screenshot
     #############################Добавление features(вагу нецінового критерія)#######################################
@@ -940,12 +1601,12 @@ Login
     ${title}=                    Get From Dictionary    ${enum}                title
     ${value}=                    Get From Dictionary    ${enum}                value
 
-    Run Keyword If  '${procurement_method_type}' in ['aboveThresholdEU', 'aboveThresholdUA.defense', 'competitiveDialogueEU']   input text    xpath=(//input[contains(@class, 'qa_option_title')])[last()]  ${title}
+    Run Keyword If  '${procurement_method_type}' in ['aboveThresholdEU', 'aboveThresholdUA.defense', 'competitiveDialogueEU', 'esco']   input text    xpath=(//input[contains(@class, 'qa_option_title')])[last()]  ${title}
     ...  ELSE    input text  xpath=(//input[contains(@class, 'qa_multilot_option')])[last()]   ${title}
     sleep   1
-    Run Keyword If  '${procurement_method_type}' in ['aboveThresholdEU', 'aboveThresholdUA.defense', 'competitiveDialogueEU']   click element    xpath=(//div[contains(@class, 'qa_language_qa_option_title')])[last()]
+    Run Keyword If  '${procurement_method_type}' in ['aboveThresholdEU', 'aboveThresholdUA.defense', 'competitiveDialogueEU', 'esco']   click element    xpath=(//div[contains(@class, 'qa_language_qa_option_title')])[last()]
     sleep   1
-    Run Keyword If  '${procurement_method_type}' in ['aboveThresholdEU', 'aboveThresholdUA.defense', 'competitiveDialogueEU']   input text    xpath=(//input[contains(@class, 'qa_option_title')])[last()]  ${title}
+    Run Keyword If  '${procurement_method_type}' in ['aboveThresholdEU', 'aboveThresholdUA.defense', 'competitiveDialogueEU', 'esco']   input text    xpath=(//input[contains(@class, 'qa_option_title')])[last()]  ${title}
     sleep   1
     ${value_input}=    covert_features    ${value}
 
@@ -1020,12 +1681,12 @@ Login
     ${unit_code}=                               Get From Dictionary                         ${items.unit}                     code
     ${unit_name}=                               Get From Dictionary                         ${items.unit}                     name
 
-    Run Keyword If  '${procurement_method_type}' in ['aboveThresholdEU', 'aboveThresholdUA.defense', 'competitiveDialogueEU']    input text    xpath=(//textarea[contains(@class, 'qa_item_description')])[last()]          ${item_description}
+    Run Keyword If  '${procurement_method_type}' in ['aboveThresholdEU', 'aboveThresholdUA.defense', 'competitiveDialogueEU', 'esco']    input text    xpath=(//textarea[contains(@class, 'qa_item_description')])[last()]          ${item_description}
     ...      ELSE      input text    xpath=(//textarea[contains(@class, 'qa_multilot_tender_descr_product')])[last()]   ${item_description}
     sleep  1
-    Run Keyword If  '${procurement_method_type}' in ['aboveThresholdEU', 'aboveThresholdUA.defense', 'competitiveDialogueEU']  click element  xpath=(//div[contains(@class, 'qa_language_qa_item_description')])[last()]
-    Run Keyword If  '${procurement_method_type}' in ['aboveThresholdEU', 'aboveThresholdUA.defense', 'competitiveDialogueEU']  sleep   1
-    Run Keyword If  '${procurement_method_type}' in ['aboveThresholdEU', 'aboveThresholdUA.defense', 'competitiveDialogueEU']  input text    xpath=(//textarea[contains(@class, 'qa_item_description undefined')])[last()]   ${item_description_en}
+    Run Keyword If  '${procurement_method_type}' in ['aboveThresholdEU', 'aboveThresholdUA.defense', 'competitiveDialogueEU', 'esco']  click element  xpath=(//div[contains(@class, 'qa_language_qa_item_description')])[last()]
+    Run Keyword If  '${procurement_method_type}' in ['aboveThresholdEU', 'aboveThresholdUA.defense', 'competitiveDialogueEU', 'esco']  sleep   1
+    Run Keyword If  '${procurement_method_type}' in ['aboveThresholdEU', 'aboveThresholdUA.defense', 'competitiveDialogueEU', 'esco']  input text    xpath=(//textarea[contains(@class, 'qa_item_description undefined')])[last()]   ${item_description_en}
     sleep  1
     input text    xpath=(//input[contains(@class, 'qa_multilot_tender_quantity_product')])[last()]      ${item_quantity}
     sleep  1
@@ -1062,17 +1723,8 @@ Login
     sleep  1
     click element   xpath=(//div[contains(@class, 'qa_multilot_tender_drop_down_region')])[last()]
     sleep  1
-    log to console  ~~~~~~~~~~~~~~~~
-    log to console  ${delivery_region}
-    log to console  ~~~~~~~~~~~~~~~~
     ${delivery_region}=   Run Keyword If   '${delivery_region}'      convert_delivery_address     ${delivery_region}
-    log to console  ~~~~~~~~~~~~~~~~
-    log to console  ${delivery_region}
-    log to console  ~~~~~~~~~~~~~~~~
     Click Element   xpath=(//div[contains(@class, 'qa_multilot_tender_drop_down_region')])[last()]//li[contains(text(), '${delivery_region}')]
-    log to console  =-=-=-=-=--
-    log to console  (//div[contains(@class, 'qa_multilot_tender_drop_down_region')])[last()]//li[contains(text(), '${delivery_region}')]
-    log to console  =-=-=-=-=--
     sleep  1
 
 Пошук тендера для провайдера
@@ -1104,9 +1756,6 @@ Login
 
 Пошук тендера по ідентифікатору
     [Arguments]    ${username}    ${tender_uaid}
-    log to console  --------------------------
-    log to console  ${username}
-    log to console  --------------------------
     log to console  ${tender_uaid}
     log to console  --------------------------
     Switch Browser    my_custom_alias
@@ -1167,12 +1816,9 @@ Login
 
 Отримати інформацію із тендера
     [Arguments]   ${username}   ${tender_uaid}   ${field_name}
-    log to console  %%%%%%%%%
-    log to console  ${field_name}
-    log to console  %%%%%%%%%
+
     ${return_value}=        Run Keyword If        '${field_name}' == 'awards[0].documents[0].title'                       click element  css=[title="Документи"]
     ${return_value}=        Run Keyword If        '${field_name}' == 'awards[0].documents[0].title'                       sleep  5
-
     ${return_value}=        Run Keyword If        '${field_name}' == 'title'                Get Text   xpath=(//h1)[1]
     ...  ELSE IF    '${field_name}' == 'description'                                        Get Text   xpath=(//p[@class])[3]
     ...  ELSE IF    '${field_name}' == 'tenderID'                                           Get Text   css=.qa_tender_id
@@ -1212,7 +1858,7 @@ Login
     ...  ELSE IF    '${field_name}' == 'procuringEntity.address.countryName'                Get Text   css=.qa_state_merchant_address_country_name
     ...  ELSE IF    '${field_name}' == 'procuringEntity.address.locality'                   Get Text   css=.qa_state_merchant_address_locality
     ...  ELSE IF    '${field_name}' == 'procuringEntity.address.postalCode'                 Get Text   css=.qa_state_merchant_address_postal_code
-    ...  ELSE IF    '${field_name}' == 'procuringEntity.address.region'                     Get Text   css=.qa_state_merchant_address_locality
+    ...  ELSE IF    '${field_name}' == 'procuringEntity.address.region'                     Get Text   css=.qa_state_merchant_address_region
     ...  ELSE IF    '${field_name}' == 'procuringEntity.address.streetAddress'              Get Text   css=.qa_state_merchant_address_street
     ...  ELSE IF    '${field_name}' == 'procuringEntity.contactPoint.name'                  Get Text   css=.qa_contact_name
     ...  ELSE IF    '${field_name}' == 'procuringEntity.contactPoint.telephone'             Get Text   css=.qa_contact_phone
@@ -1263,16 +1909,14 @@ Login
     ...  ELSE IF    '${field_name}' == 'awards[0].value.amount'                             Get Text   xpath=(//span[@class='qa_item_quantity'])[1]
     ...  ELSE IF    '${field_name}' == 'contracts[0].value.amountNet'                       Get Element Attribute   xpath=//div[@data-qa="award_amount"]@data-qa-value
     ...  ELSE IF    '${field_name}' == 'contracts[0].value.amount'                          Get Element Attribute   xpath=//div[@data-qa="award_amount"]@data-qa-value
-    ### Поменять
-
     ...  ELSE IF    '${field_name}' == 'awards[0].documents[0].title'                       Get Text   xpath=(//div[contains(@class, 'qa_classifier_popup')]//a[contains(@class, 'qa_file_name')])[1]
     ...  ELSE IF    '${field_name}' == 'contracts[0].status'                                Get Text   xpath=//td[contains(@class, 'qa_status_award')]
     ...  ELSE IF    '${field_name}' == 'documents[0].title'                                 Get Text   xpath=(//a[contains(@class, 'qa_file_name')])[1]
+    ...  ELSE IF    '${field_name}' == 'contracts[1].value.amountNet'                       Get Element Attribute    xpath=(//div[@data-qa="qa_user_award"])[1]@data-qa-value
+    ...  ELSE IF    '${field_name}' == 'contracts[1].value.amount'                          Get Element Attribute    xpath=(//div[@data-qa="qa_user_award"])[1]@data-qa-value
+
     reload page
     sleep  1
-    log to console  %%%%%%%%%
-    log to console  ${return_value}
-    log to console  %%%%%%%%%
     ${return_value}=   Run Keyword If    '${field_name}' == 'mainProcurementCategory'       convert_prom_string_to_common_string                                    ${return_value}
     ...  ELSE IF    '${field_name}' == 'value.valueAddedTaxIncluded'                        convert_prom_string_to_common_string                                    ${return_value}
     ...  ELSE IF    '${field_name}' == 'value.currency'                                     convert_prom_string_to_common_string                                    ${return_value}
@@ -1313,9 +1957,6 @@ Login
     ...  ELSE IF    '${field_name}' == 'contracts[0].value.amount'          convert to number                               ${return_value}
     ...  ELSE IF    '${field_name}' == 'awards[0].value.valueAddedTaxIncluded'                   convert_prom_string_to_common_string                           ${return_value}
     ...  ELSE        convert_prom_string_to_common_string       ${return_value}
-    log to console  %%%%%%%%%
-    log to console  ${return_value}
-    log to console  %%%%%%%%%
     [Return]  ${return_value}
 
 Отримати інформацію із предмету
@@ -1399,15 +2040,9 @@ Login
     ${return_value}=     Run Keyword If            '${field_name}' == 'title'       Get Text   xpath=(//p[@class="h-mb-10"])[last()]
     ...  ELSE IF    '${field_name}' == 'description'                                Get Text   xpath=(//span[@class='qa_state_feature_desc'])[last()]
     ...  ELSE IF    '${field_name}' == 'featureOf'                                  set variable       tenderer
-    log to console  &&&&&&&&&&
-    log to console  ${return_value}
-    log to console  &&&&&&&&&&
     ${return_value}=   Run Keyword If    '${field_name}' == 'unit.name'       convert_prom_string_to_common_string                                    ${return_value}
     ...  ELSE IF    '${field_name}' == 'quantity'                           convert to number                        ${return_value.replace(',', '.')}
     ...  ELSE        convert_prom_string_to_common_string       ${return_value}
-    log to console  &&&&&&&&&&
-    log to console  ${return_value}
-    log to console  &&&&&&&&&&
     sleep  3
     CLICK ELEMENT    xpath=(//a[contains(@href, "state_purchase/view")])[2]
     Wait Until Element Is Visible   css=.qa_lot_button     10
@@ -1415,14 +2050,8 @@ Login
 
 Отримати інформацію із документа
     [Arguments]  ${username}  ${tender_uaid}  ${doc_id}  ${field}
-    log to console   ((((((((((((
-    log to console   ${doc_id}
-    log to console   ((((((((((((
     log to console   ${field}
     ${return_value}=        Run Keyword And Return If                      '${field}' == 'title'                         Get Text   css=.qa_file_name
-    log to console   ((((((((((((
-    log to console   ${return_value}
-    log to console   ((((((((((((
     [Return]  ${return_value}
 
 Отримати документ
@@ -1690,7 +2319,7 @@ Login
     ...   Sleep  2
     ...   AND     Reload Page
     ...   AND     Sleep  2
-    Wait Until Element Is Visible       css=.zk-upload-files__file-id
+    ...   AND     Wait Until Element Is Visible       css=.zk-upload-files__file-id
 
 Змінити лот
     [Arguments]  ${username}   ${tender_uaid}   ${lot_id}   ${fieldname}    ${fieldvalue}
@@ -1909,7 +2538,17 @@ Login
 
 Створити постачальника, додати документацію і підтвердити його
     [Arguments]   ${username}   ${tender_uaid}   ${supplier_data}   ${document}
+    log to console  -0-0-0-0-0-00-
+    log to console   ${supplier_data}
+    log to console  -0-0-0-0-0-00-
+    log to console   ${tender_uaid}
+    log to console  -0-0-0-0-0-00-
 
+    Run Keyword If          '${procurement_method_type}' == 'negotiation'       Створити постачальника negotiation    ${username}   ${tender_uaid}   ${supplier_data}   ${document}
+    Run Keyword If          '${procurement_method_type}' == 'reporting'         Створити постачальника reporting      ${username}   ${tender_uaid}   ${supplier_data}   ${document}
+
+Створити постачальника negotiation
+    [Arguments]   ${username}   ${tender_uaid}   ${supplier_data}   ${document}
     ${locality}=                            Get From Dictionary         ${supplier_data.data.suppliers[0].address}                                         locality
     ${zip_code}=                            Get From Dictionary         ${supplier_data.data.suppliers[0].address}                                         postalCode
     ${region}=                              Get From Dictionary         ${supplier_data.data.suppliers[0].address}                                         region
@@ -2009,12 +2648,84 @@ Login
     Click Element  css=#SignDataButton
     sleep  15
 
+Створити постачальника reporting
+    [Arguments]   ${username}   ${tender_uaid}   ${supplier_data}   ${document}
+
+    ${locality}=                            Get From Dictionary         ${supplier_data.data.suppliers[0].address}                                         locality
+    ${zip_code}=                            Get From Dictionary         ${supplier_data.data.suppliers[0].address}                                         postalCode
+    ${region}=                              Get From Dictionary         ${supplier_data.data.suppliers[0].address}                                         region
+    ${street_address}=                      Get From Dictionary         ${supplier_data.data.suppliers[0].address}                                         streetAddress
+    ${name}=                                Get From Dictionary         ${supplier_data.data.suppliers[0]}                                                 name
+    ${email}=                               Get From Dictionary         ${supplier_data.data.suppliers[0].contactPoint}                                    email
+    ${telephone}=                           Get From Dictionary         ${supplier_data.data.suppliers[0].contactPoint}                                    telephone
+    ${identifier_id}=                       Get From Dictionary         ${supplier_data.data.suppliers[0].identifier}                                      id
+    ${legal_name}=                          Get From Dictionary         ${supplier_data.data.suppliers[0].identifier}                                      legalName
+    ${value_amount}=                        Get From Dictionary         ${supplier_data.data.value}                                                        amount
+    ${value_amount}=                        convert to number           ${value_amount}
+    ${tax}=                                 Get From Dictionary         ${supplier_data.data.value}                                                        valueAddedTaxIncluded
+
+     Wait Until Keyword Succeeds     100      5          Run Keywords
+    ...   Sleep  2
+    ...   AND     Reload Page
+    ...   AND     Sleep  2
+    ...   AND     Wait Until Element Is Visible       xpath=//button[contains(@data-sign-template-url, 'state_purchase/signature_template')]
+    click element   xpath=//button[contains(@data-sign-template-url, 'state_purchase/signature_template')]
+    sleep  2
+    prom.Подписание ЕЦП
+    sleep  10
+    capture page screenshot
+
+    Wait Until Keyword Succeeds     30      5          Run Keywords
+    ...   Sleep  2
+    ...   AND     Reload Page
+    ...   AND     Sleep  2
+    ...   AND     Wait Until Element Is Visible         xpath=//a[contains(@href, 'state_purchase/complete')]
+    click element    xpath=//a[contains(@href, 'state_purchase/complete')]
+    sleep  3
+    choose file    xpath=//input[contains(@class, 'qa_state_offer_add_field')]   ${document}
+    sleep  3
+    input text   css=#contract_number    2342345
+    sleep  2
+
+    capture page screenshot
+    sleep  1
+    ${time}=     date_now
+    log to console   !$!$!$!$!$!$!$!$!$!
+    log to console     ${time}
+    log to console   !$!$!$!$!$!$!$!$!$!
+    input text   xpath=//input[@id="contract_sign_date"]    ${time}
+    sleep  1
+    click element   xpath=//input[@id="contract_sign_date"]
+    ${start_date}=          delivery_date_start
+    ${end_date}=        delivery_date_end
+    sleep  3
+    capture page screenshot
+    input text      css=#contract_period_start  ${start_date}
+    sleep  3
+    click element   css=#contract_period_start
+    sleep  1
+    input text      css=#contract_period_end  ${end_date}
+    sleep  2
+    click element   css=#contract_period_end
+    sleep  2
+    click element   css=#submit_button
+    sleep  5
+    capture page screenshot
+
 Підтвердити підписання контракту
     [Arguments]    ${username}   ${tender_uaid}   ${contract_num}
-    log to console  _+_+_+_+_+_+_+_+_+
-    log to console  ${contract_num}
-    log to console  _+_+_+_+_+_+_+_+_+
+    log to console  -----------------------------
+    log to console   ${tender_uaid}
+    log to console  -----------------------------
+    log to console   ${contract_num}
+    log to console  -----------------------------
+    Run Keyword If          '${procurement_method_type}' == 'negotiation'       Підтвердити підписання контракту negotiation    ${username}   ${tender_uaid}   ${contract_num}
+    Run Keyword If          '${procurement_method_type}' == 'reporting'         Підтвердити підписання контракту reporting      ${username}   ${tender_uaid}   ${contract_num}
+
+Підтвердити підписання контракту negotiation
+    [Arguments]    ${username}   ${tender_uaid}   ${contract_num}
     capture page screenshot
+
     Wait Until Page Contains Element        css=.qa_lot_button
     sleep  1
     click element   css=.qa_lot_button
@@ -2026,14 +2737,7 @@ Login
     sleep  2
     capture page screenshot
     ${doc_date}=     get element attribute     xpath=//div[contains(@class, 'qa_qualification_end_date')]@data-qualification-date-end
-    log to console  @_@!__@_@@!_@!_@_!#!@#_!#_!@_#
-    log to console   ${doc_date}
-    log to console  @_@!__@_@@!_@!_@_!#!@#_!#_!@_#
     ${doc_date}=     tender_end_date            ${doc_date}
-    log to console  @_@!__@_@@!_@!_@_!#!@#_!#_!@_#
-    log to console   ${doc_date}
-    log to console  @_@!__@_@@!_@!_@_!#!@#_!#_!@_#
-
     Wait Until Keyword Succeeds     100      5          Run Keywords
     ...   Sleep  2
     ...   AND     Reload Page
@@ -2104,9 +2808,56 @@ Login
     Click Element  css=#SignDataButton
     sleep  30
     capture page screenshot
+    Wait Until Keyword Succeeds     150      5          Run Keywords
+    ...   Sleep  2
+    ...   AND     Reload Page
+    ...   AND     Sleep  2
+    ...   AND     Wait Until Element Is Visible       xpath=//button[contains(@data-afip-url, 'state_award/sign_contract')]
+    click element  xpath=//button[contains(@data-afip-url, 'state_award/sign_contract')]
+    sleep  7
+    click element  css=#submit_button
+    sleep  10
 
+Підтвердити підписання контракту reporting
+    [Arguments]    ${username}   ${tender_uaid}   ${contract_num}
+
+    Wait Until Keyword Succeeds     100      5          Run Keywords
+    ...   Sleep  2
+    ...   AND     Reload Page
+    ...   AND     Sleep  2
+    ...   AND     Wait Until Element Is Visible        xpath=//div[contains(@data-sign-process-url, 'state_award/process_contract_signature/')]
+    click element  xpath=//div[contains(@data-sign-process-url, 'state_award/process_contract_signature/')]
+    sleep  30
+    capture page screenshot
+    Wait Until Keyword Succeeds     100      5          Run Keywords
+    ...   Sleep  2
+    ...   AND     Wait Until Element Is Visible       css=#CAsServersSelect
+    capture page screenshot
+    click element    css=#CAsServersSelect
+    sleep  3
+    CLICK ELEMENT    xpath=//*[contains(text(), 'АЦСК ТОВ "КС"')]
+    sleep  4
+    click element    css=#CAsServersSelect
+    sleep  2
+    ${file_path}=    get_ecp_key    src/robot_tests.broker.prom/Key-6.dat
+    Choose File       css=#PKeyFileInput      ${file_path}
+    sleep  3
+    Input Text    css=#PKeyPassword    1234
+    sleep  7
+    capture page screenshot
+    Click Element  css=#SignDataButton
+    sleep  30
+    capture page screenshot
 
 Редагувати угоду
+    [Arguments]    ${username}   ${tender_uaid}   ${contract_index}    ${fieldname}    ${fieldvalue}
+
+    Run Keyword If          '${procurement_method_type}' == 'negotiation'       Редагувати угоду reporting          ${username}   ${tender_uaid}   ${contract_index}    ${fieldname}    ${fieldvalue}
+    Run Keyword If          '${procurement_method_type}' == 'reporting'         Редагувати угоду negotiation        ${username}   ${tender_uaid}   ${contract_index}    ${fieldname}    ${fieldvalue}
+    sleep  2
+    capture page screenshot
+
+Редагувати угоду negotiation
     [Arguments]    ${username}   ${tender_uaid}   ${contract_index}    ${fieldname}    ${fieldvalue}
 
     ${value_net}=     Run Keyword If                 '${fieldname}' == 'value.amountNet'             convert to string    ${fieldvalue}
@@ -2117,8 +2868,35 @@ Login
     sleep  2
     capture page screenshot
 
+Редагувати угоду reporting
+    [Arguments]    ${username}   ${tender_uaid}   ${contract_index}    ${fieldname}    ${fieldvalue}
 
+    Wait Until Keyword Succeeds     30      5          Run Keywords
+    ...   Sleep  2
+    ...   AND     Reload Page
+    ...   AND     Sleep  2
+    ...   AND     Wait Until Element Is Visible        xpath=//a[contains(@href, 'state_purchase/complete')]
+    sleep  3
+    ${value_net}=     Run Keyword If                 '${fieldname}' == 'value.amountNet'             convert to string    ${fieldvalue}
+    log to console  ^&&^&^&^&^&&^&&^
+    log to console   ${value_net}
+    log to console  ^&&^&^&^&^&&^&&^
+    Run Keyword If                 '${fieldname}' == 'value.amountNet'             clear element text   css=#contract_value_amount_net
+    Run Keyword If                 '${fieldname}' == 'value.amountNet'             sleep  2
+    Run Keyword If                 '${fieldname}' == 'value.amountNet'             input text   css=#contract_value_amount_net            ${value_net}
 
+    ${value}=     Run Keyword If                 '${fieldname}' == 'value.amount'             convert to string    ${fieldvalue}
+    log to console  ^&&^&^&^&^&&^&&^
+    log to console   ${value}
+    log to console  ^&&^&^&^&^&&^&&^
+    Run Keyword If                 '${fieldname}' == 'value.amount'             clear element text   css=#contract_value_amount
+    Run Keyword If                 '${fieldname}' == 'value.amount'             sleep  2
+    Run Keyword If                 '${fieldname}' == 'value.amount'             input text   css=#contract_value_amount            ${value}
+    sleep  2
+    capture page screenshot
+    click element   css=#submit_button
+    sleep  5
+    capture page screenshot
 
 
 ################################## Claim ######################################
@@ -2347,333 +3125,3 @@ Login
     click element   xpath=(//p[text()='${complaintID}']//../span)
     sleep  5
     log to console  ***Підтвердити вирішення вимоги про виправлення умов закупівлі***
-
-
-############################
-
-Створити aboveThresholdUA.defense
-    [Arguments]   ${username}     ${tender_data}     ${plan_id}
-    log to console  Створити aboveThresholdUA
-    log to console  ${tender_data}
-    log to console  ${plan_id}
-    log to console  ---------------------
-    ${mainprocurementcategory}=         Get From Dictionary         ${tender_data.data}                                         mainProcurementCategory
-    ${title}=                           Get From Dictionary         ${tender_data.data}                                         title
-    ${title_en}=                        Get From Dictionary         ${tender_data.data}                                         title_en
-    ${description}=                     Get From Dictionary         ${tender_data.data}                                         description
-    ${description_en}=                  Get From Dictionary         ${tender_data.data}                                         description_en
-    ${value_amount}=                    Get From Dictionary         ${tender_data.data.value}                                   amount
-    ${currency}=                        Get From Dictionary         ${tender_data.data.value}                                   currency
-    ${tax}=                             Get From Dictionary         ${tender_data.data.value}                                   valueAddedTaxIncluded
-    ${lots_title}=                      Get From Dictionary         ${tender_data.data.lots[0]}                                 title
-    ${lots_description}=                Get From Dictionary         ${tender_data.data.lots[0]}                                 description
-    ${lots_amount}=                     Get From Dictionary         ${tender_data.data.lots[0].value}                           amount
-    ${lots_amount}=                     Convert To String           ${lots_amount}
-    ${lots_minimalStep}=                Get From Dictionary         ${tender_data.data.lots[0].minimalStep}                     amount
-    ${lots_minimalstep}=                Convert To String           ${lots_minimalstep}
-    ${milestones}=                      Get From Dictionary         ${tender_data.data}                                         milestones
-    ${items}=                           Get From Dictionary         ${tender_data.data}                                         items
-    ${tender_end}                       Get From Dictionary         ${tender_data.data.tenderPeriod}                            endDate
-    ${tender_end}                       convert_iso_date_to_prom    ${tender_end}
-    ${telephone_en}=                    Get From Dictionary         ${tender_data.data.procuringEntity.contactPoint}            telephone
-    ${email_en}=                        Get From Dictionary         ${tender_data.data.procuringEntity.contactPoint}            email
-
-    Go to                                ${USERS.users['${username}'].default_page}
-    Sleep  1
-    Wait Until Page Contains Element     css=.qa_button_add_new_purchase     20
-    Click Element                        css=.qa_button_add_new_purchase
-    Wait Until Page Contains Element     css=.qa_multilot_type_drop_down     20
-    Click Element                        css=.qa_multilot_type_drop_down
-    sleep  2
-
-    Run Keyword If          '${procurement_method_type}' == 'aboveThresholdUA.defense'       Click Element    xpath=(//span[text()='Переговорна процедура для потреб оборони'])[last()]
-    sleep  4
-    click element  xpath=(//input[@type='checkbox'])[1]
-    sleep  2
-    input text   css=.qa_plan_tuid    ${plan_id}
-    sleep  1
-    click element  css=.qa_procurement_category_choices
-    sleep  2
-    Run Keyword If          '${mainprocurementcategory}' == 'goods'             Click Element    xpath=//span[text()='товари']
-    ...      ELSE IF        '${mainprocurementcategory}' == 'services'          Click Element    xpath=//span[text()='послуги']
-    ...      ELSE IF        '${mainprocurementcategory}' == 'works'             Click Element    xpath=//span[text()='роботи']
-    sleep  3
-
- #######################заповнюємо контактні дані###############################
-    click element  xpath=//div[contains(@class, 'qa_contact_lis')]//div[contains(@class, 'qa_language')]
-    sleep  2
-    ${test_name}=   set variable    'test test'
-    input text     css=.qa_contact_name             ${test_name}
-    sleep  1
-    input text  css=.qa_name_in_en                  ${test_name}
-    sleep  1
-    Clear Element Text  css=.qa_phone_in_en
-    input text  css=.qa_phone_in_en                 ${telephone_en}
-    sleep  1
-    input text  css=.qa_email_in_en                 ${email_en}
-
-    ######################заповнюємо тендер#####################################
-    input text     css=.qa_tender_title                                                     ${title}
-    sleep  2
-    click element  xpath=(//div[contains(@class, 'qa_language_qa_tender_title')])[last()]
-    sleep  3
-    input text     xpath=//textarea[contains(@class, 'qa_tender_title undefined')]          ${title_en}
-    sleep  1
-    input text     css=.qa_tender_description                                               ${description}
-    sleep  1
-    click element  xpath=(//div[contains(@class, 'qa_language_qa_tender_description')])[last()]
-    sleep  3
-    input text     xpath=//textarea[contains(@class, 'qa_tender_description undefined')]    ${description_en}
-    sleep  1
-    Run Keyword If  '${tax}' == 'True'   click element  css=.qa_multilot_tax_included
-    SLEEP  1
-    input text     css=.qa_multilot_end_period_adjustments                                  ${tender_end}
-    sleep  2
-    click element   css=.qa_multilot_end_period_adjustments
-    sleep  2
-    ############################заповнюємо лот##################################
-    input text  css=.qa_lot_title                                                           ${lots_title}
-    sleep  1
-    click element  xpath=(//div[contains(@class, 'qa_language_qa_lot_title')])[last()]
-    sleep  2
-    input text  xpath=//textarea[contains(@class, 'qa_lot_title undefined')]                ${lots_title}
-    sleep  2
-    input text  css=.qa_lot_description                                                     ${lots_description}
-    click element  xpath=(//div[contains(@class, 'qa_language_qa_lot_description')])[last()]
-
-    input text  xpath=//textarea[contains(@class, 'qa_lot_description undefined')]          ${lots_description}
-
-    input text  css=.qa_multilot_tender_lot_bugdet                                          ${lots_amount}
-
-    input text  css=.qa_multilot_tender_step_auction_rate                                   ${lots_minimalstep}
-
-    #####################Добавление features(Нецінові критерії)#################
-
-    ${KeyIsfeatures}=    Run Keyword And Return Status          Dictionary Should Contain Key           ${tender_data.data}            features
-    ${features}=   Run Keyword If    ${KeyIsfeatures}           Get From Dictionary                     ${tender_data.data}            features
-    Run Keyword If   '${KeyIsfeatures}' == 'True'               Нецінові критерії                       ${features}
-
-    ################Добавление milestones(Додати умови оплати)##################
-
-    ${number_of_milestones}=      Get Length                      ${milestones}
-    set global variable                                           ${number_of_milestones}
-    :FOR  ${index}  IN RANGE  ${number_of_milestones}
-    \  Run Keyword If  '${index}' != '0'   Click Element     xpath=(//a[contains(@class, 'qa_add_new_milestone')])[last()]
-    \  Додати умови оплати    ${milestones[${index}]}
-    sleep  2
-
-    #############################Добавление Items###############################
-
-    ${number_of_items}=  Get Length  ${items}
-    set global variable    ${number_of_items}
-    :FOR  ${index}  IN RANGE  ${number_of_items}
-    \  Run Keyword If  '${index}' != '0'   Click Element     css=.qa_add_button
-    \  Додати айтем тендера    ${items[${index}]}   ${tender_data}
-
-Створити competitiveDialogueUA
-    [Arguments]   ${username}     ${tender_data}     ${plan_id}
-    log to console  Створити competitiveDialogueUA
-    log to console  ${tender_data}
-    log to console  ${plan_id}
-    log to console  ---------------------
-    ${mainprocurementcategory}=         Get From Dictionary         ${tender_data.data}                                         mainProcurementCategory
-    ${title}=                           Get From Dictionary         ${tender_data.data}                                         title
-    ${description}=                     Get From Dictionary         ${tender_data.data}                                         description
-    ${value_amount}=                    Get From Dictionary         ${tender_data.data.value}                                   amount
-    ${currency}=                        Get From Dictionary         ${tender_data.data.value}                                   currency
-    ${tax}=                             Get From Dictionary         ${tender_data.data.value}                                   valueAddedTaxIncluded
-    ${lots_title}=                      Get From Dictionary         ${tender_data.data.lots[0]}                                 title
-    ${lots_description}=                Get From Dictionary         ${tender_data.data.lots[0]}                                 description
-    ${lots_amount}=                     Get From Dictionary         ${tender_data.data.lots[0].value}                           amount
-    ${lots_amount}=                     Convert To String           ${lots_amount}
-    ${lots_minimalStep}=                Get From Dictionary         ${tender_data.data.lots[0].minimalStep}                     amount
-    ${lots_minimalstep}=                Convert To String           ${lots_minimalstep}
-    ${milestones}=                      Get From Dictionary         ${tender_data.data}                                         milestones
-    ${items}=                           Get From Dictionary         ${tender_data.data}                                         items
-    ${tender_end}                       Get From Dictionary         ${tender_data.data.tenderPeriod}                            endDate
-    ${tender_end}                       convert_iso_date_to_prom    ${tender_end}
-    ${telephone_en}=                    Get From Dictionary         ${tender_data.data.procuringEntity.contactPoint}            telephone
-    ${email_en}=                        Get From Dictionary         ${tender_data.data.procuringEntity.contactPoint}            email
-
-    Go to                                ${USERS.users['${username}'].default_page}
-    Sleep  1
-    Wait Until Page Contains Element     css=.qa_button_add_new_purchase     20
-    Click Element                        css=.qa_button_add_new_purchase
-    Wait Until Page Contains Element     css=.qa_multilot_type_drop_down     20
-    Click Element                        css=.qa_multilot_type_drop_down
-    sleep  2
-
-    Run Keyword If          '${procurement_method_type}' == 'competitiveDialogueUA'       Click Element    xpath=(//span[text()='Конкурентний діалог'])[last()]
-    sleep  4
-    click element  xpath=(//input[@type='checkbox'])[1]
-    sleep  2
-    input text   css=.qa_plan_tuid    ${plan_id}
-    sleep  1
-    click element  css=.qa_procurement_category_choices
-    sleep  2
-    Run Keyword If          '${mainprocurementcategory}' == 'goods'             Click Element    xpath=//span[text()='товари']
-    ...      ELSE IF        '${mainprocurementcategory}' == 'services'          Click Element    xpath=//span[text()='послуги']
-    ...      ELSE IF        '${mainprocurementcategory}' == 'works'             Click Element    xpath=//span[text()='роботи']
-    sleep  3
-
-    ######################заповнюємо тендер#####################################
-    input text     css=.qa_multilot_title                                               ${title}
-    sleep  1
-    input text     css=.qa_multilot_descr                                               ${description}
-    sleep  1
-    Run Keyword If  '${tax}' == 'True'   click element  css=.qa_multilot_tax_included
-    sleep  1
-    input text     css=.qa_multilot_end_period_adjustments                              ${tender_end}
-    sleep  2
-    click element   css=.qa_multilot_end_period_adjustments
-    sleep  2
-    ############################заповнюємо лот##################################
-    input text  css=.qa_multilot_tender_lot_name                                        ${lots_title}
-    sleep  1
-    input text  css=.qa_multilot_tender_lot_descr                                       ${lots_description}
-    sleep  1
-    input text  css=.qa_multilot_tender_lot_bugdet                                      ${lots_amount}
-
-    input text  css=.qa_multilot_tender_step_auction_rate                               ${lots_minimalstep}
-
-    #####################Добавление features(Нецінові критерії)#################
-
-    ${KeyIsfeatures}=    Run Keyword And Return Status          Dictionary Should Contain Key           ${tender_data.data}            features
-    ${features}=   Run Keyword If    ${KeyIsfeatures}           Get From Dictionary                     ${tender_data.data}            features
-    Run Keyword If   '${KeyIsfeatures}' == 'True'               Нецінові критерії                       ${features}
-
-    ################Добавление milestones(Додати умови оплати)##################
-
-    ${number_of_milestones}=      Get Length                      ${milestones}
-    set global variable                                           ${number_of_milestones}
-    :FOR  ${index}  IN RANGE  ${number_of_milestones}
-    \  Run Keyword If  '${index}' != '0'   Click Element     xpath=(//a[contains(@class, 'qa_add_new_milestone')])[last()]
-    \  Додати умови оплати    ${milestones[${index}]}
-    sleep  2
-
-    #############################Добавление Items###############################
-
-    ${number_of_items}=  Get Length  ${items}
-    set global variable    ${number_of_items}
-    :FOR  ${index}  IN RANGE  ${number_of_items}
-    \  Run Keyword If  '${index}' != '0'   Click Element     css=.qa_add_button
-    \  Додати айтем тендера    ${items[${index}]}   ${tender_data}
-
-Створити competitiveDialogueEU
-    [Arguments]   ${username}     ${tender_data}     ${plan_id}
-    log to console  Створити competitiveDialogueEU
-    log to console  ${tender_data}
-    log to console  ${plan_id}
-    log to console  ---------------------
-    ${mainprocurementcategory}=         Get From Dictionary         ${tender_data.data}                                         mainProcurementCategory
-    ${title}=                           Get From Dictionary         ${tender_data.data}                                         title
-    ${title_en}=                        Get From Dictionary         ${tender_data.data}                                         title_en
-    ${description}=                     Get From Dictionary         ${tender_data.data}                                         description
-    ${description_en}=                  Get From Dictionary         ${tender_data.data}                                         description_en
-    ${value_amount}=                    Get From Dictionary         ${tender_data.data.value}                                   amount
-    ${currency}=                        Get From Dictionary         ${tender_data.data.value}                                   currency
-    ${tax}=                             Get From Dictionary         ${tender_data.data.value}                                   valueAddedTaxIncluded
-    ${lots_title}=                      Get From Dictionary         ${tender_data.data.lots[0]}                                 title
-    ${lots_description}=                Get From Dictionary         ${tender_data.data.lots[0]}                                 description
-    ${lots_amount}=                     Get From Dictionary         ${tender_data.data.lots[0].value}                           amount
-    ${lots_amount}=                     Convert To String           ${lots_amount}
-    ${lots_minimalStep}=                Get From Dictionary         ${tender_data.data.lots[0].minimalStep}                     amount
-    ${lots_minimalstep}=                Convert To String           ${lots_minimalstep}
-    ${milestones}=                      Get From Dictionary         ${tender_data.data}                                         milestones
-    ${items}=                           Get From Dictionary         ${tender_data.data}                                         items
-    ${tender_end}                       Get From Dictionary         ${tender_data.data.tenderPeriod}                            endDate
-    ${tender_end}                       convert_iso_date_to_prom    ${tender_end}
-    ${telephone_en}=                    Get From Dictionary         ${tender_data.data.procuringEntity.contactPoint}            telephone
-    ${email_en}=                        Get From Dictionary         ${tender_data.data.procuringEntity.contactPoint}            email
-
-    Go to                                ${USERS.users['${username}'].default_page}
-    Sleep  1
-    Wait Until Page Contains Element     css=.qa_button_add_new_purchase     20
-    Click Element                        css=.qa_button_add_new_purchase
-    Wait Until Page Contains Element     css=.qa_multilot_type_drop_down     20
-    Click Element                        css=.qa_multilot_type_drop_down
-    sleep  2
-
-    Run Keyword If          '${procurement_method_type}' == 'competitiveDialogueEU'       Click Element    xpath=(//span[text()='Конкурентний діалог з публікацією англійською мовою'])[last()]
-    sleep  4
-    click element  xpath=(//input[@type='checkbox'])[1]
-    sleep  2
-    input text   css=.qa_plan_tuid    ${plan_id}
-    sleep  1
-    click element  css=.qa_procurement_category_choices
-    sleep  2
-    Run Keyword If          '${mainprocurementcategory}' == 'goods'             Click Element    xpath=//span[text()='товари']
-    ...      ELSE IF        '${mainprocurementcategory}' == 'services'          Click Element    xpath=//span[text()='послуги']
-    ...      ELSE IF        '${mainprocurementcategory}' == 'works'             Click Element    xpath=//span[text()='роботи']
-    sleep  3
-
- #######################заповнюємо контактні дані###############################
-    click element  xpath=//div[contains(@class, 'qa_contact_lis')]//div[contains(@class, 'qa_language')]
-    sleep  2
-    ${test_name}=   set variable    'test test'
-    input text     css=.qa_contact_name             ${test_name}
-    sleep  1
-    input text  css=.qa_name_in_en                  ${test_name}
-    sleep  1
-    Clear Element Text  css=.qa_phone_in_en
-    input text  css=.qa_phone_in_en                 ${telephone_en}
-    sleep  1
-    input text  css=.qa_email_in_en                 ${email_en}
-
-    ######################заповнюємо тендер#####################################
-    input text     css=.qa_tender_title                                                     ${title}
-    sleep  2
-    click element  xpath=(//div[contains(@class, 'qa_language_qa_tender_title')])[last()]
-    sleep  3
-    input text     xpath=//textarea[contains(@class, 'qa_tender_title undefined')]          ${title_en}
-    sleep  1
-    input text     css=.qa_tender_description                                               ${description}
-    sleep  1
-    click element  xpath=(//div[contains(@class, 'qa_language_qa_tender_description')])[last()]
-    sleep  3
-    input text     xpath=//textarea[contains(@class, 'qa_tender_description undefined')]    ${description_en}
-    sleep  1
-    Run Keyword If  '${tax}' == 'True'   click element  css=.qa_multilot_tax_included
-    SLEEP  1
-    input text     css=.qa_multilot_end_period_adjustments                                  ${tender_end}
-    sleep  2
-    click element   css=.qa_multilot_end_period_adjustments
-    sleep  2
-    ############################заповнюємо лот##################################
-    input text  css=.qa_lot_title                                                           ${lots_title}
-    sleep  1
-    click element  xpath=(//div[contains(@class, 'qa_language_qa_lot_title')])[last()]
-    sleep  2
-    input text  xpath=//textarea[contains(@class, 'qa_lot_title undefined')]                ${lots_title}
-    sleep  2
-    input text  css=.qa_lot_description                                                     ${lots_description}
-    click element  xpath=(//div[contains(@class, 'qa_language_qa_lot_description')])[last()]
-
-    input text  xpath=//textarea[contains(@class, 'qa_lot_description undefined')]          ${lots_description}
-
-    input text  css=.qa_multilot_tender_lot_bugdet                                          ${lots_amount}
-
-    input text  css=.qa_multilot_tender_step_auction_rate                                   ${lots_minimalstep}
-
-    #####################Добавление features(Нецінові критерії)#################
-
-    ${KeyIsfeatures}=    Run Keyword And Return Status          Dictionary Should Contain Key           ${tender_data.data}            features
-    ${features}=   Run Keyword If    ${KeyIsfeatures}           Get From Dictionary                     ${tender_data.data}            features
-    Run Keyword If   '${KeyIsfeatures}' == 'True'               Нецінові критерії                       ${features}
-
-    ################Добавление milestones(Додати умови оплати)##################
-
-    ${number_of_milestones}=      Get Length                      ${milestones}
-    set global variable                                           ${number_of_milestones}
-    :FOR  ${index}  IN RANGE  ${number_of_milestones}
-    \  Run Keyword If  '${index}' != '0'   Click Element     xpath=(//a[contains(@class, 'qa_add_new_milestone')])[last()]
-    \  Додати умови оплати    ${milestones[${index}]}
-    sleep  2
-
-    #############################Добавление Items###############################
-
-    ${number_of_items}=  Get Length  ${items}
-    set global variable    ${number_of_items}
-    :FOR  ${index}  IN RANGE  ${number_of_items}
-    \  Run Keyword If  '${index}' != '0'   Click Element     css=.qa_add_button
-    \  Додати айтем тендера    ${items[${index}]}   ${tender_data}

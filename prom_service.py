@@ -140,6 +140,7 @@ def revert_negotiation_cause_type(string):
          u"cт. 35, п. 2 Відсутність конкуренції": u"noCompetition",
     }.get(string, string)
 
+
 def adapt_owner(tender_data):
     tender_data['data']['procuringEntity']['identifier']['legalName'] = u'ТОВ "Prom_Owner"'
     tender_data['data']['procuringEntity']['identifier']['id'] = u'5555555'
@@ -227,4 +228,11 @@ def convert_complaints_resolutiontype(string):
 def convert_complaints_satisfied_status(string):
     return {
         u"задовільнена": True
+    }.get(string, string)
+
+
+def convert_plan_status(string):
+    return {
+        u"Запланований": u"scheduled",
+        u"Допорогова закупівля": u"belowThreshold"
     }.get(string, string)

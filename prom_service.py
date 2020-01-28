@@ -164,7 +164,7 @@ def adapt_viewer(tender_data):
 
 
 def adapt_provider(tender_data):
-    tender_data['data']['procuringEntity']['identifier']['legalName'] = u'ТОВ "Prom_Provider1"'
+    tender_data['data']['procuringEntity']['identifier']['legalName'] = u'ТОВ "Prom_Provider"'
     tender_data['data']['procuringEntity']['identifier']['scheme'] = u'UA-EDR'
     tender_data['data']['procuringEntity']['name'] = u'тест тест'
     return tender_data

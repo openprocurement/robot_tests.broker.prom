@@ -1955,13 +1955,19 @@ Login
     ...  ELSE IF    '${field_name}' == 'qualifications[0].status'                               Get Text   xpath=(//td[contains(@class, 'qa_status_award')])[1]
     ...  ELSE IF    '${field_name}' == 'qualifications[1].status'                               Get Text   xpath=(//td[contains(@class, 'qa_status_award')])[2]
     ...  ELSE IF    '${field_name}' == 'awards[0].status'                                       Get Text   xpath=(//td[contains(@class, 'qa_status_award')])[1]
-    ...  ELSE IF    '${field_name}' == 'lots[0].minimalStepPercentage'                          Get Text   css=qa_minimal_step
-    ...  ELSE IF    '${field_name}' == 'lots[0].fundingKind'                                    Get Text   css=qa_funding_kind
-    ...  ELSE IF    '${field_name}' == 'lots[0].yearlyPaymentsPercentageRange'                  Get Text   css=qa_financial_step
+    ...  ELSE IF    '${field_name}' == 'minimalStepPercentage'                                  Get Text   xpath=//span[contains(@class, 'qa_minimal_step')]
+    ...  ELSE IF    '${field_name}' == 'lots[0].minimalStepPercentage'                          Get Text   xpath=//span[contains(@class, 'qa_minimal_step')]
+    ...  ELSE IF    '${field_name}' == 'lots[0].fundingKind'                                    Get Text   xpath=//span[contains(@class, 'qa_funding_kind')]
+    ...  ELSE IF    '${field_name}' == 'lots[0].yearlyPaymentsPercentageRange'                  Get Text   xpath=//span[contains(@class, 'qa_financial_step')]
     sleep  2
-    log to console  -----------==---0-0
+    ${return_value}=     Run Keyword If                 '${field_name}' == 'lots[0].minimalStepPercentage'         convert to number                               ${return_value.replace('%', '')}
+    ...  ELSE IF    '${field_name}' == 'minimalStepPercentage'                            convert to number                               ${return_value.replace('%', '')}
+    ...  ELSE IF    '${field_name}' == 'lots[0].yearlyPaymentsPercentageRange'            convert to number                               ${return_value.replace('%', '')}
+    ...  ELSE IF    '${field_name}' == 'lots[0].minimalStepPercentage'                    convert to number                               ${return_value.replace('%', '')}
+
+    log to console  ----інформацію із лота-----
     log to console  ${return_value}
-    log to console  -----------==---0-0
+    log to console  ================================
     CLICK ELEMENT    xpath=(//a[contains(@href, "state_purchase/view")])[2]
     Wait Until Element Is Visible   css=.qa_lot_button     10
     [Return]  ${return_value}
@@ -2125,10 +2131,12 @@ Login
     ...  ELSE IF    '${field_name}' == 'contracts[1].value.amount'                          Get Element Attribute    xpath=(//div[@data-qa="qa_user_award"])[1]@data-qa-value
     ...  ELSE IF    '${field_name}' == 'budget.amount'                                      get element attribute   xpath=//span[@class="qa_budget_amount"]@data-qa-amount
     ...  ELSE IF    '${field_name}' == 'NBUdiscountRate'                                    get text   xpath=//span[contains(@class, 'qa_nbu_rate')]
+    ...  ELSE IF    '${field_name}' == 'minimalStepPercentage'                              Отримати інформацію із лота тендера      ${field_name}
     ...  ELSE IF    '${field_name}' == 'lots[0].minimalStepPercentage'                      Отримати інформацію із лота тендера      ${field_name}
     ...  ELSE IF    '${field_name}' == 'lots[0].fundingKind'                                Отримати інформацію із лота тендера      ${field_name}
     ...  ELSE IF    '${field_name}' == 'lots[0].yearlyPaymentsPercentageRange'              Отримати інформацію із лота тендера      ${field_name}
-    log to console  -----------==---0-0
+    ...  ELSE IF    '${field_name}' == 'complaintPeriod.endDate'                            get element attribute  xpath=(//span[contains(@class, "qa_date_time_end")])[1]@data-period-date-end
+    log to console  --------інформацію із тендера---==---0-0
     log to console  ${return_value}
     log to console  -----------==---0-0
     reload page
@@ -2177,13 +2185,11 @@ Login
     ...  ELSE IF    '${field_name}' == 'awards[0].value.valueAddedTaxIncluded'                   convert_prom_string_to_common_string                           ${return_value}
     ...  ELSE IF    '${field_name}' == 'NBUdiscountRate'                    convert to number                               ${return_value.replace('%', '')}
     ...  ELSE IF    '${field_name}' == 'NBUdiscountRate'                    revert_esco_data                                ${return_value}
-    ...  ELSE IF    '${field_name}' == 'lots[0].minimalStepPercentage'                    convert to number                               ${return_value.replace('%', '')}
-    ...  ELSE IF    '${field_name}' == 'lots[0].minimalStepPercentage'                    revert_esco_data                                ${return_value}
-    ...  ELSE IF    '${field_name}' == 'lots[0].fundingKind'                    convert to number                               convert_fundingkind
-    ...  ELSE IF    '${field_name}' == 'lots[0].yearlyPaymentsPercentageRange'                    convert to number                               ${return_value.replace('%', '')}
+    ...  ELSE IF    '${field_name}' == 'lots[0].minimalStepPercentage'      revert_esco_data                                ${return_value}
+    ...  ELSE IF    '${field_name}' == 'lots[0].fundingKind'                convert_fundingkind                             ${return_value}
     ...  ELSE IF    '${field_name}' == 'lots[0].yearlyPaymentsPercentageRange'                    revert_esco_data                                ${return_value}
     ...  ELSE        convert_prom_string_to_common_string       ${return_value}
-    log to console  -----------==---0-0
+    log to console  ------Convert-----==---0-0
     log to console  ${return_value}
     log to console  -----------==---0-0
     [Return]  ${return_value}

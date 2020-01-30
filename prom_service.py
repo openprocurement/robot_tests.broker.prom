@@ -42,9 +42,19 @@ def tender_end_date(date):
     return convert_date.strftime("%d.%m.%Y %H:%M")
 
 
+def tender_end_date_esco(date):
+    convert_date = dateutil.parser.parse(date) + timedelta(minutes=20)
+    return convert_date.strftime("%d.%m.%Y %H:%M")
+
+
 def convert_iso_date_to_prom(date):
     convert_date = dateutil.parser.parse(date)
     return convert_date.strftime("%d.%m.%Y %H:%M")
+
+
+def convert_iso_date_to_prom_without_time(date):
+    convert_date = dateutil.parser.parse(date)
+    return convert_date.strftime("%d.%m.%Y")
 
 
 def convert_iso_date_to_prom_without_time_two(date):
@@ -93,6 +103,7 @@ def convert_prom_string_to_common_string(string):
         u"шт.": u"штуки",
         u"нб.": u"набір",
         u"уп.": u"упаковка",
+        u"кг": u"кілограми",
         u"кв.м.": u"метри квадратні",
         u"с НДС": True,
         u"з ПДВ": True,
@@ -243,3 +254,23 @@ def convert_plan_status(string):
         u"Запланований": u"scheduled",
         u"Допорогова закупівля": u"belowThreshold"
     }.get(string, string)
+
+def convert_procurementmethodtype(string):
+    return {
+        u"Публічні закупівлі енергосервісу": u"esco",
+        u"Допорогова закупівля": u"belowThreshold"
+    }.get(string, string)
+
+
+def convert_fundingkind(string):
+    return {
+        u"фінансування з бюджетних коштів": u"budget"
+    }.get(string, string)
+
+
+def convert_esco_data(data):
+    return data * 100
+
+
+def revert_esco_data(data):
+    return data / 100

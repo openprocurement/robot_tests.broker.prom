@@ -131,9 +131,14 @@ Login
 
 створити план для процедури
     [Arguments]   ${username}    ${plan_data}   ${procurement_method_type}
+    log to console  *(*(*(*((
+    log to console   ${plan_data}
+    log to console  *(*(*(*((
     ${description}=                     Get From Dictionary             ${plan_data.data.budget}                        description
     ${amount}=                          Get From Dictionary             ${plan_data.data.budget}                        amount
     ${classification}=                  Get From Dictionary             ${plan_data.data.classification}                id
+    ${startDate}=               Get From Dictionary             ${plan_data.data.tender.tenderPeriod}           startDate
+    ${startDate}=               convert_iso_date_to_prom_without_time             ${startDate}
 
     Run Keyword If          '${procurement_method_type}' == 'aboveThresholdEU'              Click Element    xpath=(//li[@data-value="aboveThresholdEU"])[last()]
     ...      ELSE IF        '${procurement_method_type}' == 'belowThreshold'                Click Element    xpath=(//li[@data-value="belowThreshold"])[last()]
@@ -171,7 +176,7 @@ Login
     set global variable    ${number_of_items}
     :FOR  ${index}  IN RANGE  ${number_of_items}
     \  Run Keyword If  '${index}' != '0'   Click Element     xpath=(//a[contains(@data-url, '/add_item')])[last()]
-    \  Додати айтем плана    ${items[${index}]}
+    \  Додати айтем плана    ${items[${index}]}  ${startDate}
 
     Click Element    xpath=(//span[contains(text(), 'Додати джерело')])[last()]
     sleep  1
@@ -222,7 +227,7 @@ Login
     [Return]    ${status_text}
 
 Додати айтем плана
-    [Arguments]   ${items}
+    [Arguments]   ${items}  ${startDate}
     ${item_classification_description}=                 Get From Dictionary             ${items.classification}                      description
     ${item_classification_id}=                          Get From Dictionary             ${items.classification}                      id
     ${item_classification_scheme}=                      Get From Dictionary             ${items.classification}                      scheme
@@ -233,6 +238,7 @@ Login
     ${item_quantity}=           Convert To String               ${item_quantity}
     ${unit_code}=               Get From Dictionary             ${items.unit}                 code
     ${unit_name}=               Get From Dictionary             ${items.unit}                 name
+
     capture page screenshot
     #Заполнение тела айтема ниже
     sleep  1
@@ -248,12 +254,17 @@ Login
     ...      ELSE IF        '${unit_name}' == 'лот'              Click Element    xpath=(//li[@data-value="77"])[last()]
     ...      ELSE           '${unit_name}' == 'pct'              Click Element    xpath=(//li[@data-value="249"])[last()]
     SLEEP  1
+    input text          css=#state_purchases_items_list-0-date_delivery_end     ${startDate}
+    sleep  2
+    click element       css=#state_purchases_items_list-0-date_delivery_end
+    sleep  2
     Click Element     xpath=(//div[@data-classifier-code="dk021"]//span)[last()]
     sleep  1
     input text  css=.qa_search_input                        ${item_classification_id}
     sleep  1
     Click Element  css=[class="b-checkbox__input"]
     sleep  2
+
     Click Element  css=.qa_submit
     sleep  1
 
@@ -1337,12 +1348,9 @@ Login
     ${telephone_en}=                    Get From Dictionary         ${tender_data.data.procuringEntity.contactPoint}            telephone
     ${email_en}=                        Get From Dictionary         ${tender_data.data.procuringEntity.contactPoint}            email
     ${mbudiscountrate}=                 Get From Dictionary         ${tender_data.data}                                         NBUdiscountRate
-    ${mbudiscountrate}=                 Convert To String           ${mbudiscountrate}
     ${fundingkind}=                     Get From Dictionary         ${tender_data.data}                                         fundingKind
     ${minimalsteppercentage}=           Get From Dictionary         ${tender_data.data.lots[0]}                                 minimalStepPercentage
-    ${minimalsteppercentage}=           covert_features             ${minimalsteppercentage}
     ${yearlyPaymentsPercentageRange}=   Get From Dictionary         ${tender_data.data.lots[0]}                                 yearlyPaymentsPercentageRange
-    ${yearlyPaymentsPercentageRange}=   Convert To String           ${yearlyPaymentsPercentageRange}
 
     Go to                                ${USERS.users['${username}'].default_page}
     Sleep  1
@@ -1391,7 +1399,9 @@ Login
     sleep  3
     input text      xpath=//textarea[contains(@class, 'qa_tender_description undefined')]       ${description_en}
     sleep  1
-    input text      css=.qa_singlelot_tender_nbu_discount_rate                                  ${mbudiscountrate}
+    ${nbudiscountrate}=       convert_esco_data     ${mbudiscountrate}
+    ${nbu}=       convert to string     ${nbudiscountrate}
+    input text      css=.qa_singlelot_tender_nbu_discount_rate                                  ${nbu}
     sleep  1
     click element   css=.qa_singlelot_tender_funding_kind
     sleep  1
@@ -1420,9 +1430,14 @@ Login
     click element  xpath=(//div[contains(@class, 'qa_language_qa_lot_description')])[last()]
     sleep  1
     input text  xpath=//textarea[contains(@class, 'qa_lot_description undefined')]              ${lots_description}
-    input text   css=.qa_singlelot_tender_minimal_step_percentage                               ${minimalsteppercentage}
     sleep  1
-    input text     css=.qa_singlelot_tender_yearly_payments_percentage_range                    ${yearlyPaymentsPercentageRange}
+    ${minimalsteppercentage}=      convert_esco_data      ${minimalsteppercentage}
+    ${steppercentage}=      convert to string      ${minimalsteppercentage}
+    input text   css=.qa_singlelot_tender_minimal_step_percentage                               ${steppercentage}
+    sleep  1
+    ${yearlyPaymentsPercentageRange}=      convert_esco_data   ${yearlyPaymentsPercentageRange}
+    ${yearlyPayments}=      convert to string   ${yearlyPaymentsPercentageRange}
+    input text     css=.qa_singlelot_tender_yearly_payments_percentage_range                    ${yearlyPayments}
     click element   css=.qa_delete_link_milestone
     sleep  2
 
@@ -1888,7 +1903,7 @@ Login
     ...  ELSE IF    '${field_name}' == 'budget.description'                                             Get Text   xpath=//span[@data-qa="state_plan_description"]
     ...  ELSE IF    '${field_name}' == 'budget.currency'                                                set variable   UAH
     ...  ELSE IF    '${field_name}' == 'classification.description'                                     get element attribute   xpath=//span[contains(@class, 'qa_code_dk')]@data-qa-name
-    ...  ELSE IF    '${field_name}' == 'classification.scheme'                                          Get Text   css=qa_classifier_dk
+    ...  ELSE IF    '${field_name}' == 'classification.scheme'                                          Get Text   css=.qa_classifier_dk
     ...  ELSE IF    '${field_name}' == 'classification.id'                                              get element attribute   xpath=//span[contains(@class, 'qa_code_dk')]@data-qa-code
     ...  ELSE IF    '${field_name}' == 'items[0].description'                                           Get Text   xpath=(//span[@data-qa="qa-state-pos-desc"])[1]
     ...  ELSE IF    '${field_name}' == 'items[0].quantity'                                              Get Text   xpath=(//span[@data-qa="qa-state-pos-quantity"])[1]
@@ -1896,7 +1911,7 @@ Login
     ...  ELSE IF    '${field_name}' == 'items[0].classification.description'                            Get Text   css=.qa_classifier_descr_primary
     ...  ELSE IF    '${field_name}' == 'items[0].classification.scheme'                                 Get Text   css=.qa_classifier_dk
     ...  ELSE IF    '${field_name}' == 'items[0].classification.id'                                     Get Text   css=.qa_classifier_descr_code
-    ...  ELSE IF    '${field_name}' == 'items[0].deliveryDate.endDate'                                  Get Text   xpath=(//div[contains(@class, 'qa_company_dd')]//p)[1]
+    ...  ELSE IF    '${field_name}' == 'items[0].deliveryDate.endDate'                                  get element attribute   xpath=//td[contains(@class, 'qa_delivery_date')]@data-qa-delivery
 
     ${return_value}=   Run Keyword If    '${field_name}' == 'status'        convert_plan_status                        ${return_value}
     ...  ELSE IF    '${field_name}' == 'tender.procurementMethodType'       convert_plan_status                        ${return_value}
@@ -1917,8 +1932,7 @@ Login
 
 Отримати інформацію із лота тендера для остальных
     [Arguments]      ${field_name}
-
-    Wait Until Element Is Visible  CLICK ELEMENT    css=.qa_lot_button
+    Wait Until Element Is Visible    css=.qa_lot_button
     CLICK ELEMENT    css=.qa_lot_button
     Wait Until Element Is Visible   css=.qa_lot_title     10
 
@@ -1941,10 +1955,22 @@ Login
     ...  ELSE IF    '${field_name}' == 'qualifications[0].status'                               Get Text   xpath=(//td[contains(@class, 'qa_status_award')])[1]
     ...  ELSE IF    '${field_name}' == 'qualifications[1].status'                               Get Text   xpath=(//td[contains(@class, 'qa_status_award')])[2]
     ...  ELSE IF    '${field_name}' == 'awards[0].status'                                       Get Text   xpath=(//td[contains(@class, 'qa_status_award')])[1]
+    ...  ELSE IF    '${field_name}' == 'minimalStepPercentage'                                  Get Text   xpath=//span[contains(@class, 'qa_minimal_step')]
+    ...  ELSE IF    '${field_name}' == 'lots[0].minimalStepPercentage'                          Get Text   xpath=//span[contains(@class, 'qa_minimal_step')]
+    ...  ELSE IF    '${field_name}' == 'lots[0].fundingKind'                                    Get Text   xpath=//span[contains(@class, 'qa_funding_kind')]
+    ...  ELSE IF    '${field_name}' == 'lots[0].yearlyPaymentsPercentageRange'                  Get Text   xpath=//span[contains(@class, 'qa_financial_step')]
     sleep  2
+    ${return_value}=     Run Keyword If                 '${field_name}' == 'lots[0].minimalStepPercentage'         convert to number                               ${return_value.replace('%', '')}
+    ...  ELSE IF    '${field_name}' == 'minimalStepPercentage'                            convert to number                               ${return_value.replace('%', '')}
+    ...  ELSE IF    '${field_name}' == 'lots[0].yearlyPaymentsPercentageRange'            convert to number                               ${return_value.replace('%', '')}
+    ...  ELSE IF    '${field_name}' == 'lots[0].minimalStepPercentage'                    convert to number                               ${return_value.replace('%', '')}
 
+    log to console  ----інформацію із лота-----
+    log to console  ${return_value}
+    log to console  ================================
     CLICK ELEMENT    xpath=(//a[contains(@href, "state_purchase/view")])[2]
     Wait Until Element Is Visible   css=.qa_lot_button     10
+    [Return]  ${return_value}
 
 Отримати інформацію із лота тендера negotiation
     [Arguments]      ${field_name}
@@ -2104,7 +2130,15 @@ Login
     ...  ELSE IF    '${field_name}' == 'contracts[1].value.amountNet'                       Get Element Attribute    xpath=(//div[@data-qa="qa_user_award"])[1]@data-qa-value
     ...  ELSE IF    '${field_name}' == 'contracts[1].value.amount'                          Get Element Attribute    xpath=(//div[@data-qa="qa_user_award"])[1]@data-qa-value
     ...  ELSE IF    '${field_name}' == 'budget.amount'                                      get element attribute   xpath=//span[@class="qa_budget_amount"]@data-qa-amount
-
+    ...  ELSE IF    '${field_name}' == 'NBUdiscountRate'                                    get text   xpath=//span[contains(@class, 'qa_nbu_rate')]
+    ...  ELSE IF    '${field_name}' == 'minimalStepPercentage'                              Отримати інформацію із лота тендера      ${field_name}
+    ...  ELSE IF    '${field_name}' == 'lots[0].minimalStepPercentage'                      Отримати інформацію із лота тендера      ${field_name}
+    ...  ELSE IF    '${field_name}' == 'lots[0].fundingKind'                                Отримати інформацію із лота тендера      ${field_name}
+    ...  ELSE IF    '${field_name}' == 'lots[0].yearlyPaymentsPercentageRange'              Отримати інформацію із лота тендера      ${field_name}
+    ...  ELSE IF    '${field_name}' == 'complaintPeriod.endDate'                            get element attribute  xpath=(//span[contains(@class, "qa_date_time_end")])[1]@data-period-date-end
+    log to console  --------інформацію із тендера---==---0-0
+    log to console  ${return_value}
+    log to console  -----------==---0-0
     reload page
     sleep  1
     ${return_value}=   Run Keyword If    '${field_name}' == 'mainProcurementCategory'       convert_prom_string_to_common_string                                    ${return_value}
@@ -2149,7 +2183,15 @@ Login
     ...  ELSE IF    '${field_name}' == 'contracts[0].value.amount'          convert to number                               ${return_value}
     ...  ELSE IF    '${field_name}' == 'budget.amount'                      convert to number                               ${return_value}
     ...  ELSE IF    '${field_name}' == 'awards[0].value.valueAddedTaxIncluded'                   convert_prom_string_to_common_string                           ${return_value}
+    ...  ELSE IF    '${field_name}' == 'NBUdiscountRate'                    convert to number                               ${return_value.replace('%', '')}
+    ...  ELSE IF    '${field_name}' == 'NBUdiscountRate'                    revert_esco_data                                ${return_value}
+    ...  ELSE IF    '${field_name}' == 'lots[0].minimalStepPercentage'      revert_esco_data                                ${return_value}
+    ...  ELSE IF    '${field_name}' == 'lots[0].fundingKind'                convert_fundingkind                             ${return_value}
+    ...  ELSE IF    '${field_name}' == 'lots[0].yearlyPaymentsPercentageRange'                    revert_esco_data                                ${return_value}
     ...  ELSE        convert_prom_string_to_common_string       ${return_value}
+    log to console  ------Convert-----==---0-0
+    log to console  ${return_value}
+    log to console  -----------==---0-0
     [Return]  ${return_value}
 
 Отримати інформацію із предмету
@@ -2309,7 +2351,9 @@ Login
 
 Подати цінову пропозицію
     [Arguments]  ${username}  ${tender_uaid}  ${bid}  ${lots_ids}=None  ${features_ids}=None
-
+    log to console   ----------------------------
+    log to console   ${bid}
+    log to console   ----------------------------
     capture page screenshot
     ${lots}=   Get From Dictionary       ${bid.data}    lotValues
     ${number_of_lot}=  Get Length       ${lots}
@@ -2440,6 +2484,7 @@ Login
 
 Завантажити документ
     [Arguments]  ${username}  ${filepath}  ${tender_uaid}
+    capture page screenshot
     sleep   1
     Wait Until Page Contains Element        xpath=//a[contains(@href, '/state_purchase/edit')]//span
     click element     xpath=//a[contains(@href, '/state_purchase/edit')]//span
@@ -2447,6 +2492,7 @@ Login
     Wait Until Page Contains Element     css=.qa_procurement_category_choices
     Choose File     xpath=(//input[contains(@class, 'qa_state_offer_add_field')])[1]     ${filepath}
     sleep   5
+
     capture page screenshot
     click element   css=.qa_submit_tender
     sleep   2
@@ -2458,6 +2504,11 @@ Login
 
 Змінити лот
     [Arguments]  ${username}   ${tender_uaid}   ${lot_id}   ${fieldname}    ${fieldvalue}
+    log to console  ------=-=-=-=-=-=-=-=23-4=2-
+    log to console   ${fieldname}
+    log to console  ------=-=-=-=-=-=-=-=23-4=2-
+    log to console   ${fieldvalue}
+    log to console  ------=-=-=-=-=-=-=-=23-4=2-
     sleep  1
     Wait Until Page Contains Element        xpath=//a[contains(@href, '/state_purchase/edit')]//span
     click element     xpath=//a[contains(@href, '/state_purchase/edit')]//span
@@ -2480,6 +2531,11 @@ Login
 
 Внести зміни в тендер
     [Arguments]  ${username}   ${tender_uaid}   ${fieldname}   ${fieldvalue}
+    log to console  $@$@$$$@$@$^^
+    log to console   ${fieldname}
+    log to console  $@$@$$$@$@$^^
+    log to console   ${fieldvalue}
+    log to console  $@$@$$$@$@$^^
     Wait Until Page Contains Element        xpath=//a[contains(@href, '/state_purchase/edit')]//span
     click element     xpath=//a[contains(@href, '/state_purchase/edit')]//span
     sleep  1
@@ -2488,6 +2544,7 @@ Login
 
     Run Keyword If   '${procurement_method_type}' == 'aboveThresholdEU'    Внести зміни EN  ${fieldname}   ${fieldvalue}
     ...    ELSE IF   '${procurement_method_type}' == 'belowThreshold'      Внести зміни belowThreshold   ${fieldname}   ${fieldvalue}
+    ...    ELSE IF   '${procurement_method_type}' == 'esco'      Внести зміни esco  ${fieldname}   ${fieldvalue}
     ...    ELSE   Внести зміни UA   ${fieldname}   ${fieldvalue}
 
     sleep  2
@@ -2544,6 +2601,22 @@ Login
     Run Keyword If      '${fieldname}' == 'description'        clear element text     css=.qa_multilot_descr
     Run Keyword If      '${fieldname}' == 'description'        sleep  2
     Run Keyword If      '${fieldname}' == 'description'        input text     css=.qa_multilot_descr    ${fieldvalue}
+
+Внести зміни esco
+    [Arguments]    ${fieldname}   ${fieldvalue}
+    log to console  *******##*****
+    log to console   ${fieldname}
+    log to console  *******##*****
+    log to console   ${fieldvalue}
+    log to console  *******##*****
+    ${end_date}=     Run Keyword If      '${fieldname}' == 'tenderPeriod.endDate'     tender_end_date_esco     ${fieldvalue}
+    Run Keyword If      '${fieldname}' == 'tenderPeriod.endDate'        clear element text     css=.qa_multilot_end_period_adjustments
+    Run Keyword If      '${fieldname}' == 'tenderPeriod.endDate'        sleep  2
+    Run Keyword If      '${fieldname}' == 'tenderPeriod.endDate'        input text     css=.qa_multilot_end_period_adjustments    ${end_date}
+
+    Run Keyword If      '${fieldname}' == 'description'        clear element text     css=.qa_tender_description
+    Run Keyword If      '${fieldname}' == 'description'        sleep  2
+    Run Keyword If      '${fieldname}' == 'description'        input text     css=.qa_tender_description   ${fieldvalue}
 
 Додати не ціновий показник на тендер
     [Arguments]  ${username}   ${tender_uaid}   ${feature}
@@ -3276,7 +3349,7 @@ Login
     click element    xpath=//div[text()='Протокол розгляду']
     sleep  3
     click element    css=[id="submit_button"]
-    speep  2
+    sleep  2
     click element  xpath=(//a[contains(@href,'cabinet/purchases/state_purchase/view')])[1]
     Wait Until Element Is Visible   css=.qa_lot_button    10
     log to console   ***Завантажити документ рішення кваліфікаційної комісії***
@@ -3295,8 +3368,73 @@ Login
     ...   AND     sleep   2
     ...   AND     Wait Until Element Is Enabled       css=[data-sign-process-url*="state_award/process_award_signature"]
     click element  css=[data-sign-process-url*="state_award/process_award_signature"]
+    sleep  4
     prom.Подписание ЕЦП
-    sleep  3
+    sleep  4
     click element  xpath=(//a[contains(@href,'cabinet/purchases/state_purchase/view')])[1]
     Wait Until Element Is Visible   css=.qa_lot_button    10
     log to console   ***Підтвердити постачальника***
+
+Створити вимогу про виправлення визначення переможця
+    [Arguments]  ${username}  ${tender_uaid}  ${claim}  ${award_index}  ${document}=${None}
+    log to console   ***Створити вимогу про виправлення визначення переможця***
+    log to console   ${username}
+    log to console   ${tender_uaid}
+    log to console   ${claim}
+    ${title}=        Get From Dictionary  ${claim.data}   title
+    ${description}=  Get From Dictionary  ${claim.data}   description
+    CLICK ELEMENT    css=.qa_lot_button
+    Wait Until Element Is Visible   css=.qa_lot_title     10
+    click element        xpath=//a[contains(@href,'/state_purchase_lot_complaint/lot_claims')]
+    capture page screenshot
+    Wait Until Page Contains Element     xpath=//a[@data-qa="qa_apply_requirement"]    4
+    capture page screenshot
+    reload page
+    click element        xpath=//a[@data-qa="qa_apply_requirement"]
+    sleep  2
+    input text  css=[id="name"]                 ${title}
+    sleep  1
+    input text  css=[id="description"]          ${description}
+    sleep  1
+    Run Keyword And Ignore Error  Choose File  xpath=//input[@data-qa="upload_file"]  ${document}
+    sleep  5
+    click element   css=[data-qa="create_claim_button"]
+    sleep  5
+    Wait Until Keyword Succeeds     300      10          Run Keywords
+    ...   Sleep  3
+    ...   AND     Reload Page
+    ...   AND     sleep   1
+    ...   AND     Wait Until Element Is Visible       css=[data-qa="complaint_id"]
+    ${return_value}=    get text    css=[data-qa="complaint_id"]
+    click element  xpath=(//a[contains(@href,'cabinet/purchases/state_purchase/view')])
+    Wait Until Element Is Visible   css=.qa_lot_button    10
+    capture page screenshot
+    log to console   ***Створити вимогу про виправлення визначення переможця***
+    [Return]  ${return_value}
+
+Відповісти на вимогу про виправлення визначення переможця
+    [Arguments]  ${username}  ${tender_uaid}  ${complaintID}  ${answer_data}  ${award_index}
+    log to console   ***Відповісти на вимогу про виправлення визначення переможця***
+    log to console   ${username}
+    log to console   ${tender_uaid}
+    log to console   ${complaintID}
+    log to console   ${answer_data}
+    log to console   ${complaintID}
+    ${answer_type}=   get from dictionary   ${answer_data.data}    resolutionType
+    ${description}=   get from dictionary   ${answer_data.data}    resolution
+    click element        xpath=//a[contains(@href,'/state_purchase_complaint/purchase_claims')]
+    Wait Until Page Contains Element     css=[data-qa="claim_tender"]    4
+    click element        xpath=(//p[text()='${complaintID}']//../span)
+    sleep  1
+    click element  css=[data-qa="answer_claim"]
+    sleep  1
+    click element  css=[data-qa="answer_type_dd"]
+    sleep  1
+    run keyword if   '${answer_type}' == 'resolved'     click element  xpath=//div[text()='Задовольнити вимогу']
+    run keyword if   '${answer_type}' == 'declined'     click element  xpath=//div[text()='Відхилити вимогу']
+    run keyword if   '${answer_type}' == 'invalid'      click element  xpath=//div[text()='Відхилити вимогу як недійсну']
+    sleep  1
+    input text  css=[id="comment"]      ${description}
+    sleep  1
+    click element  xpath=(//button[@type="button"])[1]
+    sleep  2

@@ -36,6 +36,9 @@ def delivery_date_end():
     next_date = datetime.now() + timedelta(days=2)
     return next_date.strftime("%d.%m.%Y")
 
+def convert_period_to_closeframeworkagreement(date):
+    convert_date = dateutil.parser.parse(date)
+    return convert_date.strftime("%Y" )
 
 def tender_end_date(date):
     convert_date = dateutil.parser.parse(date) + timedelta(minutes=1)
@@ -107,7 +110,7 @@ def convert_prom_string_to_common_string(string):
         u"кв.м.": u"метри квадратні",
         u"с НДС": True,
         u"з ПДВ": True,
-        u"без ПДВ": False,
+        u"без ПДВ": False
     }.get(string, string)
 
 
@@ -258,7 +261,8 @@ def convert_plan_status(string):
 def convert_procurementmethodtype(string):
     return {
         u"Публічні закупівлі енергосервісу": u"esco",
-        u"Допорогова закупівля": u"belowThreshold"
+        u"Допорогова закупівля": u"belowThreshold",
+        u"Укладення рамкової угоди": u"closeFrameworkAgreementUA"
     }.get(string, string)
 
 

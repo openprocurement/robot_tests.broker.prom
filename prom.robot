@@ -2421,10 +2421,10 @@ Login
 
     Click Element       xpath=(//a[contains(@class, 'qa_add_new_offer')]//span)[last()]
     Wait Until Page Contains Element     css=[data-qa="add_file"]    10
-    ${chbx_rule}=   Run Keyword And Return Status       Element Should Be Visible   css=[data-qa="chbx_rule"]
+    ${chbx_rule}=   Run Keyword And Return Status       Element Should Be Enabled    css=[data-qa="chbx_rule"]
     Run Keyword If   '${chbx_rule}' == 'True'             Click Element               css=[data-qa="chbx_rule"]
     sleep  2
-    ${chbx_qualification}=   Run Keyword And Return Status    Element Should Be Visible     css=[data-qa="chbx_qualification"]
+    ${chbx_qualification}=   Run Keyword And Return Status    Element Should Be Enabled      css=[data-qa="chbx_qualification"]
     Run Keyword If   '${chbx_qualification}' == 'True'          Click Element                 css=[data-qa="chbx_qualification"]
     sleep  2
 

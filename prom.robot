@@ -2125,7 +2125,7 @@ Login
     ...  ELSE IF    '${field_name}' == 'awards[0].suppliers[0].name'                        Get Text   xpath=//div[contains(@class, 'qa_award_item ')]
     ...  ELSE IF    '${field_name}' == 'awards[0].value.valueAddedTaxIncluded'              Get Text   xpath=(//span[contains(@class, 'qa_vat')])[1]
     ...  ELSE IF    '${field_name}' == 'awards[0].value.currency'                           Get Text   xpath=(//span[contains(@class, 'qa_code')])[1]
-    ...  ELSE IF    '${field_name}' == 'awards[0].value.amount'                             Get Text   xpath=(//span[@class='qa_item_quantity'])[1]
+    ...  ELSE IF    '${field_name}' == 'awards[0].value.amount'                             Get Element Attribute   xpath=(//div[@data-qa="award_amount"])[1]@data-qa-value
     ...  ELSE IF    '${field_name}' == 'contracts[0].value.amountNet'                       Get Element Attribute   xpath=//div[@data-qa="award_amount"]@data-qa-value
     ...  ELSE IF    '${field_name}' == 'contracts[0].value.amount'                          Get Element Attribute   xpath=//div[@data-qa="award_amount"]@data-qa-value
     ...  ELSE IF    '${field_name}' == 'awards[0].documents[0].title'                       Get Text   xpath=(//div[contains(@class, 'qa_classifier_popup')]//a[contains(@class, 'qa_file_name')])[1]
@@ -2182,7 +2182,7 @@ Login
     ...  ELSE IF    '${field_name}' == 'items[0].quantity'                  convert to number                               ${return_value.replace(',', '.')}
     ...  ELSE IF    '${field_name}' == 'items[1].quantity'                  convert to number                               ${return_value.replace(',', '.')}
     ...  ELSE IF    '${field_name}' == 'awards[0].status'                   convert_tender_status                           ${return_value}
-    ...  ELSE IF    '${field_name}' == 'awards[0].value.amount'             convert to number                               ${return_value.replace(',', '.')}
+    ...  ELSE IF    '${field_name}' == 'awards[0].value.amount'             convert to number                               ${return_value}
     ...  ELSE IF    '${field_name}' == 'contracts[0].value.amountNet'       convert to number                               ${return_value}
     ...  ELSE IF    '${field_name}' == 'contracts[0].value.amount'          convert to number                               ${return_value}
     ...  ELSE IF    '${field_name}' == 'budget.amount'                      convert to number                               ${return_value}

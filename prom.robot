@@ -2341,7 +2341,7 @@ Login
     log to console  ~~~~~~+++~~~
     CLICK ELEMENT    css=.qa_lot_button
     sleep  5
-    ${return_value}=     Run Keyword       Get Text   xpath=(//a[contains(@href, 'https://auction-staging.prozorro.gov.ua/tenders')])[2]
+    ${return_value}=    Get Text     xpath=(//a[contains(@href, 'https://auction-staging.prozorro.gov.ua/tenders')])[2]
     log to console  *^&^&^*^*&^*%^&%&%$*%*%
     log to console    ${return_value}
     log to console  *^&^&^*^*&^*%^&%&%$*%*%
@@ -2357,7 +2357,7 @@ Login
     log to console  ^%^%^%^%^%^%^%^%
     CLICK ELEMENT    css=.qa_lot_button
     sleep  5
-    ${return_value}=     Run Keyword       Get Text   xpath=(//a[contains(@href, 'https://auction-staging.prozorro.gov.ua/tenders')])[2]
+    ${return_value}=   Get Text   xpath=(//a[contains(@href, 'https://auction-staging.prozorro.gov.ua/tenders')])[2]
     log to console  *^&^&^*^*&^*2234234%^&%&%$*%*%
     log to console    ${return_value}
     log to console  *^&^&^*^*&^234324*%^&%&%$*%*%
@@ -2404,8 +2404,8 @@ Login
     log to console  ${KeyIslot}
     log to console  --------------$$$444$$$$-------
 
-    Run Keyword If     ${KeyIslot}                      Додати лот у звичайну процедуру         ${bid}   ${lots_ids}
-    Run Keyword If     '${KeyIslot}' == 'False'         Додати лот у belowThreshold singl       ${bid}    ${lots_ids}
+    Run Keyword If      ${KeyIslot}                     Додати лот у звичайну процедуру         ${bid}   ${lots_ids}
+    Run Keyword If     '${KeyIslot}' == 'False'         Додати лот у belowThreshold singl       ${bid}   ${lots_ids}
 
 Додати лот у belowThreshold singl
     [Arguments]   ${bid}    ${lots_ids}
@@ -2421,15 +2421,13 @@ Login
 
     Click Element       xpath=(//a[contains(@class, 'qa_add_new_offer')]//span)[last()]
     Wait Until Page Contains Element     css=[data-qa="add_file"]    10
-    ${chbx_rule}=   Run Keyword And Return Status       Element Should Be Visible   css=[data-qa="chbx_rule"]
-    Run Keyword If   '${chbx_rule}' == 'True'             Click Element               css=[data-qa="chbx_rule"]
+    ${chbx_rule}=   Run Keyword And Return Status           Element Should Be Enabled   css=[data-qa="chbx_rule"]
+    Run Keyword If   '${chbx_rule}' == 'True'               Click Element               css=[data-qa="chbx_rule"]
     sleep  2
-    ${chbx_qualification}=   Run Keyword And Return Status    Element Should Be Visible     css=[data-qa="chbx_qualification"]
+    ${chbx_qualification}=   Run Keyword And Return Status      Element Should Be Enabled     css=[data-qa="chbx_qualification"]
     Run Keyword If   '${chbx_qualification}' == 'True'          Click Element                 css=[data-qa="chbx_qualification"]
     sleep  2
-
     ${bid_amount_str}=     convert to string    ${amount}
-
     click element       xpath=//span[contains(text(), '${lots_ids}')]/..//button[@data-qa="participate"]
     Wait Until Page Contains Element     css=[data-qa="lot_price"]    10
     input Text          xpath=//span[contains(text(), '${lots_ids}')]/..//input[@data-qa="lot_price"]    ${bid_amount_str}
@@ -2453,15 +2451,9 @@ Login
     Wait Until Page Contains Element     css=[data-qa="add_file"]    10
     sleep  1
     ${chbx_rule}=   Run Keyword And Return Status      Element Should Be Enabled   css=[data-qa="chbx_rule"]
-    log to console  _#_#_${chbx_rule}_#_#
-    log to console   ${chbx_rule}
-    log to console  _#_#__#_#_#_#
     Run Keyword If   '${chbx_rule}' == 'True'    Click Element     css=[data-qa="chbx_rule"]
     sleep  2
     ${chbx_qualification}=   Run Keyword And Return Status    Element Should Be Enabled     css=[data-qa="chbx_qualification"]
-    log to console  _#_#_${chbx_qualification}_#_#
-    log to console   ${chbx_qualification}
-    log to console  _#_#__#_#_#_#
     Run Keyword If   '${chbx_qualification}' == 'True'      Click Element     css=[data-qa="chbx_qualification"]
     sleep  2
     click element       xpath=//p[contains(text(), '${lots_ids}')]/..//button[@data-qa="participate"]
@@ -2494,14 +2486,9 @@ Login
 
 Добавить annualCostsReduction
     [Arguments]   ${annual}     ${index}
-    log to console  -------++==
-    log to console   ${annual}
-    log to console  -------++==
+
     ${annual}=    convert to string    ${annual}
     ${input_line}=   Run Keyword And Return Status       Element Should Be Visible   xpath=(//input[@data-qa="reduction_input"])[${index + 1}]
-    log to console  +++++++tttttttt+++
-    log to console   ${input_line}
-    log to console  +++++++tttttttt+++
     sleep  1
     run keyword if  '${input_line}' == 'True'  input text  xpath=(//input[@data-qa="reduction_input"])[${index + 1}]    ${annual}
 
@@ -2526,7 +2513,9 @@ Login
 
 Завантажити документ в ставку
     [Arguments]  ${username}  ${path}  ${tender_uaid}  ${doc_type}=documents  ${doc_name}=${None}
-
+    log to console  =-=-=-=-=-=-=-=
+    log to console  ${tender_uaid}
+    log to console  =-=-=-=-=-=-=-=
     capture page screenshot
     Wait Until Page Contains Element      css=.qa_edit_offer     10
     Sleep   5
@@ -2577,6 +2566,12 @@ Login
 
 Змінити цінову пропозицію
     [Arguments]  ${username}  ${tender_uaid}  ${field}   ${value}
+
+    run keyword if  '${procurement_method_type}' == 'esco'    Змінити цінову пропозицію esco   ${username}  ${tender_uaid}  ${field}   ${value}
+    ...  ELSE     Змінити цінову пропозицію all   ${username}  ${tender_uaid}  ${field}   ${value}
+
+Змінити цінову пропозицію all
+    [Arguments]  ${username}  ${tender_uaid}  ${field}   ${value}
     log to console  ~~~~~~~~~~~~~~~~~~~~~~~~
     log to console  ${field}
     log to console  ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2594,6 +2589,29 @@ Login
     sleep  1
     input text      xpath=//input[@data-qa="lot_price"]    ${value}
     Sleep   1
+    Click Element       css=[data-qa="submit_payment"]
+    Sleep   3
+    ${pop_up}=  Run Keyword And Return Status    Element Should Be Visible     xpath=//button[@data-qa="ok"]
+    Run Keyword If    '${pop_up}' == 'True'    Click Element       xpath=//button[@data-qa="ok"]
+    Sleep   90
+    reload page
+
+Змінити цінову пропозицію esco
+    [Arguments]  ${username}  ${tender_uaid}  ${field}   ${value}
+    log to console  ~~~~~~~~~~esco~~~~~~~~~~~~~~
+    log to console  ${field}
+    log to console  ~~~~~~~~~esco~~~~~~~~~~~~~~~
+    log to console  ${value}
+    log to console  ~~~~~~~~~esco~~~~~~~~~~~~~~~
+    sleep       10
+    ${value}=    convert to string  ${value}
+    Wait Until Page Contains Element      css=.qa_edit_offer     10
+    Sleep   5
+    Click Element       css=.qa_edit_offer
+    sleep   2
+    Click Element       xpath=(//span[@data-qa="skip_unskip"])[1]
+    Sleep   3
+    capture page screenshot
     Click Element       css=[data-qa="submit_payment"]
     Sleep   3
     ${pop_up}=  Run Keyword And Return Status    Element Should Be Visible     xpath=//button[@data-qa="ok"]
@@ -2797,7 +2815,6 @@ Login
 
 Видалити неціновий показник
     [Arguments]   ${username}   ${tender_uaid}    ${feature_id}    ${obj_id}=Empty
-
     click element     xpath=//a[contains(@href, '/state_purchase/edit')]//span
     sleep  3
     capture page screenshot
@@ -2807,7 +2824,6 @@ Login
 
 Відповісти на запитання
     [Arguments]   ${username}   ${tender_uaid}    ${answer_data}    ${question_id}
-
     Sleep   2
     Wait Until Page Contains Element      css=#qa_question_and_answer
     Click Element                         css=#qa_question_and_answer
@@ -2827,7 +2843,10 @@ Login
     sleep  2
     CLICK ELEMENT    css=.qa_lot_button
     Wait Until Element Is Visible   css=.qa_lot_title     10
-    click element  xpath=(//table[contains(@class, 'qa_prequalification')]//td[contains(@class, 'qa_status_award')])[${index}]/..//button[@id="approve_popup"]
+    ${award}=  Run Keyword And Return Status  Element Should Be Enabled  xpath=(//table[contains(@class, 'qa_prequalification')]//td[contains(@class, 'qa_status_award')])[${index}]/..//button[@id="approve_popup"]
+    Run Keyword If  '${award}' == 'True'  click element  xpath=(//table[contains(@class, 'qa_prequalification')]//td[contains(@class, 'qa_status_award')])[${index}]/..//button[@id="approve_popup"]
+    ...  ELSE   click element   xpath=(//button[@id="approve_popup"])[last()]
+    #click element  xpath=(//table[contains(@class, 'qa_prequalification')]//td[contains(@class, 'qa_status_award')])[${index}]/..//button[@id="approve_popup"]
     sleep  5
     click element   xpath=(//form[@class="qa_winner_popup"]//input[@id='self_qualified'])
     sleep  1
@@ -2838,9 +2857,9 @@ Login
     click element  xpath=(//a[contains(@href,'cabinet/purchases/state_purchase/view')])[1]
     Wait Until Element Is Visible   css=.qa_lot_button    10
 
-
 Відхилити кваліфікацію
     [Arguments]   ${username}   ${tender_uaid}    ${qualification_num}
+    log to console  ***Відхилити кваліфікацію***
     ${index}=    run keyword if  '${qualification_num}' == '0'   set variable  1
     ...   ELSE     set variable  2
     sleep  2
@@ -2860,28 +2879,38 @@ Login
     input text    xpath=//form[@id='state_qualification_status_form']//textarea[@name="description"]    ${ananas}
     sleep  4
     click element  xpath=//form[@id='state_qualification_status_form']//button[@id="submit_button"]
+    sleep  2
+    click element  xpath=(//a[contains(@href,'cabinet/purchases/state_purchase/view')])[1]
+    Wait Until Element Is Visible   css=.qa_lot_button    10
 
 Скасувати кваліфікацію
     [Arguments]   ${username}   ${tender_uaid}    ${qualification_num}
     ${index}=    run keyword if  '${qualification_num}' == '0'   set variable  1
     ...   ELSE     set variable  2
-    log to console  @#@#@@#@#@
+    log to console  ***Скасувати кваліфікацію***
     log to console  ${index}
     log to console  @#@#@@#@#@
     sleep  2
     CLICK ELEMENT    css=.qa_lot_button
     Wait Until Element Is Visible   css=.qa_lot_title     10
+    reload page
+    sleep  3
     click element  xpath=(//table[contains(@class, 'qa_prequalification')]//td[contains(@class, 'qa_status_award')])[${index}]/../..//button[contains(@data-afip-url, "state_qualification/cancel")]
     sleep  1
     Wait Until Element Is Visible     xpath=//form[@id='state_qualification_cancel_form']//button[@id="submit_button"]
     click element  xpath=//form[@id='state_qualification_cancel_form']//button[@id="submit_button"]
     sleep  20
     reload page
-    sleep  1
+    sleep  4
+    click element  xpath=(//a[contains(@href,'cabinet/purchases/state_purchase/view')])[1]
+    Wait Until Element Is Visible   css=.qa_lot_button    10
 
 Затвердити остаточне рішення кваліфікації
     [Arguments]   ${username}   ${tender_uaid}
+    log to console  ***Затвердити остаточне рішення кваліфікації***
     sleep  2
+    CLICK ELEMENT    css=.qa_lot_button
+    Wait Until Element Is Visible   css=.qa_lot_title     10
     Wait Until Element Is Visible     xpath=//a[contains(@data-afip-url , 'complete_prequalification')]
     click element  xpath=//a[contains(@data-afip-url , 'complete_prequalification')]
     sleep  2
@@ -2889,6 +2918,8 @@ Login
     sleep  10
     reload page
     sleep  1
+    click element  xpath=(//a[contains(@href,'cabinet/purchases/state_purchase/view')])[1]
+    Wait Until Element Is Visible   css=.qa_lot_button    10
 
 Створити постачальника, додати документацію і підтвердити його
     [Arguments]   ${username}   ${tender_uaid}   ${supplier_data}   ${document}
@@ -3575,7 +3606,9 @@ Login
     log to console   ${complaintID}
     log to console   ${cancellation_data}
     ${cancellationReason}=   Get From Dictionary  ${cancellation_data.data}   cancellationReason
-    click element        xpath=//a[contains(@href,'/state_purchase_complaint/purchase_claims')]
+    CLICK ELEMENT    css=.qa_lot_button
+    Wait Until Element Is Visible   css=.qa_lot_title     10
+    click element        xpath=//a[contains(@href,'/state_purchase_lot_complaint/lot_claims')]
     Wait Until Page Contains Element     xpath=//a[@data-qa="qa_apply_requirement"]    4
     click element        xpath=(//p[text()='${complaintID}']//../span)
     sleep  2

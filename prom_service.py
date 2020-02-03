@@ -130,6 +130,7 @@ def convert_tender_status(string):
         u"неактивно": u"invalid",
         u"Кандидат, очікує рішення": u"pending",
         u"Прекваліфікація: період оскарження": u"active.pre-qualification.stand-still",
+        u"очікує розгляду": u"invalid",
     }.get(string, string)
 
 

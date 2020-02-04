@@ -26,7 +26,6 @@ def date_now():
     next_date = datetime.now()
     return next_date.strftime("%d.%m.%Y %H:%M")
 
-
 def delivery_date_start():
     next_date = datetime.now()
     return next_date.strftime("%d.%m.%Y")
@@ -41,7 +40,7 @@ def convert_period_to_closeframeworkagreement(date):
     return convert_date.strftime("%Y" )
 
 def tender_end_date(date):
-    convert_date = dateutil.parser.parse(date) + timedelta(minutes=1)
+    convert_date = dateutil.parser.parse(date) + timedelta(minutes=4)
     return convert_date.strftime("%d.%m.%Y %H:%M")
 
 
@@ -263,6 +262,7 @@ def convert_procurementmethodtype(string):
     return {
         u"Публічні закупівлі енергосервісу": u"esco",
         u"Допорогова закупівля": u"belowThreshold",
+        u"Переговорна процедура для потреб оборони": u"aboveThresholdUA.defense",
         u"Укладення рамкової угоди": u"closeFrameworkAgreementUA"
     }.get(string, string)
 

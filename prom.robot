@@ -2220,7 +2220,8 @@ Login
     ...  ELSE IF    '${field_name}' == 'procuringEntity.name'                               Get Text   xpath=(//div[contains(@class, 'qa_company_dd')]//p)[2]
     ...  ELSE IF    '${field_name}' == 'enquiryPeriod.startDate'                            Get Element Attribute   xpath=//dd[contains(@class, ' qa_date_period_clarifications')]//span[contains(@class, 'qa_end_clarifications')]@qa_date_period_enquire_start
     ...  ELSE IF    '${field_name}' == 'enquiryPeriod.endDate'                              Get Element Attribute   xpath=//dd[contains(@class, ' qa_date_period_clarifications')]//span[contains(@class, 'qa_end_clarifications')]@qa_date_period_clarifications
-    ...  ELSE IF    '${field_name}' == 'qualificationPeriod.endDate'                        Get Element Attribute   xpath=//dd[contains(@class, ' qa_date_period_clarifications')]//span[contains(@class, 'qa_date_time_end')]@data-period-date-end
+    #...  ELSE IF    '${field_name}' == 'qualificationPeriod.endDate'                        Get Element Attribute   xpath=//dd[contains(@class, ' qa_date_period_clarifications')]//span[contains(@class, 'qa_date_time_end')]@data-period-date-end
+    ...  ELSE IF    '${field_name}' == 'qualificationPeriod.endDate'                        Get Element Attribute   xpath=//span[contains(@class, 'qa_qualification_period')]//span[contains(@class, 'qa_date_time_end')]@data-period-date-end
     ...  ELSE IF    '${field_name}' == 'milestones[0].code'                                 Отримати інформацію із лота тендера      ${field_name}
     ...  ELSE IF    '${field_name}' == 'milestones[1].code'                                 Отримати інформацію із лота тендера      ${field_name}
     ...  ELSE IF    '${field_name}' == 'milestones[2].code'                                 Отримати інформацію із лота тендера      ${field_name}
@@ -3448,7 +3449,8 @@ Login
     ${description}=  Get From Dictionary  ${claim.data}   description
 
     click element        xpath=//a[contains(@href,'/state_purchase_complaint/purchase_claims')]
-    Wait Until Page Contains Element     xpath=//a[@data-qa="qa_apply_requirement"]    4
+    sleep  2
+    Wait Until Page Contains Element     xpath=//a[@data-qa="qa_apply_requirement"]    30
     reload page
     click element        xpath=//a[@data-qa="qa_apply_requirement"]
     sleep  3
@@ -3479,7 +3481,7 @@ Login
     log to console   ${cancellation_data}
     ${cancellationReason}=   Get From Dictionary  ${cancellation_data.data}   cancellationReason
     click element        xpath=//a[contains(@href,'/state_purchase_complaint/purchase_claims')]
-    Wait Until Page Contains Element     xpath=//a[@data-qa="qa_apply_requirement"]    4
+    Wait Until Page Contains Element     xpath=//a[@data-qa="qa_apply_requirement"]    30
     reload page
     click element  xpath=(//p[text()='${complaintID}']//../span)
     sleep  5
@@ -3550,7 +3552,7 @@ Login
     log to console   ${doc_id}
     log to console   ${field}
     click element        xpath=//a[contains(@href,'/state_purchase_complaint/purchase_claims')]
-    Wait Until Element Is Visible     xpath=//a[@data-qa="qa_apply_requirement"]    4
+    Wait Until Element Is Visible     xpath=//a[@data-qa="qa_apply_requirement"]    30
     reload page
     click element   xpath=(//p[text()='${complaintID}']//../span)
     sleep  2
@@ -3567,7 +3569,7 @@ Login
     Wait Until Element Is Visible   css=.qa_lot_title     10
     click element        xpath=//a[contains(@href,'/state_purchase_lot_complaint/lot_claims')]
     capture page screenshot
-    Wait Until Page Contains Element     xpath=//a[@data-qa="qa_apply_requirement"]    4
+    Wait Until Page Contains Element     xpath=//a[@data-qa="qa_apply_requirement"]    30
     capture page screenshot
     reload page
     click element        xpath=//a[@data-qa="qa_apply_requirement"]
@@ -3599,7 +3601,7 @@ Login
     log to console   ${cancellation_data}
     ${cancellationReason}=   Get From Dictionary  ${cancellation_data.data}   cancellationReason
     click element        xpath=//a[contains(@href,'/state_purchase_complaint/purchase_claims')]
-    Wait Until Page Contains Element     xpath=//a[@data-qa="qa_apply_requirement"]    4
+    Wait Until Page Contains Element     xpath=//a[@data-qa="qa_apply_requirement"]    30
     click element        xpath=(//p[text()='${complaintID}']//../span)
     sleep  2
      Wait Until Keyword Succeeds     300      10          Run Keywords
@@ -3626,7 +3628,7 @@ Login
     ${answer_type}=   get from dictionary   ${answer_data.data}    resolutionType
     ${description}=   get from dictionary   ${answer_data.data}    resolution
     click element        xpath=//a[contains(@href,'/state_purchase_complaint/purchase_claims')]
-    Wait Until Page Contains Element     css=[data-qa="claim_tender"]    4
+    Wait Until Page Contains Element     css=[data-qa="claim_tender"]    30
     click element        xpath=(//p[text()='${complaintID}']//../span)
     sleep  1
     click element  css=[data-qa="answer_claim"]
@@ -3743,7 +3745,7 @@ Login
     Wait Until Element Is Visible   css=.qa_lot_title     10
     click element        xpath=//a[contains(@href,'/state_purchase_lot_complaint/lot_claims')]
     capture page screenshot
-    Wait Until Page Contains Element     xpath=//a[@data-qa="qa_apply_requirement"]    4
+    Wait Until Page Contains Element     xpath=//a[@data-qa="qa_apply_requirement"]    30
     capture page screenshot
     reload page
     click element        xpath=//a[@data-qa="qa_apply_requirement"]
@@ -3781,7 +3783,7 @@ Login
     CLICK ELEMENT    css=.qa_lot_button
     Wait Until Element Is Visible   css=.qa_lot_title     10
     click element        xpath=//a[contains(@href,'/state_purchase_lot_complaint/lot_claims')]
-    Wait Until Page Contains Element     xpath=//a[@data-qa="qa_apply_requirement"]    4
+    Wait Until Page Contains Element     xpath=//a[@data-qa="qa_apply_requirement"]    30
     click element        xpath=(//p[text()='${complaintID}']//../span)
     sleep  2
     Wait Until Keyword Succeeds     300      10          Run Keywords
@@ -3811,7 +3813,7 @@ Login
     ${answer_type}=   get from dictionary   ${answer_data.data}    resolutionType
     ${description}=   get from dictionary   ${answer_data.data}    resolution
     click element        xpath=//a[contains(@href,'/state_purchase_complaint/purchase_claims')]
-    Wait Until Page Contains Element     css=[data-qa="claim_tender"]    4
+    Wait Until Page Contains Element     css=[data-qa="claim_tender"]    30
     click element        xpath=(//p[text()='${complaintID}']//../span)
     sleep  1
     click element  css=[data-qa="answer_claim"]

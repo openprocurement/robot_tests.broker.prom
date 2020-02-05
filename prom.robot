@@ -1520,7 +1520,7 @@ Login
     sleep  2
     click element   css=.qa_multilot_end_period_adjustments
     sleep  2
-    input text      css=.qa_multilot_term_agreement                                         '40'
+    input text      css=.qa_multilot_term_agreement                                          '44'
     sleep  1
     input text      css=.qa_multilot_participants_agreement                                 ${maxawardscount}
     sleep  1
@@ -2220,8 +2220,7 @@ Login
     ...  ELSE IF    '${field_name}' == 'procuringEntity.name'                               Get Text   xpath=(//div[contains(@class, 'qa_company_dd')]//p)[2]
     ...  ELSE IF    '${field_name}' == 'enquiryPeriod.startDate'                            Get Element Attribute   xpath=//dd[contains(@class, ' qa_date_period_clarifications')]//span[contains(@class, 'qa_end_clarifications')]@qa_date_period_enquire_start
     ...  ELSE IF    '${field_name}' == 'enquiryPeriod.endDate'                              Get Element Attribute   xpath=//dd[contains(@class, ' qa_date_period_clarifications')]//span[contains(@class, 'qa_end_clarifications')]@qa_date_period_clarifications
-    #...  ELSE IF    '${field_name}' == 'qualificationPeriod.endDate'                        Get Element Attribute   xpath=//dd[contains(@class, ' qa_date_period_clarifications')]//span[contains(@class, 'qa_date_time_end')]@data-period-date-end
-    ...  ELSE IF    '${field_name}' == 'qualificationPeriod.endDate'                        Get Element Attribute   xpath=//span[contains(@class, 'qa_qualification_period')]//span[contains(@class, 'qa_date_time_end')]@data-period-date-end
+    ...  ELSE IF    '${field_name}' == 'qualificationPeriod.endDate'                        Отримати qualificationPeriod.endDate
     ...  ELSE IF    '${field_name}' == 'milestones[0].code'                                 Отримати інформацію із лота тендера      ${field_name}
     ...  ELSE IF    '${field_name}' == 'milestones[1].code'                                 Отримати інформацію із лота тендера      ${field_name}
     ...  ELSE IF    '${field_name}' == 'milestones[2].code'                                 Отримати інформацію із лота тендера      ${field_name}
@@ -3020,7 +3019,6 @@ Login
     ${award}=  Run Keyword And Return Status  Element Should Be Enabled  xpath=(//table[contains(@class, 'qa_prequalification')]//td[contains(@class, 'qa_status_award')])[${index}]/..//button[@id="approve_popup"]
     Run Keyword If  '${award}' == 'True'  click element  xpath=(//table[contains(@class, 'qa_prequalification')]//td[contains(@class, 'qa_status_award')])[${index}]/..//button[@id="approve_popup"]
     ...  ELSE   click element   xpath=(//button[@id="approve_popup"])[last()]
-    #click element  xpath=(//table[contains(@class, 'qa_prequalification')]//td[contains(@class, 'qa_status_award')])[${index}]/..//button[@id="approve_popup"]
     sleep  5
     click element   xpath=(//form[@class="qa_winner_popup"]//input[@id='self_qualified'])
     sleep  1
@@ -3042,7 +3040,11 @@ Login
 
     click element  xpath=(//table[contains(@class, 'qa_prequalification')]//td[contains(@class, 'qa_status_award')])[${index}]/../..//button[contains(@data-afip-url, "state_qualification/unsuccessful")]
     sleep  3
-    Wait Until Element Is Visible  css=#state_qualification_status_form
+    Wait Until Keyword Succeeds     300      10          Run Keywords
+    ...   Sleep  3
+    ...   AND     Reload Page
+    ...   AND     sleep   1
+    ...   AND     Wait Until Element Is Visible       css=#state_qualification_status_form
     click element   xpath=//form[@id='state_qualification_status_form']//div[contains(@class, 'drop-down')]//div
     sleep  2
     click element  xpath=//form[@id='state_qualification_status_form']//input[@id="0"]
@@ -3830,3 +3832,9 @@ Login
     sleep  2
 
 ###############################################################################
+Отримати qualificationPeriod.endDate
+    log to console  ***Отримати qualificationPeriod.endDate***
+    ${return_value}=  run keyword if  '${procurement_method_type}' == 'closeFrameworkAgreementUA'   Get Element Attribute   xpath=//span[contains(@class, 'qa_qualification_period')]//span[contains(@class, 'qa_date_time_end')]@data-period-date-end
+    ...  ELSE  Get Element Attribute   xpath=//dd[contains(@class, ' qa_date_period_clarifications')]//span[contains(@class, 'qa_date_time_end')]@data-period-date-end
+    log to console  ${return_value}
+    [Return]  ${return_value}

@@ -2134,6 +2134,17 @@ Login
     ...  ELSE IF    '${field_name}' == 'lots[0].fundingKind'                                    Get Text   xpath=//span[contains(@class, 'qa_funding_kind')]
     ...  ELSE IF    '${field_name}' == 'lots[0].yearlyPaymentsPercentageRange'                  Get Element Attribute   xpath=//span[contains(@class, 'qa_financial_step')]@data-qa-value
     ...  ELSE IF    '${field_name}' == 'yearlyPaymentsPercentageRange'                          Get Element Attribute   xpath=//span[contains(@class, 'qa_financial_step')]@data-qa-value
+    ...  ELSE IF    '${field_name}' == 'awards[0].complaintPeriod.endDate'                      Get Element Attribute   xpath=//div[contains(@class, 'qa_qualification_end_date')]@data-qualification-date-end
+    ...  ELSE IF    '${field_name}' == 'awards[1].complaintPeriod.endDate'                      Get Element Attribute   xpath=//div[contains(@class, 'qa_qualification_end_date')]@data-qualification-date-end
+    ...  ELSE IF    '${field_name}' == 'awards[2].complaintPeriod.endDate'                      Get Element Attribute   xpath=//div[contains(@class, 'qa_qualification_end_date')]@data-qualification-date-end
+    ...  ELSE IF    '${field_name}' == 'contracts[0].value.amountNet'                           Get Element Attribute   xpath=//div[@data-qa="award_amount"]@data-qa-value
+    ...  ELSE IF    '${field_name}' == 'contracts[0].value.amount'                              Get Element Attribute   xpath=(//div[@data-qa="award_amount"])[1]@data-qa-value
+    ...  ELSE IF    '${field_name}' == 'contracts[0].status'                                    Get Text   xpath=(//td[contains(@class, 'qa_status_award')])[1]
+    ...  ELSE IF    '${field_name}' == 'contracts[1].status'                                    Get Text   xpath=(//td[contains(@class, 'qa_status_award')])[2]
+    ...  ELSE IF    '${field_name}' == 'contracts[1].value.amountNet'                           Get Element Attribute    xpath=(//div[@data-qa="qa_user_award"])[2]@data-qa-value
+    ...  ELSE IF    '${field_name}' == 'contracts[1].value.amount'                              Get Element Attribute    xpath=(//div[@data-qa="qa_user_award"])[2]@data-qa-value
+    ...  ELSE IF    '${field_name}' == 'auctionPeriod.startDate'                                Get Element Attribute    xpath=//dd[contains(@class, 'qa_date_time_auction')]//span[@class="qa_date_time_start"]@data-period-date-start
+
     sleep  2
     CLICK ELEMENT    xpath=(//a[contains(@href, "state_purchase/view")])[2]
     Wait Until Element Is Visible   css=.qa_lot_button     10
@@ -2165,6 +2176,13 @@ Login
     ...  ELSE IF    '${field_name}' == 'qualifications[0].status'                               Get Text   xpath=(//td[contains(@class, 'qa_status_award')])[1]
     ...  ELSE IF    '${field_name}' == 'qualifications[1].status'                               Get Text   xpath=(//td[contains(@class, 'qa_status_award')])[2]
     ...  ELSE IF    '${field_name}' == 'awards[0].status'                                       Get Text   xpath=(//td[contains(@class, 'qa_status_award')])[1]
+    ...  ELSE IF    '${field_name}' == 'contracts[0].value.amountNet'                           Get Element Attribute   xpath=//div[@data-qa="award_amount"]@data-qa-value
+    ...  ELSE IF    '${field_name}' == 'contracts[0].value.amount'                              Get Element Attribute   xpath=(//div[@data-qa="award_amount"])[1]@data-qa-value
+    ...  ELSE IF    '${field_name}' == 'contracts[0].status'                                    Get Text   xpath=(//td[contains(@class, 'qa_status_award')])[1]
+    ...  ELSE IF    '${field_name}' == 'contracts[1].status'                                    Get Text   xpath=(//td[contains(@class, 'qa_status_award')])[2]
+    ...  ELSE IF    '${field_name}' == 'contracts[1].value.amountNet'                           Get Element Attribute    xpath=(//div[@data-qa="qa_user_award"])[2]@data-qa-value
+    ...  ELSE IF    '${field_name}' == 'contracts[1].value.amount'                              Get Element Attribute    xpath=(//div[@data-qa="qa_user_award"])[2]@data-qa-value
+    ...  ELSE IF    '${field_name}' == 'auctionPeriod.startDate'                                Get Element Attribute    xpath=//dd[contains(@class, 'qa_date_time_auction')]//span[@class="qa_date_time_start"]@data-period-date-start
     sleep  2
     [Return]  ${return_value}
 
@@ -2191,6 +2209,13 @@ Login
     ...  ELSE IF    '${field_name}' == 'qualifications[0].status'                               Get Text   xpath=(//td[contains(@class, 'qa_status_award')])[1]
     ...  ELSE IF    '${field_name}' == 'qualifications[1].status'                               Get Text   xpath=(//td[contains(@class, 'qa_status_award')])[2]
     ...  ELSE IF    '${field_name}' == 'awards[0].status'                                       Get Text   xpath=(//td[contains(@class, 'qa_status_award')])[1]
+    ...  ELSE IF    '${field_name}' == 'contracts[0].value.amountNet'                           Get Element Attribute   xpath=//div[@data-qa="award_amount"]@data-qa-value
+    ...  ELSE IF    '${field_name}' == 'contracts[0].value.amount'                              Get Element Attribute   xpath=(//div[@data-qa="award_amount"])[1]@data-qa-value
+    ...  ELSE IF    '${field_name}' == 'contracts[0].status'                                    Get Text   xpath=(//td[contains(@class, 'qa_status_award')])[1]
+    ...  ELSE IF    '${field_name}' == 'contracts[1].status'                                    Get Text   xpath=(//td[contains(@class, 'qa_status_award')])[2]
+    ...  ELSE IF    '${field_name}' == 'contracts[1].value.amountNet'                           Get Element Attribute    xpath=(//div[@data-qa="qa_user_award"])[2]@data-qa-value
+    ...  ELSE IF    '${field_name}' == 'contracts[1].value.amount'                              Get Element Attribute    xpath=(//div[@data-qa="qa_user_award"])[2]@data-qa-value
+    ...  ELSE IF    '${field_name}' == 'auctionPeriod.startDate'                                Get Element Attribute    xpath=//dd[contains(@class, 'qa_date_time_auction')]//span[@class="qa_date_time_start"]@data-period-date-start
     sleep  2
     Run Keyword If  '${KeyIslot}' == 'True'     CLICK ELEMENT    xpath=(//a[contains(@href, "state_purchase/view")])[2]
     Run Keyword If  '${KeyIslot}' == 'True'     Wait Until Element Is Visible   css=.qa_lot_button     10
@@ -2294,13 +2319,14 @@ Login
     ...  ELSE IF    '${field_name}' == 'awards[0].value.valueAddedTaxIncluded'              Get Text   xpath=(//span[contains(@class, 'qa_vat')])[1]
     ...  ELSE IF    '${field_name}' == 'awards[0].value.currency'                           Get Text   xpath=(//span[contains(@class, 'qa_code')])[1]
     ...  ELSE IF    '${field_name}' == 'awards[0].value.amount'                             Get Element Attribute   xpath=(//div[@data-qa="award_amount"])[1]@data-qa-value
-    ...  ELSE IF    '${field_name}' == 'contracts[0].value.amountNet'                       Get Element Attribute   xpath=//div[@data-qa="award_amount"]@data-qa-value
-    ...  ELSE IF    '${field_name}' == 'contracts[0].value.amount'                          Get Element Attribute   xpath=//div[@data-qa="award_amount"]@data-qa-value
     ...  ELSE IF    '${field_name}' == 'awards[0].documents[0].title'                       Get Text   xpath=(//div[contains(@class, 'qa_classifier_popup')]//a[contains(@class, 'qa_file_name')])[1]
-    ...  ELSE IF    '${field_name}' == 'contracts[0].status'                                Get Text   xpath=//td[contains(@class, 'qa_status_award')]
+    ...  ELSE IF    '${field_name}' == 'contracts[0].value.amountNet'                       Отримати інформацію із лота тендера      ${field_name}
+    ...  ELSE IF    '${field_name}' == 'contracts[0].value.amount'                          Отримати інформацію із лота тендера      ${field_name}
+    ...  ELSE IF    '${field_name}' == 'contracts[0].status'                                Отримати інформацію із лота тендера      ${field_name}
+    ...  ELSE IF    '${field_name}' == 'contracts[1].status'                                Отримати інформацію із лота тендера      ${field_name}
+    ...  ELSE IF    '${field_name}' == 'contracts[1].value.amountNet'                       Отримати інформацію із лота тендера      ${field_name}
+    ...  ELSE IF    '${field_name}' == 'contracts[1].value.amount'                          Отримати інформацію із лота тендера      ${field_name}
     ...  ELSE IF    '${field_name}' == 'documents[0].title'                                 Get Text   xpath=(//a[contains(@class, 'qa_file_name')])[1]
-    ...  ELSE IF    '${field_name}' == 'contracts[1].value.amountNet'                       Get Element Attribute    xpath=(//div[@data-qa="qa_user_award"])[1]@data-qa-value
-    ...  ELSE IF    '${field_name}' == 'contracts[1].value.amount'                          Get Element Attribute    xpath=(//div[@data-qa="qa_user_award"])[1]@data-qa-value
     ...  ELSE IF    '${field_name}' == 'budget.amount'                                      get element attribute   xpath=//span[@class="qa_budget_amount"]@data-qa-amount
     ...  ELSE IF    '${field_name}' == 'NBUdiscountRate'                                    Get Element Attribute    xpath=//span[contains(@class, 'qa_nbu_rate')]@data-qa-value
     ...  ELSE IF    '${field_name}' == 'complaintPeriod.endDate'                            get element attribute  xpath=(//span[contains(@class, "qa_date_time_end")])[1]@data-period-date-end
@@ -2311,58 +2337,65 @@ Login
     ...  ELSE IF    '${field_name}' == 'yearlyPaymentsPercentageRange'                      Отримати інформацію із лота тендера      ${field_name}
     ...  ELSE IF    '${field_name}' == 'lots[0].yearlyPaymentsPercentageRange'              Отримати інформацію із лота тендера      ${field_name}
     ...  ELSE IF    '${field_name}' == 'enquiryPeriod.clarificationsUntil'                  get element attribute  xpath=//span[contains(@class, 'qa_date_period_answer')]@qa_date_clarifications_until
+    ...  ELSE IF    '${field_name}' == 'contracts[0].dateSigned'                            get element attribute  xpath=//span[contains(@class, 'qa_date_tender_terms')]@data-qa-date
+    ...  ELSE IF    '${field_name}' == 'awards[0].complaintPeriod.endDate'                  Отримати інформацію із лота тендера      ${field_name}
+    ...  ELSE IF    '${field_name}' == 'awards[1].complaintPeriod.endDate'                  Отримати інформацію із лота тендера      ${field_name}
+    ...  ELSE IF    '${field_name}' == 'awards[2].complaintPeriod.endDate'                  Отримати інформацію із лота тендера      ${field_name}
+    ...  ELSE IF    '${field_name}' == 'auctionPeriod.startDate'                            Отримати інформацію із лота тендера      ${field_name}
     reload page
     sleep  1
-    ${return_value}=   Run Keyword If    '${field_name}' == 'mainProcurementCategory'       convert_prom_string_to_common_string                                    ${return_value}
-    ...  ELSE IF    '${field_name}' == 'procurementMethodType'                              convert_procurementmethodtype                                           ${return_value}
-    ...  ELSE IF    '${field_name}' == 'value.valueAddedTaxIncluded'                        convert_prom_string_to_common_string                                    ${return_value}
-    ...  ELSE IF    '${field_name}' == 'maxAwardsCount'                                     convert to number                                                       ${return_value}
-    ...  ELSE IF    '${field_name}' == 'value.currency'                                     convert_prom_string_to_common_string                                    ${return_value}
-    ...  ELSE IF    '${field_name}' == 'value.amount'                                       convert to number                                                       ${return_value.replace(" ", "").replace(',', '.')}
-    ...  ELSE IF    '${field_name}' == 'fundingKind'                                        convert_fundingkind                                                     ${return_value}
-    ...  ELSE IF    '${field_name}' == 'lots[0].value.amount'                               convert to number                                                       ${return_value.replace(" ", "").replace(',', '.')}
-    ...  ELSE IF    '${field_name}' == 'lots[0].value.currency'                             convert_prom_string_to_common_string                                    ${return_value}
-    ...  ELSE IF    '${field_name}' == 'lots[0].value.valueAddedTaxIncluded'                convert_prom_string_to_common_string                                    ${return_value}
-    ...  ELSE IF    '${field_name}' == 'lots[0].minimalStep.currency'                       convert_prom_string_to_common_string                                    ${return_value}
-    ...  ELSE IF    '${field_name}' == 'lots[0].minimalStep.valueAddedTaxIncluded'          convert_prom_string_to_common_string                                    ${return_value}
-    ...  ELSE IF    '${field_name}' == 'milestones[0].code'                 get_milestones_code                             ${return_value}
-    ...  ELSE IF    '${field_name}' == 'milestones[1].code'                 get_milestones_code                             ${return_value}
-    ...  ELSE IF    '${field_name}' == 'milestones[2].code'                 get_milestones_code                             ${return_value}
-    ...  ELSE IF    '${field_name}' == 'milestones[0].title'                get_milestones_title                            ${return_value}
-    ...  ELSE IF    '${field_name}' == 'milestones[1].title'                get_milestones_title                            ${return_value}
-    ...  ELSE IF    '${field_name}' == 'milestones[2].title'                get_milestones_title                            ${return_value}
-    ...  ELSE IF    '${field_name}' == 'milestones[0].duration.days'        convert to integer                              ${return_value}
-    ...  ELSE IF    '${field_name}' == 'milestones[1].duration.days'        convert to integer                              ${return_value}
-    ...  ELSE IF    '${field_name}' == 'milestones[2].duration.days'        convert to integer                              ${return_value}
-    ...  ELSE IF    '${field_name}' == 'milestones[0].percentage'           convert to integer                              ${return_value.replace("%", "")}
-    ...  ELSE IF    '${field_name}' == 'milestones[1].percentage'           convert to integer                              ${return_value.replace("%", "")}
-    ...  ELSE IF    '${field_name}' == 'milestones[2].percentage'           convert to integer                              ${return_value.replace("%", "")}
-    ...  ELSE IF    '${field_name}' == 'milestones[0].duration.type'        get_milestones_duration_type                    ${return_value}
-    ...  ELSE IF    '${field_name}' == 'milestones[1].duration.type'        get_milestones_duration_type                    ${return_value}
-    ...  ELSE IF    '${field_name}' == 'milestones[2].duration.type'        get_milestones_duration_type                    ${return_value}
-    ...  ELSE IF    '${field_name}' == 'items[0].unit.name'                 convert_prom_string_to_common_string            ${return_value}
-    ...  ELSE IF    '${field_name}' == 'status'                             convert_tender_status                           ${return_value}
-    ...  ELSE IF    '${field_name}' == 'qualifications[0].status'           convert_tender_status                           ${return_value}
-    ...  ELSE IF    '${field_name}' == 'qualifications[1].status'           convert_tender_status                           ${return_value}
-    ...  ELSE IF    '${field_name}' == 'contracts[0].status'                convert_tender_status                           ${return_value}
-    ...  ELSE IF    '${field_name}' == 'contracts[1].status'                convert_tender_status                           ${return_value}
-    ...  ELSE IF    '${field_name}' == 'minimalStep.amount'                 convert to number                               ${return_value.replace(" ", "").replace(',', '.').replace(u'грн', '')}
-    ...  ELSE IF    '${field_name}' == 'cause'                              revert_negotiation_cause_type                   ${return_value}
-    ...  ELSE IF    '${field_name}' == 'items[0].quantity'                  convert to number                               ${return_value.replace(',', '.')}
-    ...  ELSE IF    '${field_name}' == 'items[1].quantity'                  convert to number                               ${return_value.replace(',', '.')}
-    ...  ELSE IF    '${field_name}' == 'awards[0].status'                   convert_tender_status                           ${return_value}
-    ...  ELSE IF    '${field_name}' == 'awards[0].value.amount'             convert to number                               ${return_value}
-    ...  ELSE IF    '${field_name}' == 'contracts[0].value.amountNet'       convert to number                               ${return_value}
-    ...  ELSE IF    '${field_name}' == 'contracts[0].value.amount'          convert to number                               ${return_value}
-    ...  ELSE IF    '${field_name}' == 'budget.amount'                      convert to number                               ${return_value}
-    ...  ELSE IF    '${field_name}' == 'awards[0].value.valueAddedTaxIncluded'                   convert_prom_string_to_common_string                           ${return_value}
-    ...  ELSE IF    '${field_name}' == 'NBUdiscountRate'                                    convert to number                              ${return_value}
-    ...  ELSE IF    '${field_name}' == 'fundingKind'                                        convert_fundingkind                            ${return_value}
-    ...  ELSE IF    '${field_name}' == 'lots[0].fundingKind'                                convert_fundingkind                            ${return_value}
-    ...  ELSE IF    '${field_name}' == 'minimalStepPercentage'                              convert to number                              ${return_value}
-    ...  ELSE IF    '${field_name}' == 'lots[0].minimalStepPercentage'                      convert to number                              ${return_value}
-    ...  ELSE IF    '${field_name}' == 'yearlyPaymentsPercentageRange'                      convert to number                              ${return_value}
-    ...  ELSE IF    '${field_name}' == 'lots[0].yearlyPaymentsPercentageRange'              convert to number                              ${return_value}
+    ${return_value}=   Run Keyword If    '${field_name}' == 'mainProcurementCategory'       convert_prom_string_to_common_string            ${return_value}
+    ...  ELSE IF    '${field_name}' == 'procurementMethodType'                              convert_procurementmethodtype                   ${return_value}
+    ...  ELSE IF    '${field_name}' == 'value.valueAddedTaxIncluded'                        convert_prom_string_to_common_string            ${return_value}
+    ...  ELSE IF    '${field_name}' == 'maxAwardsCount'                                     convert to number                               ${return_value}
+    ...  ELSE IF    '${field_name}' == 'value.currency'                                     convert_prom_string_to_common_string            ${return_value}
+    ...  ELSE IF    '${field_name}' == 'value.amount'                                       convert to number                               ${return_value.replace(" ", "").replace(',', '.')}
+    ...  ELSE IF    '${field_name}' == 'fundingKind'                                        convert_fundingkind                             ${return_value}
+    ...  ELSE IF    '${field_name}' == 'lots[0].value.amount'                               convert to number                               ${return_value.replace(" ", "").replace(',', '.')}
+    ...  ELSE IF    '${field_name}' == 'lots[0].value.currency'                             convert_prom_string_to_common_string            ${return_value}
+    ...  ELSE IF    '${field_name}' == 'lots[0].value.valueAddedTaxIncluded'                convert_prom_string_to_common_string            ${return_value}
+    ...  ELSE IF    '${field_name}' == 'lots[0].minimalStep.currency'                       convert_prom_string_to_common_string            ${return_value}
+    ...  ELSE IF    '${field_name}' == 'lots[0].minimalStep.valueAddedTaxIncluded'          convert_prom_string_to_common_string            ${return_value}
+    ...  ELSE IF    '${field_name}' == 'milestones[0].code'                                 get_milestones_code                             ${return_value}
+    ...  ELSE IF    '${field_name}' == 'milestones[1].code'                                 get_milestones_code                             ${return_value}
+    ...  ELSE IF    '${field_name}' == 'milestones[2].code'                                 get_milestones_code                             ${return_value}
+    ...  ELSE IF    '${field_name}' == 'milestones[0].title'                                get_milestones_title                            ${return_value}
+    ...  ELSE IF    '${field_name}' == 'milestones[1].title'                                get_milestones_title                            ${return_value}
+    ...  ELSE IF    '${field_name}' == 'milestones[2].title'                                get_milestones_title                            ${return_value}
+    ...  ELSE IF    '${field_name}' == 'milestones[0].duration.days'                        convert to integer                              ${return_value}
+    ...  ELSE IF    '${field_name}' == 'milestones[1].duration.days'                        convert to integer                              ${return_value}
+    ...  ELSE IF    '${field_name}' == 'milestones[2].duration.days'                        convert to integer                              ${return_value}
+    ...  ELSE IF    '${field_name}' == 'milestones[0].percentage'                           convert to integer                              ${return_value.replace("%", "")}
+    ...  ELSE IF    '${field_name}' == 'milestones[1].percentage'                           convert to integer                              ${return_value.replace("%", "")}
+    ...  ELSE IF    '${field_name}' == 'milestones[2].percentage'                           convert to integer                              ${return_value.replace("%", "")}
+    ...  ELSE IF    '${field_name}' == 'milestones[0].duration.type'                        get_milestones_duration_type                    ${return_value}
+    ...  ELSE IF    '${field_name}' == 'milestones[1].duration.type'                        get_milestones_duration_type                    ${return_value}
+    ...  ELSE IF    '${field_name}' == 'milestones[2].duration.type'                        get_milestones_duration_type                    ${return_value}
+    ...  ELSE IF    '${field_name}' == 'items[0].unit.name'                                 convert_prom_string_to_common_string            ${return_value}
+    ...  ELSE IF    '${field_name}' == 'status'                                             convert_tender_status                           ${return_value}
+    ...  ELSE IF    '${field_name}' == 'qualifications[0].status'                           convert_tender_status                           ${return_value}
+    ...  ELSE IF    '${field_name}' == 'qualifications[1].status'                           convert_tender_status                           ${return_value}
+    ...  ELSE IF    '${field_name}' == 'contracts[0].status'                                convert_tender_status                           ${return_value}
+    ...  ELSE IF    '${field_name}' == 'contracts[1].status'                                convert_tender_status                           ${return_value}
+    ...  ELSE IF    '${field_name}' == 'minimalStep.amount'                                 convert to number                               ${return_value.replace(" ", "").replace(',', '.').replace(u'грн', '')}
+    ...  ELSE IF    '${field_name}' == 'cause'                                              revert_negotiation_cause_type                   ${return_value}
+    ...  ELSE IF    '${field_name}' == 'items[0].quantity'                                  convert to number                               ${return_value.replace(',', '.')}
+    ...  ELSE IF    '${field_name}' == 'items[1].quantity'                                  convert to number                               ${return_value.replace(',', '.')}
+    ...  ELSE IF    '${field_name}' == 'awards[0].status'                                   convert_tender_status                           ${return_value}
+    ...  ELSE IF    '${field_name}' == 'awards[0].value.amount'                             convert to number                               ${return_value}
+    ...  ELSE IF    '${field_name}' == 'contracts[0].value.amountNet'                       convert to number                               ${return_value}
+    ...  ELSE IF    '${field_name}' == 'contracts[1].value.amountNet'                       convert to number                               ${return_value}
+    ...  ELSE IF    '${field_name}' == 'contracts[0].value.amount'                          convert to number                               ${return_value}
+    ...  ELSE IF    '${field_name}' == 'contracts[1].value.amount'                          convert to number                               ${return_value}
+    ...  ELSE IF    '${field_name}' == 'budget.amount'                                      convert to number                               ${return_value}
+    ...  ELSE IF    '${field_name}' == 'awards[0].value.valueAddedTaxIncluded'              convert_prom_string_to_common_string            ${return_value}
+    ...  ELSE IF    '${field_name}' == 'NBUdiscountRate'                                    convert to number                               ${return_value}
+    ...  ELSE IF    '${field_name}' == 'fundingKind'                                        convert_fundingkind                             ${return_value}
+    ...  ELSE IF    '${field_name}' == 'lots[0].fundingKind'                                convert_fundingkind                             ${return_value}
+    ...  ELSE IF    '${field_name}' == 'minimalStepPercentage'                              convert to number                               ${return_value}
+    ...  ELSE IF    '${field_name}' == 'lots[0].minimalStepPercentage'                      convert to number                               ${return_value}
+    ...  ELSE IF    '${field_name}' == 'yearlyPaymentsPercentageRange'                      convert to number                               ${return_value}
+    ...  ELSE IF    '${field_name}' == 'lots[0].yearlyPaymentsPercentageRange'              convert to number                               ${return_value}
     ...  ELSE        convert_prom_string_to_common_string       ${return_value}
     [Return]  ${return_value}
 
@@ -2496,8 +2529,8 @@ Login
     Run Keyword If   '${status}' == 'False'   Click Element   xpath=(//div[@class='zk-question' and .//p[contains(text(), '${question_id}')]]//p[contains(@class, 'qa_message_title')])
     Sleep  3
     ${return_value}=      Run Keyword If   '${field_name}' == 'title'   Get Text   xpath=(//div[@class='zk-question' and .//p[contains(text(), '${question_id}')]]//p[contains(@class, 'qa_message_title')])
-    ...     ELSE IF  '${field_name}' == 'answer'                        Get Text   xpath=(//div[@class='zk-question' and .//p[contains(text(), '${question_id}')]]//span[@class='qa_answer'])
-    ...     ELSE IF  '${field_name}' == 'questions[0].answer'           Get Text   xpath=(//div[@class='zk-question' and .//p[contains(text(), '${question_id}')]]//span[@class='qa_answer'])
+    ...     ELSE IF  '${field_name}' == 'answer'                        Get Text   xpath=(//div[@class='zk-question' and .//p[contains(text(), '${question_id}')]]//*[contains(@class, 'answer')])[last()]
+    ...     ELSE IF  '${field_name}' == 'questions[0].answer'           Get Text   xpath=(//div[@class='zk-question' and .//p[contains(text(), '${question_id}')]]//*[contains(@class, 'answer')])[last()]
     ...     ELSE IF  '${field_name}' == 'questions[0].description'      Get Text   xpath=(//div[@class='zk-question' and .//p[contains(text(), '${question_id}')]]//div[contains(@class, 'qa_message_description')])
     ...     ELSE IF  '${field_name}' == 'questions[0].title'            Get Text   xpath=(//div[@class='zk-question' and .//p[contains(text(), '${question_id}')]]//p[contains(@class, 'qa_message_title')])
     ...     ELSE    Get Text   xpath=(//div[@class='zk-question' and .//p[contains(text(), '${question_id}')]]//div[contains(@class, 'qa_message_description')])
@@ -3071,8 +3104,8 @@ Login
     Wait Until Element Is Visible   css=.qa_lot_title     10
     reload page
     sleep  3
-    click element  xpath=(//table[contains(@class, 'qa_prequalification')]//td[contains(@class, 'qa_status_award')])[${index}]/../..//button[contains(@data-afip-url, "state_qualification/cancel")]
-    sleep  1
+    click element  xpath=(//button[contains(@data-afip-url, "state_qualification/cancel")])[last()]
+    sleep  2
     Wait Until Element Is Visible     xpath=//form[@id='state_qualification_cancel_form']//button[@id="submit_button"]
     click element  xpath=//form[@id='state_qualification_cancel_form']//button[@id="submit_button"]
     sleep  20
@@ -3679,24 +3712,10 @@ Login
     log to console   ${award_num}
     CLICK ELEMENT    css=.qa_lot_button
     Wait Until Element Is Visible   css=.qa_lot_title     10
-    Wait Until Keyword Succeeds     300      10          Run Keywords
-    ...   Sleep  3
-    ...   AND     Reload Page
-    ...   AND     sleep   2
-    ...   AND     Wait Until Element Is Enabled       css=[data-afip-url*="/cabinet/purchases/state_award/active"]
-    click element    css=[data-afip-url*="/cabinet/purchases/state_award/active"]
-    sleep  2
-    Choose File      css=.qa_state_offer_add_field    ${document}
-    sleep  5
-    click element    css=.qa_type_file
-    sleep  2
-    click element    xpath=//div[text()='Протокол розгляду']
-    sleep  3
-    click element    css=[id="submit_button"]
-    sleep  2
+    Run Keyword If  '${procurement_method_type}' == 'closeFrameworkAgreementUA'   Завантажити документ рішення кваліфікаційної комісії для closeFrameworkAgreementUA    ${document}    ${award_num}
+    ...  ELSE   Завантажити документ рішення кваліфікаційної комісії для інших процедур     ${document}
     click element  xpath=(//a[contains(@href,'cabinet/purchases/state_purchase/view')])[1]
     Wait Until Element Is Visible   css=.qa_lot_button    10
-    log to console   ***Завантажити документ рішення кваліфікаційної комісії***
 
 Скасування рішення кваліфікаційної комісії
     [Arguments]  ${username}   ${tender_uaid}  ${award_num}
@@ -3838,3 +3857,43 @@ Login
     ...  ELSE  Get Element Attribute   xpath=//dd[contains(@class, ' qa_date_period_clarifications')]//span[contains(@class, 'qa_date_time_end')]@data-period-date-end
     log to console  ${return_value}
     [Return]  ${return_value}
+
+Завантажити документ рішення кваліфікаційної комісії для closeFrameworkAgreementUA
+    [Arguments]  ${document}    ${award_num}
+    log to console  ***Завантажити документ рішення кваліфікаційної комісії для closeFrameworkAgreementUA***
+    ${award_num}=   convert to integer      ${award_num}
+    ${index}=       set variable            ${award_num + 1}
+    Wait Until Keyword Succeeds     300      10          Run Keywords
+    ...   Sleep  3
+    ...   AND     Reload Page
+    ...   AND     sleep   2
+    ...   AND     Wait Until Element Is Enabled       xpath=//button[@data-qa="award_confirm"]
+    click element    xpath=(//button[@data-qa="award_confirm"])[${index}]
+    sleep  2
+    Choose File      css=.qa_state_offer_add_field    ${document}
+    sleep  5
+    click element    css=.qa_type_file
+    sleep  2
+    click element    xpath=//div[text()='Протокол розгляду']
+    sleep  3
+    click element    css=[id="submit_button"]
+    sleep  2
+
+Завантажити документ рішення кваліфікаційної комісії для інших процедур
+     [Arguments]  ${document}
+     log to console  ***Завантажити документ рішення кваліфікаційної комісії для інших процедур***
+     Wait Until Keyword Succeeds     300      10          Run Keywords
+    ...   Sleep  3
+    ...   AND     Reload Page
+    ...   AND     sleep   2
+    ...   AND     Wait Until Element Is Enabled       css=[data-afip-url*="/cabinet/purchases/state_award/active"]
+    click element    css=[data-afip-url*="/cabinet/purchases/state_award/active"]
+    sleep  2
+    Choose File      css=.qa_state_offer_add_field    ${document}
+    sleep  5
+    click element    css=.qa_type_file
+    sleep  2
+    click element    xpath=//div[text()='Протокол розгляду']
+    sleep  3
+    click element    css=[id="submit_button"]
+    sleep  2

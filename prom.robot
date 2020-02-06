@@ -78,7 +78,7 @@ Login
     Click Element   xpath=(//a[contains(@href, 'state_plan/add')])[1]
     Sleep  2
     ${procurement_method_type}=         Get From Dictionary             ${plan_data.data.tender}           procurementMethodType
-
+    Set Global Variable      ${procurement_method_type}
     Wait Until Page Contains Element        css=#state_plan_purchase_method_type_dd    20
     CLICK ELEMENT       css=#state_plan_purchase_method_type_dd
     sleep  2
@@ -2144,6 +2144,7 @@ Login
     ...  ELSE IF    '${field_name}' == 'contracts[1].value.amountNet'                           Get Element Attribute    xpath=(//div[@data-qa="qa_user_award"])[2]@data-qa-value
     ...  ELSE IF    '${field_name}' == 'contracts[1].value.amount'                              Get Element Attribute    xpath=(//div[@data-qa="qa_user_award"])[2]@data-qa-value
     ...  ELSE IF    '${field_name}' == 'auctionPeriod.startDate'                                Get Element Attribute    xpath=//dd[contains(@class, 'qa_date_time_auction')]//span[@class="qa_date_time_start"]@data-period-date-start
+    ...  ELSE IF    '${field_name}' == 'lots[0].title'                                          get text   xpath=//span[contains(@class, 'qa_lot_title')]
 
     sleep  2
     CLICK ELEMENT    xpath=(//a[contains(@href, "state_purchase/view")])[2]
@@ -2183,6 +2184,7 @@ Login
     ...  ELSE IF    '${field_name}' == 'contracts[1].value.amountNet'                           Get Element Attribute    xpath=(//div[@data-qa="qa_user_award"])[2]@data-qa-value
     ...  ELSE IF    '${field_name}' == 'contracts[1].value.amount'                              Get Element Attribute    xpath=(//div[@data-qa="qa_user_award"])[2]@data-qa-value
     ...  ELSE IF    '${field_name}' == 'auctionPeriod.startDate'                                Get Element Attribute    xpath=//dd[contains(@class, 'qa_date_time_auction')]//span[@class="qa_date_time_start"]@data-period-date-start
+    ...  ELSE IF    '${field_name}' == 'lots[0].title'                                          get text   xpath=//span[contains(@class, 'qa_lot_title')]
     sleep  2
     [Return]  ${return_value}
 
@@ -2216,6 +2218,7 @@ Login
     ...  ELSE IF    '${field_name}' == 'contracts[1].value.amountNet'                           Get Element Attribute    xpath=(//div[@data-qa="qa_user_award"])[2]@data-qa-value
     ...  ELSE IF    '${field_name}' == 'contracts[1].value.amount'                              Get Element Attribute    xpath=(//div[@data-qa="qa_user_award"])[2]@data-qa-value
     ...  ELSE IF    '${field_name}' == 'auctionPeriod.startDate'                                Get Element Attribute    xpath=//dd[contains(@class, 'qa_date_time_auction')]//span[@class="qa_date_time_start"]@data-period-date-start
+    ...  ELSE IF    '${field_name}' == 'lots[0].title'                                          get text   xpath=//span[contains(@class, 'qa_lot_title')]
     sleep  2
     Run Keyword If  '${KeyIslot}' == 'True'     CLICK ELEMENT    xpath=(//a[contains(@href, "state_purchase/view")])[2]
     Run Keyword If  '${KeyIslot}' == 'True'     Wait Until Element Is Visible   css=.qa_lot_button     10
@@ -2332,6 +2335,7 @@ Login
     ...  ELSE IF    '${field_name}' == 'complaintPeriod.endDate'                            get element attribute  xpath=(//span[contains(@class, "qa_date_time_end")])[1]@data-period-date-end
     ...  ELSE IF    '${field_name}' == 'minimalStepPercentage'                              Отримати інформацію із лота тендера      ${field_name}
     ...  ELSE IF    '${field_name}' == 'lots[0].minimalStepPercentage'                      Отримати інформацію із лота тендера      ${field_name}
+    ...  ELSE IF    '${field_name}' == 'lots[0].title'                                      Отримати інформацію із лота тендера      ${field_name}
     ...  ELSE IF    '${field_name}' == 'fundingKind'                                        Отримати інформацію із лота тендера      ${field_name}
     ...  ELSE IF    '${field_name}' == 'lots[0].fundingKind'                                Отримати інформацію із лота тендера      ${field_name}
     ...  ELSE IF    '${field_name}' == 'yearlyPaymentsPercentageRange'                      Отримати інформацію із лота тендера      ${field_name}
@@ -2484,6 +2488,7 @@ Login
     [Arguments]  ${username}  ${tender_uaid}  ${doc_id}  ${field}
     log to console   ${field}
     ${return_value}=        Run Keyword And Return If                      '${field}' == 'title'                         Get Text   css=.qa_file_name
+    ...  ELSE IF    '${field}' == 'documentOf'                      set variable     tender
     [Return]  ${return_value}
 
 Отримати документ
@@ -3065,13 +3070,14 @@ Login
 Відхилити кваліфікацію
     [Arguments]   ${username}   ${tender_uaid}    ${qualification_num}
     log to console  ***Відхилити кваліфікацію***
-    ${index}=    run keyword if  '${qualification_num}' == '0'   set variable  1
+    log to console  ${qualification_num}
+    ${index}=    run keyword if  '${qualification_num}' == '1'   set variable  1
     ...   ELSE     set variable  2
     sleep  2
     CLICK ELEMENT    css=.qa_lot_button
     Wait Until Element Is Visible   css=.qa_lot_title     10
 
-    click element  xpath=(//table[contains(@class, 'qa_prequalification')]//td[contains(@class, 'qa_status_award')])[${index}]/../..//button[contains(@data-afip-url, "state_qualification/unsuccessful")]
+    click element  xpath=(//button[contains(@data-afip-url, "state_qualification/unsuccessful")])['${index}']
     sleep  3
     Wait Until Keyword Succeeds     300      10          Run Keywords
     ...   Sleep  3
@@ -3750,9 +3756,12 @@ Login
     sleep  4
     prom.Подписание ЕЦП
     sleep  4
-    click element  xpath=(//a[contains(@href,'cabinet/purchases/state_purchase/view')])[1]
-    Wait Until Element Is Visible   css=.qa_lot_button    10
-    log to console   ***Підтвердити постачальника***
+    Wait Until Keyword Succeeds     300      10          Run Keywords
+    ...   Sleep  3
+    ...   AND     Reload Page
+    ...   AND     sleep   2
+    ...   AND     Wait Until Element Is Enabled       css=[href*='state_purchase_lot/complete']
+    sleep  3
 
 Створити вимогу про виправлення визначення переможця
     [Arguments]  ${username}  ${tender_uaid}  ${claim}  ${award_index}  ${document}=${None}
@@ -3861,23 +3870,64 @@ Login
 Завантажити документ рішення кваліфікаційної комісії для closeFrameworkAgreementUA
     [Arguments]  ${document}    ${award_num}
     log to console  ***Завантажити документ рішення кваліфікаційної комісії для closeFrameworkAgreementUA***
-    ${award_num}=   convert to integer      ${award_num}
-    ${index}=       set variable            ${award_num + 1}
     Wait Until Keyword Succeeds     300      10          Run Keywords
     ...   Sleep  3
     ...   AND     Reload Page
     ...   AND     sleep   2
     ...   AND     Wait Until Element Is Enabled       xpath=//button[@data-qa="award_confirm"]
-    click element    xpath=(//button[@data-qa="award_confirm"])[${index}]
+
+    run keyword if   '${award_num}' == '0'      Підтвердити першого Аварда      ${document}
+    ...   ELSE IF    '${award_num}' == '1'      Підтвердити другого Аварда      ${document}
+    ...   ELSE                                  Підтвердити третього Аварда     ${document}
+
+    ${award1}=      Get Element Attribute     xpath=(//button[@data-qa="award_confirm"])[1]/../..//div[@data-qa-award]@data-qa-award
+    ${award2}=      Get Element Attribute     xpath=(//button[@data-qa="award_confirm"])[2]/../..//div[@data-qa-award]@data-qa-award
+    ${award3}=      Get Element Attribute     xpath=(//button[@data-qa="award_confirm"])[3]/../..//div[@data-qa-award]@data-qa-award
+
+Підтвердити першого Аварда
+    [Arguments]  ${document}
     sleep  2
-    Choose File      css=.qa_state_offer_add_field    ${document}
+    log to console  ***Підтвердити першого Аварда***
+    click element    xpath=//button[@data-qa="award_confirm" and //div[@data-qa-award="${award1}"]]
+    sleep  2
+    Choose File      xpath=//div[@data-qa-award="${award1}"]//input[@data-qa="upload_file"]     ${document}
     sleep  5
     click element    css=.qa_type_file
     sleep  2
     click element    xpath=//div[text()='Протокол розгляду']
     sleep  3
-    click element    css=[id="submit_button"]
+    click element    xpath=//div[@data-qa-award="${award1}"]//button[@data-qa="ok"]
+    sleep  5
+
+Підтвердити другого Аварда
+    [Arguments]  ${document}
     sleep  2
+    log to console  ***Підтвердити другого Аварда***
+    click element    xpath=//button[@data-qa="award_confirm" and //div[@data-qa-award="${award2}"]]
+    sleep  2
+    Choose File      xpath=//div[@data-qa-award="${award2}"]//input[@data-qa="upload_file"]     ${document}
+    sleep  5
+    click element    css=.qa_type_file
+    sleep  2
+    click element    xpath=//div[text()='Протокол розгляду']
+    sleep  3
+    click element    xpath=//div[@data-qa-award="${award2}"]//button[@data-qa="ok"]
+    sleep  5
+
+Підтвердити третього Аварда
+    [Arguments]  ${document}
+    sleep  2
+    log to console  ***Підтвердити третього Аварда***
+    click element    xpath=//button[@data-qa="award_confirm" and //div[@data-qa-award="${award3}"]]
+    sleep  2
+    Choose File      xpath=//div[@data-qa-award="${award3}"]//input[@data-qa="upload_file"]     ${document}
+    sleep  5
+    click element    css=.qa_type_file
+    sleep  2
+    click element    xpath=//div[text()='Протокол розгляду']
+    sleep  3
+    click element    xpath=//div[@data-qa-award="${award3}"]//button[@data-qa="ok"]
+    sleep  5
 
 Завантажити документ рішення кваліфікаційної комісії для інших процедур
      [Arguments]  ${document}
@@ -3890,10 +3940,10 @@ Login
     click element    css=[data-afip-url*="/cabinet/purchases/state_award/active"]
     sleep  2
     Choose File      css=.qa_state_offer_add_field    ${document}
-    sleep  5
+    sleep  7
     click element    css=.qa_type_file
-    sleep  2
+    sleep  7
     click element    xpath=//div[text()='Протокол розгляду']
     sleep  3
     click element    css=[id="submit_button"]
-    sleep  2
+    sleep  4

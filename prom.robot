@@ -2487,7 +2487,7 @@ Login
 Отримати інформацію із документа
     [Arguments]  ${username}  ${tender_uaid}  ${doc_id}  ${field}
     log to console   ${field}
-    ${return_value}=        Run Keyword And Return If                      '${field}' == 'title'                         Get Text   css=.qa_file_name
+    ${return_value}=   Run Keyword If    '${field}' == 'title'                         Get Text   css=.qa_file_name
     ...  ELSE IF    '${field}' == 'documentOf'                      set variable     tender
     [Return]  ${return_value}
 

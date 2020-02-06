@@ -40,7 +40,7 @@ def convert_period_to_closeframeworkagreement(date):
     return convert_date.strftime("%Y" )
 
 def tender_end_date(date):
-    convert_date = dateutil.parser.parse(date) + timedelta(minutes=4)
+    convert_date = dateutil.parser.parse(date) + timedelta(minutes=15)
     return convert_date.strftime("%d.%m.%Y %H:%M")
 
 

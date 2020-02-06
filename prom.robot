@@ -28,6 +28,7 @@ ${password_sign_in}                                                name=password
     ...    adapt_viewer   ${tender_data}
     ...    ELSE IF  '${role_name}' == 'tender_owner'        adapt_owner             ${tender_data}
     ...    ELSE IF  '${role_name}' == 'provider'            adapt_provider          ${tender_data}
+    ...    ELSE IF  '${role_name}' == 'provider2'           adapt_provider2         ${tender_data}
     ...    ELSE                                             adapt_provider1         ${tender_data}
     ${procurement_method_type}=         Get From Dictionary         ${tender_data.data}                                         procurementMethodType
     Set Global Variable      ${procurement_method_type}

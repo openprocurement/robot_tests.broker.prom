@@ -3076,14 +3076,8 @@ Login
     sleep  2
     CLICK ELEMENT    css=.qa_lot_button
     Wait Until Element Is Visible   css=.qa_lot_title     10
-
     click element  xpath=(//button[contains(@data-afip-url, "state_qualification/unsuccessful")])['${index}']
     sleep  3
-    Wait Until Keyword Succeeds     300      10          Run Keywords
-    ...   Sleep  3
-    ...   AND     Reload Page
-    ...   AND     sleep   1
-    ...   AND     Wait Until Element Is Visible       css=#state_qualification_status_form
     click element   xpath=//form[@id='state_qualification_status_form']//div[contains(@class, 'drop-down')]//div
     sleep  2
     click element  xpath=//form[@id='state_qualification_status_form']//input[@id="0"]
@@ -3094,7 +3088,7 @@ Login
     input text    xpath=//form[@id='state_qualification_status_form']//textarea[@name="description"]    ${ananas}
     sleep  4
     click element  xpath=//form[@id='state_qualification_status_form']//button[@id="submit_button"]
-    sleep  2
+    sleep  5
     click element  xpath=(//a[contains(@href,'cabinet/purchases/state_purchase/view')])[1]
     Wait Until Element Is Visible   css=.qa_lot_button    10
 

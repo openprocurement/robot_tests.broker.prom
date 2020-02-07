@@ -233,7 +233,8 @@ def convert_complaints_status(string):
         u"задовільнена": u"answered",
         u"відхилена": u"declined",
         u"розглянута": u"resolved",
-        u"недійсна": u"invalid"
+        u"недійсна": u"invalid",
+        u"залишилася без відповіді": u"ignored"
     }.get(string, string)
 
 
@@ -258,12 +259,18 @@ def convert_plan_status(string):
         u"Допорогова закупівля": u"belowThreshold"
     }.get(string, string)
 
+
 def convert_procurementmethodtype(string):
     return {
         u"Публічні закупівлі енергосервісу": u"esco",
         u"Допорогова закупівля": u"belowThreshold",
         u"Переговорна процедура для потреб оборони": u"aboveThresholdUA.defense",
-        u"Укладення рамкової угоди": u"closeFrameworkAgreementUA"
+        u"Укладення рамкової угоди": u"closeFrameworkAgreementUA",
+        u"Конкурентний діалог з публікацією англійською мовою": u"competitiveDialogueEU",
+        u"Переговорна процедура": u"negotiation",
+        u"Звіт про укладений договір": u"reporting",
+        u"Відкриті торги з публікацією англійською мовою": u"aboveThresholdEU",
+        u"Відкриті торги": u"aboveThresholdUA",
     }.get(string, string)
 
 

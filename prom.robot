@@ -3607,10 +3607,9 @@ Login
     log to console   ${doc_id}
     log to console   ${field}
     click element        xpath=//a[contains(@href,'/state_purchase_complaint/purchase_claims')]
-    Wait Until Element Is Visible     xpath=//a[@data-qa="qa_apply_requirement"]    30
-    reload page
+    sleep  6
     click element   xpath=(//p[text()='${complaintID}']//../span)
-    sleep  2
+    sleep  6
     ${doc_name}=  get text  css=[data-qa="files"]
     [Return]  ${doc_name}
 
@@ -3734,6 +3733,7 @@ Login
     Wait Until Element Is Visible   css=.qa_lot_title     10
     Run Keyword If  '${procurement_method_type}' == 'closeFrameworkAgreementUA'   Завантажити документ рішення кваліфікаційної комісії для closeFrameworkAgreementUA    ${document}    ${award_num}
     ...  ELSE   Завантажити документ рішення кваліфікаційної комісії для інших процедур     ${document}
+    prom.Пошук тендера по ідентифікатору    ${username}  ${tender_uaid}
 
 Скасування рішення кваліфікаційної комісії
     [Arguments]  ${username}   ${tender_uaid}  ${award_num}
@@ -3772,9 +3772,11 @@ Login
     ...   AND     sleep   2
     ...   AND     Wait Until Element Is Enabled       css=[data-sign-process-url*="state_award/process_award_signature"]
     click element  css=[data-sign-process-url*="state_award/process_award_signature"]
-    sleep  4
-    prom.Подписание ЕЦП
-    sleep  4
+    sleep  10
+    ${already_ECP}=  Run Keyword And Return Status  Element Should Be Disabled  css=#PKeySelectFileButton
+    Run Keyword If  '${already_ECP}' == 'True'  Click Element  css=#SignDataButton
+    ...     ELSE    prom.Подписание ЕЦП
+    sleep  6
     Wait Until Keyword Succeeds     300      10          Run Keywords
     ...   Sleep  3
     ...   AND     Reload Page

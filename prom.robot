@@ -2861,12 +2861,8 @@ Login
 
     capture page screenshot
     click element   css=.qa_submit_tender
-    sleep   2
-    Wait Until Keyword Succeeds     300      30          Run Keywords
-    ...   Sleep  2
-    ...   AND     Reload Page
-    ...   AND     Sleep  2
-    ...   AND     Wait Until Element Is Visible       css=.zk-upload-files__file-id
+    sleep   120
+
 
 Змінити лот
     [Arguments]  ${username}   ${tender_uaid}   ${lot_id}   ${fieldname}    ${fieldvalue}

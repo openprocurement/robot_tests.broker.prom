@@ -1520,7 +1520,7 @@ Login
     sleep  2
     click element   css=.qa_multilot_end_period_adjustments
     sleep  2
-    input text      css=.qa_multilot_term_agreement                                          '44'
+    input text      css=.qa_multilot_term_agreement                                         ${agreementduration}
     sleep  1
     input text      css=.qa_multilot_participants_agreement                                 ${maxawardscount}
     sleep  1
@@ -2861,12 +2861,8 @@ Login
 
     capture page screenshot
     click element   css=.qa_submit_tender
-    sleep   2
-    Wait Until Keyword Succeeds     300      30          Run Keywords
-    ...   Sleep  2
-    ...   AND     Reload Page
-    ...   AND     Sleep  2
-    ...   AND     Wait Until Element Is Visible       css=.zk-upload-files__file-id
+    sleep   120
+
 
 Змінити лот
     [Arguments]  ${username}   ${tender_uaid}   ${lot_id}   ${fieldname}    ${fieldvalue}
@@ -3123,7 +3119,6 @@ Login
     ...   ELSE     set variable  2
     log to console  ***Скасувати кваліфікацію***
     log to console  ${index}
-    log to console  @#@#@@#@#@
     sleep  2
     CLICK ELEMENT    css=.qa_lot_button
     Wait Until Element Is Visible   css=.qa_lot_title     10
@@ -3739,8 +3734,6 @@ Login
     Wait Until Element Is Visible   css=.qa_lot_title     10
     Run Keyword If  '${procurement_method_type}' == 'closeFrameworkAgreementUA'   Завантажити документ рішення кваліфікаційної комісії для closeFrameworkAgreementUA    ${document}    ${award_num}
     ...  ELSE   Завантажити документ рішення кваліфікаційної комісії для інших процедур     ${document}
-    click element  xpath=(//a[contains(@href,'cabinet/purchases/state_purchase/view')])[1]
-    Wait Until Element Is Visible   css=.qa_lot_button    10
 
 Скасування рішення кваліфікаційної комісії
     [Arguments]  ${username}   ${tender_uaid}  ${award_num}
@@ -3756,7 +3749,8 @@ Login
     click element    xpath=//a[contains(@data-afip-url, 'award_cancel')]
     sleep  2
     click element   css=[type="submit"]
-    sleep  2
+    sleep  3
+    prom.Пошук тендера по ідентифікатору    ${username}  ${tender_uaid}
 
 Підтвердити постачальника
     [Arguments]  ${username}  ${tender_uaid}  ${award_num}
@@ -3764,6 +3758,12 @@ Login
     log to console   ${username}
     log to console   ${tender_uaid}
     log to console   ${award_num}
+    run keyword if  '${procurement_method_type}' == 'closeFrameworkAgreementUA'  Підтвердити постачальника для closeFrameworkAgreementUA    ${username}  ${tender_uaid}  ${award_num}
+    ...  ELSE  Підтвердити постачальника для інших процедур     ${username}  ${tender_uaid}  ${award_num}
+
+Підтвердити постачальника для інших процедур
+    [Arguments]  ${username}  ${tender_uaid}  ${award_num}
+    log to console  ***Підтвердити постачальника для інших процедур***
     CLICK ELEMENT    css=.qa_lot_button
     Wait Until Element Is Visible   css=.qa_lot_title     10
     Wait Until Keyword Succeeds     300      10          Run Keywords
@@ -3781,6 +3781,63 @@ Login
     ...   AND     sleep   2
     ...   AND     Wait Until Element Is Enabled       css=[href*='state_purchase_lot/complete']
     sleep  3
+    prom.Пошук тендера по ідентифікатору    ${username}  ${tender_uaid}
+
+Підтвердити постачальника для closeFrameworkAgreementUA
+    [Arguments]  ${username}  ${tender_uaid}  ${award_num}
+    log to console  ***Підтвердити постачальника для closeFrameworkAgreementUA***
+    CLICK ELEMENT    css=.qa_lot_button
+    Wait Until Element Is Visible   css=.qa_lot_title     10
+    Wait Until Keyword Succeeds     300      10          Run Keywords
+    ...   Sleep  3
+    ...   AND     Reload Page
+    ...   AND     sleep   2
+    ...   AND     Wait Until Element Is Enabled        xpath=//span[contains(text(), 'Підписати (ЕЦП)')]
+    click element   xpath=//span[contains(text(), 'Підписати (ЕЦП)')]
+    sleep  4
+    prom.Подписание ЕЦП
+    sleep  4
+    Wait Until Keyword Succeeds     300      10          Run Keywords
+    ...   Sleep  3
+    ...   AND     Reload Page
+    ...   AND     sleep   2
+    ...   AND     Wait Until Element Is Enabled       xpath=//span[contains(text(), 'Повернути на кваліфікацію')]
+    sleep  3
+    prom.Пошук тендера по ідентифікатору    ${username}  ${tender_uaid}
+
+Дискваліфікувати постачальника
+    [Arguments]  ${username}  ${tender_uaid}  ${award_num}
+    log to console   ***Дискваліфікувати постачальника***
+    CLICK ELEMENT    css=.qa_lot_button
+    Wait Until Element Is Visible   css=.qa_lot_title     10
+    Wait Until Keyword Succeeds     300      10          Run Keywords
+    ...   Sleep  3
+    ...   AND     Reload Page
+    ...   AND     sleep   2
+    ...   AND     Wait Until Element Is Enabled       css=[data-afip-url*="state_award/unsuccessful"]
+    click element   css=[data-afip-url*="state_award/unsuccessful"]
+    sleep  3
+    ${filepath}=        create_random_file
+    choose file    xpath=//input[contains(@class, 'qa_state_offer_add_field')]   ${filepath}
+    sleep  7
+    click element   xpath=//div[contains(text(), 'Оберіть причину відхилення зі списку')]
+    sleep  3
+    click element  xpath=//input[@type='checkbox']/../input[@id='0']
+    sleep  3
+    click element  css=.qa_submit_dd
+    sleep  3
+    click element   css=[type="submit"]
+    sleep  5
+    Wait Until Keyword Succeeds     300      10          Run Keywords
+    ...   Sleep  3
+    ...   AND     Reload Page
+    ...   AND     sleep   2
+    ...   AND     Wait Until Element Is Enabled       css=[data-sign-process-url*="state_award/process_award_signature"]
+    click element  css=[data-sign-process-url*="state_award/process_award_signature"]
+    sleep  4
+    Click Element  css=#SignDataButton
+    sleep  10
+    prom.Пошук тендера по ідентифікатору    ${username}  ${tender_uaid}
 
 Створити вимогу про виправлення визначення переможця
     [Arguments]  ${username}  ${tender_uaid}  ${claim}  ${award_index}  ${document}=${None}
@@ -3878,6 +3935,28 @@ Login
     click element  xpath=(//button[@type="button"])[1]
     sleep  2
 
+Підтвердити вирішення вимоги про виправлення визначення переможця
+    [Arguments]  ${username}  ${tender_uaid}  ${complaintID}  ${confirmation_data}  ${award_index}
+    log to console  ***Підтвердити вирішення вимоги про виправлення визначення переможця***
+    log to console   ${username}
+    log to console   ${tender_uaid}
+    log to console   ${complaintID}
+    log to console   ${confirmation_data}
+    CLICK ELEMENT    css=.qa_lot_button
+    Wait Until Element Is Visible   css=.qa_lot_title     10
+    click element        xpath=//a[contains(@href,'/state_purchase_lot_complaint/lot_claims')]
+    sleep  4
+    click element        xpath=(//p[text()='${complaintID}']//../span)
+    sleep  3
+    ${satisfied}=      get from dictionary   ${confirmation_data.data}   satisfied
+    run keyword if    '${satisfied}' == 'True'  click element  css=[data-qa="qa_status_satisfied"]
+    sleep  2
+    ${pop_up}=  Run Keyword And Return Status    Element Should Be Visible    css=[data-qa="qa_close_claim_dialog"]
+    Run Keyword If    '${pop_up}' == 'True'      click element    css=[data-qa="qa_close_claim_dialog"]
+    sleep  4
+    click element  xpath=(//a[contains(@href,'cabinet/purchases/state_purchase/view')])[1]
+    Wait Until Element Is Visible   css=.qa_lot_button    10
+
 ###############################################################################
 Отримати qualificationPeriod.endDate
     log to console  ***Отримати qualificationPeriod.endDate***
@@ -3893,60 +3972,20 @@ Login
     ...   Sleep  3
     ...   AND     Reload Page
     ...   AND     sleep   2
-    ...   AND     Wait Until Element Is Enabled       xpath=//button[@data-qa="award_confirm"]
+    ...   AND     Wait Until Element Is Enabled       xpath=((//div[@data-qa-award])[1])
 
-    run keyword if   '${award_num}' == '0'      Підтвердити першого Аварда      ${document}
-    ...   ELSE IF    '${award_num}' == '1'      Підтвердити другого Аварда      ${document}
-    ...   ELSE                                  Підтвердити третього Аварда     ${document}
+    ${award}=       Get Element Attribute     xpath=((//div[@data-qa-award])[1])@data-qa-award
 
-    ${award1}=      Get Element Attribute     xpath=(//button[@data-qa="award_confirm"])[1]/../..//div[@data-qa-award]@data-qa-award
-    ${award2}=      Get Element Attribute     xpath=(//button[@data-qa="award_confirm"])[2]/../..//div[@data-qa-award]@data-qa-award
-    ${award3}=      Get Element Attribute     xpath=(//button[@data-qa="award_confirm"])[3]/../..//div[@data-qa-award]@data-qa-award
-
-Підтвердити першого Аварда
-    [Arguments]  ${document}
+    click element    xpath=//div[@data-qa-award="${award}" and //button[@data-qa="award_confirm"]]
     sleep  2
-    log to console  ***Підтвердити першого Аварда***
-    click element    xpath=//button[@data-qa="award_confirm" and //div[@data-qa-award="${award1}"]]
+    Choose File      xpath=//div[@data-qa-award="${award}"]//input[@data-qa="upload_file"]     ${document}
+    sleep  10
+    click element    css=[data-qa="document_type"]
     sleep  2
-    Choose File      xpath=//div[@data-qa-award="${award1}"]//input[@data-qa="upload_file"]     ${document}
-    sleep  5
-    click element    css=.qa_type_file
-    sleep  2
-    click element    xpath=//div[text()='Протокол розгляду']
+    click element    xpath=(//div[text()='Протокол розгляду'])[last()]
     sleep  3
-    click element    xpath=//div[@data-qa-award="${award1}"]//button[@data-qa="ok"]
-    sleep  5
-
-Підтвердити другого Аварда
-    [Arguments]  ${document}
-    sleep  2
-    log to console  ***Підтвердити другого Аварда***
-    click element    xpath=//button[@data-qa="award_confirm" and //div[@data-qa-award="${award2}"]]
-    sleep  2
-    Choose File      xpath=//div[@data-qa-award="${award2}"]//input[@data-qa="upload_file"]     ${document}
-    sleep  5
-    click element    css=.qa_type_file
-    sleep  2
-    click element    xpath=//div[text()='Протокол розгляду']
-    sleep  3
-    click element    xpath=//div[@data-qa-award="${award2}"]//button[@data-qa="ok"]
-    sleep  5
-
-Підтвердити третього Аварда
-    [Arguments]  ${document}
-    sleep  2
-    log to console  ***Підтвердити третього Аварда***
-    click element    xpath=//button[@data-qa="award_confirm" and //div[@data-qa-award="${award3}"]]
-    sleep  2
-    Choose File      xpath=//div[@data-qa-award="${award3}"]//input[@data-qa="upload_file"]     ${document}
-    sleep  5
-    click element    css=.qa_type_file
-    sleep  2
-    click element    xpath=//div[text()='Протокол розгляду']
-    sleep  3
-    click element    xpath=//div[@data-qa-award="${award3}"]//button[@data-qa="ok"]
-    sleep  5
+    click element    xpath=//div[@data-qa-award="${award}"]//button[@data-qa="ok"]
+    sleep  7
 
 Завантажити документ рішення кваліфікаційної комісії для інших процедур
      [Arguments]  ${document}
@@ -3961,8 +4000,8 @@ Login
     Choose File      css=.qa_state_offer_add_field    ${document}
     sleep  7
     click element    css=.qa_type_file
-    sleep  7
+    sleep  10
     click element    xpath=//div[text()='Протокол розгляду']
     sleep  3
     click element    css=[id="submit_button"]
-    sleep  4
+    sleep  7

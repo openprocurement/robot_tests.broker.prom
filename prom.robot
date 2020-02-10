@@ -2632,9 +2632,9 @@ Login
 
 Додати лот у belowThreshold
     [Arguments]   ${bid}    ${lots_ids}
-    log to console  --------------$$$444$$$$-------
+    log to console  -345-
     log to console  ${KeyIslot}
-    log to console  --------------$$$444$$$$-------
+    log to console  -345-
 
     Run Keyword If      ${KeyIslot}                     Додати лот у звичайну процедуру         ${bid}   ${lots_ids}
     Run Keyword If     '${KeyIslot}' == 'False'         Додати лот у belowThreshold singl       ${bid}   ${lots_ids}
@@ -2644,7 +2644,7 @@ Login
     log to console  @@@@
     log to console  ${bid}
     log to console  @@@@
-    Додати lot ставку    ${bid}    ${lots_ids[0]}
+    Додати lot ставку    ${bid}    ${lots_ids}
 
 Додати lot ставку
     [Arguments]   ${lots}    ${lots_ids}

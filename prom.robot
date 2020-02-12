@@ -2861,10 +2861,12 @@ Login
     sleep   2
     Wait Until Page Contains Element     css=.qa_procurement_category_choices
     Choose File     xpath=(//input[contains(@class, 'qa_state_offer_add_field')])[1]     ${filepath}
-    sleep   5
+    sleep   10
 
     capture page screenshot
     click element   css=.qa_submit_tender
+    sleep  10
+    prom.Пошук тендера по ідентифікатору    ${username}  ${tender_uaid}
     sleep   120
 
 

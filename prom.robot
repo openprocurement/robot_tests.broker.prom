@@ -3345,7 +3345,7 @@ Login
     sleep  2
     capture page screenshot
     ${doc_date}=     get element attribute     xpath=//div[contains(@class, 'qa_qualification_end_date')]@data-qualification-date-end
-    ${doc_date}=     tender_end_date            ${doc_date}
+    ${doc_date}=     tender_end_date_negotiation            ${doc_date}
     Wait Until Keyword Succeeds     100      5          Run Keywords
     ...   Sleep  2
     ...   AND     Reload Page

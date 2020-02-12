@@ -43,6 +43,9 @@ def tender_end_date(date):
     convert_date = dateutil.parser.parse(date) + timedelta(minutes=15)
     return convert_date.strftime("%d.%m.%Y %H:%M")
 
+def tender_end_date_negotiation(date):
+    convert_date = dateutil.parser.parse(date) + timedelta(minutes=10)
+    return convert_date.strftime("%d.%m.%Y %H:%M")
 
 def tender_end_date_esco(date):
     convert_date = dateutil.parser.parse(date) + timedelta(minutes=20)
@@ -288,4 +291,3 @@ def convert_esco_data(data):
 
 def revert_esco_data(data):
     return data / 100
-

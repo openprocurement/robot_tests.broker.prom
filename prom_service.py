@@ -131,6 +131,7 @@ def convert_tender_status(string):
         u"Прекваліфікація: період оскарження": u"active.pre-qualification.stand-still",
         u"очікує розгляду": u"invalid",
         u"Визнаний переможцем": u"active",
+        u"Очікує оголошення другого етапу": u"active.stage2.pending",
     }.get(string, string)
 
 
@@ -287,3 +288,4 @@ def convert_esco_data(data):
 
 def revert_esco_data(data):
     return data / 100
+

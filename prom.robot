@@ -2163,6 +2163,7 @@ Login
     ...  ELSE IF    '${field_name}' == 'auctionPeriod.startDate'                                Get Element Attribute    xpath=//dd[contains(@class, 'qa_date_time_auction')]//span[@class="qa_date_time_start"]@data-period-date-start
     ...  ELSE IF    '${field_name}' == 'lots[0].title'                                          get text   xpath=//span[contains(@class, 'qa_lot_title')]
     ...  ELSE IF    '${field_name}' == 'contracts[0].dateSigned'                                get element attribute  xpath=//span[contains(@class, 'qa_date_tender_terms')]@data-qa-date
+    ...  ELSE IF    '${field_name}' == 'lots[0].auctionPeriod.startDate'                        Get Element Attribute    xpath=//dd[contains(@class, 'qa_date_time_auction')]//span[@class="qa_date_time_start"]@data-period-date-start
     sleep  2
     CLICK ELEMENT    xpath=(//a[contains(@href, "state_purchase/view")])[2]
     Wait Until Element Is Visible   css=.qa_lot_button     10
@@ -2206,6 +2207,7 @@ Login
     ...  ELSE IF    '${field_name}' == 'awards[1].complaintPeriod.endDate'                      Get Element Attribute   xpath=//div[contains(@class, 'qa_qualification_end_date')]@data-qualification-date-end
     ...  ELSE IF    '${field_name}' == 'awards[2].complaintPeriod.endDate'                      Get Element Attribute   xpath=//div[contains(@class, 'qa_qualification_end_date')]@data-qualification-date-end
     ...  ELSE IF    '${field_name}' == 'contracts[0].dateSigned'                                get element attribute  xpath=//span[contains(@class, 'qa_date_tender_terms')]@data-qa-date
+    ...  ELSE IF    '${field_name}' == 'lots[0].auctionPeriod.startDate'                        Get Element Attribute    xpath=//dd[contains(@class, 'qa_date_time_auction')]//span[@class="qa_date_time_start"]@data-period-date-start
     sleep  2
     [Return]  ${return_value}
 
@@ -2244,6 +2246,7 @@ Login
     ...  ELSE IF    '${field_name}' == 'awards[1].complaintPeriod.endDate'                      Get Element Attribute   xpath=//div[contains(@class, 'qa_qualification_end_date')]@data-qualification-date-end
     ...  ELSE IF    '${field_name}' == 'awards[2].complaintPeriod.endDate'                      Get Element Attribute   xpath=//div[contains(@class, 'qa_qualification_end_date')]@data-qualification-date-end
     ...  ELSE IF    '${field_name}' == 'contracts[0].dateSigned'                                get element attribute  xpath=//span[contains(@class, 'qa_date_tender_terms')]@data-qa-date
+    ...  ELSE IF    '${field_name}' == 'lots[0].auctionPeriod.startDate'                        Get Element Attribute    xpath=//dd[contains(@class, 'qa_date_time_auction')]//span[@class="qa_date_time_start"]@data-period-date-start
     sleep  2
     Run Keyword If  '${KeyIslot}' == 'True'     CLICK ELEMENT    xpath=(//a[contains(@href, "state_purchase/view")])[2]
     Run Keyword If  '${KeyIslot}' == 'True'     Wait Until Element Is Visible   css=.qa_lot_button     10
@@ -2371,6 +2374,7 @@ Login
     ...  ELSE IF    '${field_name}' == 'awards[1].complaintPeriod.endDate'                  Отримати інформацію із лота тендера      ${field_name}
     ...  ELSE IF    '${field_name}' == 'awards[2].complaintPeriod.endDate'                  Отримати інформацію із лота тендера      ${field_name}
     ...  ELSE IF    '${field_name}' == 'auctionPeriod.startDate'                            Отримати інформацію із лота тендера      ${field_name}
+    ...  ELSE IF    '${field_name}' == 'lots[0].auctionPeriod.startDate'                    Отримати інформацію із лота тендера      ${field_name}
     reload page
     sleep  1
     ${return_value}=   Run Keyword If    '${field_name}' == 'mainProcurementCategory'       convert_prom_string_to_common_string            ${return_value}
@@ -2857,10 +2861,12 @@ Login
     sleep   2
     Wait Until Page Contains Element     css=.qa_procurement_category_choices
     Choose File     xpath=(//input[contains(@class, 'qa_state_offer_add_field')])[1]     ${filepath}
-    sleep   5
+    sleep   10
 
     capture page screenshot
     click element   css=.qa_submit_tender
+    sleep  10
+    prom.Пошук тендера по ідентифікатору    ${username}  ${tender_uaid}
     sleep   120
 
 
@@ -3607,10 +3613,9 @@ Login
     log to console   ${doc_id}
     log to console   ${field}
     click element        xpath=//a[contains(@href,'/state_purchase_complaint/purchase_claims')]
-    Wait Until Element Is Visible     xpath=//a[@data-qa="qa_apply_requirement"]    30
-    reload page
+    sleep  10
     click element   xpath=(//p[text()='${complaintID}']//../span)
-    sleep  2
+    sleep  10
     ${doc_name}=  get text  css=[data-qa="files"]
     [Return]  ${doc_name}
 
@@ -3725,6 +3730,7 @@ Login
 
 Завантажити документ рішення кваліфікаційної комісії
     [Arguments]  ${username}  ${document}  ${tender_uaid}  ${award_num}
+    prom.Пошук тендера по ідентифікатору    ${username}  ${tender_uaid}
     log to console   ***Завантажити документ рішення кваліфікаційної комісії***
     log to console   ${username}
     log to console   ${document}
@@ -3734,6 +3740,7 @@ Login
     Wait Until Element Is Visible   css=.qa_lot_title     10
     Run Keyword If  '${procurement_method_type}' == 'closeFrameworkAgreementUA'   Завантажити документ рішення кваліфікаційної комісії для closeFrameworkAgreementUA    ${document}    ${award_num}
     ...  ELSE   Завантажити документ рішення кваліфікаційної комісії для інших процедур     ${document}
+    prom.Пошук тендера по ідентифікатору    ${username}  ${tender_uaid}
 
 Скасування рішення кваліфікаційної комісії
     [Arguments]  ${username}   ${tender_uaid}  ${award_num}
@@ -3772,9 +3779,11 @@ Login
     ...   AND     sleep   2
     ...   AND     Wait Until Element Is Enabled       css=[data-sign-process-url*="state_award/process_award_signature"]
     click element  css=[data-sign-process-url*="state_award/process_award_signature"]
-    sleep  4
-    prom.Подписание ЕЦП
-    sleep  4
+    sleep  10
+    ${already_ECP}=  Run Keyword And Return Status  Element Should Be Disabled  css=#PKeySelectFileButton
+    Run Keyword If  '${already_ECP}' == 'True'  Click Element  css=#SignDataButton
+    ...     ELSE    prom.Подписание ЕЦП
+    sleep  6
     Wait Until Keyword Succeeds     300      10          Run Keywords
     ...   Sleep  3
     ...   AND     Reload Page
@@ -3794,9 +3803,11 @@ Login
     ...   AND     sleep   2
     ...   AND     Wait Until Element Is Enabled        xpath=//span[contains(text(), 'Підписати (ЕЦП)')]
     click element   xpath=//span[contains(text(), 'Підписати (ЕЦП)')]
-    sleep  4
-    prom.Подписание ЕЦП
-    sleep  4
+    sleep  10
+    ${already_ECP}=  Run Keyword And Return Status  Element Should Be Disabled  css=#PKeySelectFileButton
+    Run Keyword If  '${already_ECP}' == 'True'  Click Element  css=#SignDataButton
+    ...     ELSE    prom.Подписание ЕЦП
+    sleep  6
     Wait Until Keyword Succeeds     300      10          Run Keywords
     ...   Sleep  3
     ...   AND     Reload Page
@@ -3838,6 +3849,21 @@ Login
     Click Element  css=#SignDataButton
     sleep  10
     prom.Пошук тендера по ідентифікатору    ${username}  ${tender_uaid}
+
+Затвердити постачальників
+    [Arguments]  ${username}  ${tender_uaid}
+    log to console  ***Затвердити постачальників***
+    CLICK ELEMENT    css=.qa_lot_button
+    Wait Until Element Is Visible   css=.qa_lot_title     10
+    Wait Until Keyword Succeeds     300      10          Run Keywords
+    ...   Sleep  3
+    ...   AND     Reload Page
+    ...   AND     sleep   2
+    ...   AND     Wait Until Element Is Enabled       css=[data-qa="complete"]
+    click element   css=[data-qa="complete"]
+    sleep  4
+    click element   xpath=(//button[@data-qa="ok"])[4]
+    sleep  4
 
 Створити вимогу про виправлення визначення переможця
     [Arguments]  ${username}  ${tender_uaid}  ${claim}  ${award_index}  ${document}=${None}

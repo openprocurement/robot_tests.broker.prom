@@ -3730,6 +3730,7 @@ Login
 
 Завантажити документ рішення кваліфікаційної комісії
     [Arguments]  ${username}  ${document}  ${tender_uaid}  ${award_num}
+    prom.Пошук тендера по ідентифікатору    ${username}  ${tender_uaid}
     log to console   ***Завантажити документ рішення кваліфікаційної комісії***
     log to console   ${username}
     log to console   ${document}

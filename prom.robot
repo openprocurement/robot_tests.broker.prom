@@ -2408,7 +2408,7 @@ Login
     ...  ELSE IF    '${field_name}' == 'status'                                             convert_tender_status                           ${return_value}
     ...  ELSE IF    '${field_name}' == 'qualifications[0].status'                           convert_tender_status                           ${return_value}
     ...  ELSE IF    '${field_name}' == 'qualifications[1].status'                           convert_tender_status                           ${return_value}
-    ...  ELSE IF    '${field_name}' == 'contracts[0].status'                                convert_tender_status                           ${return_value}
+    ...  ELSE IF    '${field_name}' == 'contracts[0].status'                                convert_contract_status                         ${return_value}
     ...  ELSE IF    '${field_name}' == 'contracts[1].status'                                convert_tender_status                           ${return_value}
     ...  ELSE IF    '${field_name}' == 'minimalStep.amount'                                 convert to number                               ${return_value.replace(" ", "").replace(',', '.').replace(u'грн', '')}
     ...  ELSE IF    '${field_name}' == 'cause'                                              revert_negotiation_cause_type                   ${return_value}
@@ -3501,6 +3501,49 @@ Login
     sleep  5
     capture page screenshot
 
+################################## competitiveDialogueEU #######################
+Перевести тендер на статус очікування обробки мостом
+    [Arguments]    ${username}   ${tender_uaid}
+    log to console  ***Перевести тендер на статус очікування обробки мостом***
+    Wait Until Keyword Succeeds     300      10          Run Keywords
+    ...   Sleep  3
+    ...   AND     Reload Page
+    ...   AND     sleep   2
+    ...   AND     Wait Until Element Is Enabled       css=[href*='do_activate_competitive_dialogue']
+    sleep  3
+    click element   css=[href*='do_activate_competitive_dialogue']
+    sleep  10
+
+Отримати тендер другого етапу та зберегти його
+    [Arguments]    ${username}   ${tender_uaid}
+    log to console  ***Отримати тендер другого етапу та зберегти його***
+    log to console  ${tender_uaid}
+    prom.Пошук тендера по ідентифікатору    ${username}  ${tender_uaid}
+
+Активувати другий етап
+    [Arguments]    ${username}   ${tender_uaid}
+    log to console  ***Активувати другий етап***
+    Wait Until Keyword Succeeds     300      10          Run Keywords
+    ...   Sleep  3
+    ...   AND     Reload Page
+    ...   AND     sleep   2
+    ...   AND     Wait Until Element Is Enabled       xpath=//a[contains(@href, '/state_purchase/edit')]//span
+    ${new_tender_data}=       Get Element Attribute    xpath=//dd[contains(@class, ' qa_date_submission_of_proposals')]//span[contains(@class, 'qa_date_time_end')]@data-period-date-end
+    sleep   1
+    click element   xpath=//a[contains(@href, '/state_purchase/edit')]//span
+    sleep  5
+    click element  css=.qa_procurement_category_choices
+    sleep  2
+    Click Element    xpath=//span[text()='роботи']
+    sleep  2
+    clear element text     css=.qa_multilot_end_period_adjustments
+    sleep  2
+    ${new_tender_data}=     tender_end_date                 ${new_tender_data}
+    input text  css=.qa_multilot_end_period_adjustments     ${new_tender_data}
+    sleep   3
+    click element   css=.qa_submit_tender
+    sleep   10
+
 ################################## Claim ######################################
 Створити вимогу про виправлення умов закупівлі
     [Arguments]   ${username}   ${tender_uaid}   ${claim}    ${claim document}=${None}
@@ -3606,7 +3649,7 @@ Login
 
 Отримати інформацію із документа до скарги
     [Arguments]  ${username}  ${tender_uaid}  ${complaintID}  ${doc_id}  ${field}
-    log to console  ******Отримати інформацію із документа до скарги*****
+    log to console  ***Отримати інформацію із документа до скарги***
     log to console   ${username}
     log to console   ${tender_uaid}
     log to console   ${complaintID}
@@ -3748,7 +3791,7 @@ Login
     log to console  ${award_num}
     CLICK ELEMENT    css=.qa_lot_button
     Wait Until Element Is Visible   css=.qa_lot_title     10
-     Wait Until Keyword Succeeds     300      10          Run Keywords
+    Wait Until Keyword Succeeds     300      10          Run Keywords
     ...   Sleep  3
     ...   AND     Reload Page
     ...   AND     sleep   2
@@ -3986,6 +4029,9 @@ Login
 ###############################################################################
 Отримати qualificationPeriod.endDate
     log to console  ***Отримати qualificationPeriod.endDate***
+    sleep   5
+    Reload Page
+    sleep  3
     ${return_value}=  run keyword if  '${procurement_method_type}' == 'closeFrameworkAgreementUA'   Get Element Attribute   xpath=//span[contains(@class, 'qa_qualification_period')]//span[contains(@class, 'qa_date_time_end')]@data-period-date-end
     ...  ELSE  Get Element Attribute   xpath=//div[@class='qa_active_pre_qualification']@data-qa
     log to console  ${return_value}

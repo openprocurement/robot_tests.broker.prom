@@ -26,6 +26,7 @@ def date_now():
     next_date = datetime.now()
     return next_date.strftime("%d.%m.%Y %H:%M")
 
+
 def delivery_date_start():
     next_date = datetime.now()
     return next_date.strftime("%d.%m.%Y")
@@ -35,9 +36,11 @@ def delivery_date_end():
     next_date = datetime.now() + timedelta(days=2)
     return next_date.strftime("%d.%m.%Y")
 
+
 def convert_period_to_closeframeworkagreement(date):
     convert_date = dateutil.parser.parse(date)
     return convert_date.strftime("%Y" )
+
 
 def tender_end_date(date):
     convert_date = dateutil.parser.parse(date) + timedelta(minutes=15)
@@ -116,6 +119,17 @@ def convert_prom_string_to_common_string(string):
     }.get(string, string)
 
 
+def convert_contract_status(string):
+    return {
+        u"Пропозицію прийнято": u"pending",
+        u"Завершена": u"complete",
+        u"Подписанный": u"active",
+        u"неактивно": u"invalid",
+        u"очікує розгляду": u"invalid",
+        u"Завершено": u"complete"
+    }.get(string, string)
+
+
 def convert_tender_status(string):
     return {
         u"Період уточнень": u"active.enquiries",
@@ -135,6 +149,7 @@ def convert_tender_status(string):
         u"очікує розгляду": u"invalid",
         u"Визнаний переможцем": u"active",
         u"Очікує оголошення другого етапу": u"active.stage2.pending",
+        u"Завершено": u"complete"
     }.get(string, string)
 
 
@@ -276,6 +291,7 @@ def convert_procurementmethodtype(string):
         u"Звіт про укладений договір": u"reporting",
         u"Відкриті торги з публікацією англійською мовою": u"aboveThresholdEU",
         u"Відкриті торги": u"aboveThresholdUA",
+        u"Конкурентний діалог": u"competitiveDialogueUA",
     }.get(string, string)
 
 

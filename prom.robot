@@ -410,6 +410,14 @@ Login
     Sleep  1
     Wait Until Page Contains Element     css=.qa_button_add_new_purchase     20
     Click Element                        css=.qa_button_add_new_purchase
+    log to console  ${SUITE NAME}
+    sleep  1
+    ${accelerator_open_ua}=   set variable    ?quick_accelerator=1440&quick_fast_forward=1
+    ${accelerator}=   set variable    ?quick_accelerator=70
+    ${create_href}=    get location
+    run keyword if  '${SUITE NAME}' == 'Tests Files.openProcedure'      go to  ${create_href}${accelerator_open_ua}
+    ...  ELSE   go to   ${create_href}${accelerator}
+    log to console  get location
     Wait Until Page Contains Element     css=.qa_multilot_type_drop_down     20
     Click Element                        css=.qa_multilot_type_drop_down
     sleep  2
@@ -536,6 +544,14 @@ Login
     Sleep  1
     Wait Until Page Contains Element     css=.qa_button_add_new_purchase     20
     Click Element                        css=.qa_button_add_new_purchase
+    log to console  ${SUITE NAME}
+    sleep  1
+    ${accelerator_open_ua}=   set variable    ?quick_accelerator=1440&quick_fast_forward=1
+    ${accelerator}=   set variable    ?quick_accelerator=70
+    ${create_href}=    get location
+    run keyword if  '${SUITE NAME}' == 'Tests Files.openProcedure'      go to  ${create_href}${accelerator_open_ua}
+    ...  ELSE   go to   ${create_href}${accelerator}
+    log to console  get location
     Wait Until Page Contains Element     css=.qa_multilot_type_drop_down     20
     Click Element                        css=.qa_multilot_type_drop_down
     sleep  2
@@ -869,6 +885,11 @@ Login
     Sleep  1
     Wait Until Page Contains Element     css=.qa_button_add_new_purchase     20
     Click Element                        css=.qa_button_add_new_purchase
+    sleep  1
+    ${create_href}=    get location
+    ${accelerator}=    set variable    ?quick_accelerator=70
+    log to console   ${create_href}${accelerator}
+    go to        ${create_href}${accelerator}
     Wait Until Page Contains Element     css=.qa_multilot_type_drop_down     20
     Click Element                        css=.qa_multilot_type_drop_down
     sleep  2
@@ -948,6 +969,11 @@ Login
     Sleep  1
     Wait Until Page Contains Element     css=.qa_button_add_new_purchase     20
     Click Element                        css=.qa_button_add_new_purchase
+    sleep  1
+    ${create_href}=    get location
+    ${accelerator}=    set variable    ?quick_accelerator=1300&quick_fast_forward=1
+    log to console   ${create_href}${accelerator}
+    go to        ${create_href}${accelerator}
     Wait Until Page Contains Element     css=.qa_multilot_type_drop_down     20
     Click Element                        css=.qa_multilot_type_drop_down
     sleep  2
@@ -1028,6 +1054,11 @@ Login
     Sleep  1
     Wait Until Page Contains Element     css=.qa_button_add_new_purchase     20
     Click Element                        css=.qa_button_add_new_purchase
+    sleep  1
+    ${create_href}=    get location
+    ${accelerator}=    set variable    ?quick_accelerator=620&quick_fast_forward=1
+    log to console   ${create_href}${accelerator}
+    go to        ${create_href}${accelerator}
     Wait Until Page Contains Element     css=.qa_multilot_type_drop_down     20
     Click Element                        css=.qa_multilot_type_drop_down
     sleep  2
@@ -1142,6 +1173,11 @@ Login
     Sleep  1
     Wait Until Page Contains Element     css=.qa_button_add_new_purchase     20
     Click Element                        css=.qa_button_add_new_purchase
+    sleep  1
+    ${create_href}=    get location
+    ${accelerator}=    set variable    ?quick_accelerator=1440&quick_fast_forward=1
+    log to console   ${create_href}${accelerator}
+    go to        ${create_href}${accelerator}
     Wait Until Page Contains Element     css=.qa_multilot_type_drop_down     20
     Click Element                        css=.qa_multilot_type_drop_down
     sleep  2
@@ -1233,6 +1269,11 @@ Login
     Sleep  1
     Wait Until Page Contains Element     css=.qa_button_add_new_purchase     20
     Click Element                        css=.qa_button_add_new_purchase
+    sleep  1
+    ${create_href}=    get location
+    ${accelerator}=    set variable    ?quick_accelerator=1440&quick_fast_forward=1
+    log to console   ${create_href}${accelerator}
+    go to        ${create_href}${accelerator}
     Wait Until Page Contains Element     css=.qa_multilot_type_drop_down     20
     Click Element                        css=.qa_multilot_type_drop_down
     sleep  2
@@ -1348,6 +1389,11 @@ Login
     Sleep  1
     Wait Until Page Contains Element     css=.qa_button_add_new_purchase     20
     Click Element                        css=.qa_button_add_new_purchase
+    sleep  1
+    ${create_href}=    get location
+    ${accelerator}=    set variable    ?quick_accelerator=1200&quick_fast_forward=1
+    log to console   ${create_href}${accelerator}
+    go to        ${create_href}${accelerator}
     Wait Until Page Contains Element     css=.qa_multilot_type_drop_down     20
     Click Element                        css=.qa_multilot_type_drop_down
     sleep  2
@@ -1472,6 +1518,11 @@ Login
     Sleep  1
     Wait Until Page Contains Element     css=.qa_button_add_new_purchase     20
     Click Element                        css=.qa_button_add_new_purchase
+    sleep  1
+    ${create_href}=    get location
+    ${accelerator}=    set variable    ?quick_accelerator=1440&quick_fast_forward=1
+    log to console   ${create_href}${accelerator}
+    go to        ${create_href}${accelerator}
     Wait Until Page Contains Element     css=.qa_multilot_type_drop_down     20
     Click Element                        css=.qa_multilot_type_drop_down
     sleep  2
@@ -2071,7 +2122,6 @@ Login
     log to console   ${KeyIslot}
     log to console  -----------------
     Sleep  2
-
 
 Оновити сторінку з тендером
     [Arguments]    ${username}    ${tender_uaid}

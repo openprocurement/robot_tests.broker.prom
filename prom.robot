@@ -383,7 +383,7 @@ Login
     ${currency}=                        Get From Dictionary         ${tender_data.data.value}                                   currency
     ${tax}=                             Get From Dictionary         ${tender_data.data.value}                                   valueAddedTaxIncluded
     ${endDate}=                         Get From Dictionary         ${tender_data.data.tenderPeriod}                            endDate
-    ${endDate}=                         convert_iso_date_to_prom      ${endDate}
+    ${endDate}=                         convert_iso_date_to_prom    ${endDate}
     ${startDate}=                       Get From Dictionary         ${tender_data.data.tenderPeriod}                            startDate
     ${procurement_method_type}=         Get From Dictionary         ${tender_data.data}                                         procurementMethodType
     ${availableLanguage}=               Get From Dictionary         ${tender_data.data.procuringEntity.contactPoint}            availableLanguage
@@ -412,12 +412,13 @@ Login
     Click Element                        css=.qa_button_add_new_purchase
     log to console  ${SUITE NAME}
     sleep  1
-    ${accelerator_open_ua}=   set variable    ?quick_accelerator=1440&quick_fast_forward=1
-    ${accelerator}=   set variable    ?quick_accelerator=70
+    ${accelerator_open_ua}=   set variable    ?quick_accelerator=620
+    ${accelerator}=   set variable    ?quick_accelerator=70&quick_fast_forward=1
     ${create_href}=    get location
     run keyword if  '${SUITE NAME}' == 'Tests Files.openProcedure'      go to  ${create_href}${accelerator_open_ua}
     ...  ELSE   go to   ${create_href}${accelerator}
-    log to console  get location
+    ${location}=  get location
+    log to console   ${location}
     Wait Until Page Contains Element     css=.qa_multilot_type_drop_down     20
     Click Element                        css=.qa_multilot_type_drop_down
     sleep  2
@@ -546,12 +547,13 @@ Login
     Click Element                        css=.qa_button_add_new_purchase
     log to console  ${SUITE NAME}
     sleep  1
-    ${accelerator_open_ua}=   set variable    ?quick_accelerator=1440&quick_fast_forward=1
-    ${accelerator}=   set variable    ?quick_accelerator=70
+    ${accelerator_open_ua}=   set variable    ?quick_accelerator=620
+    ${accelerator}=   set variable    ?quick_accelerator=70&quick_fast_forward=1
     ${create_href}=    get location
     run keyword if  '${SUITE NAME}' == 'Tests Files.openProcedure'      go to  ${create_href}${accelerator_open_ua}
     ...  ELSE   go to   ${create_href}${accelerator}
-    log to console  get location
+    ${location}=  get location
+    log to console   ${location}
     Wait Until Page Contains Element     css=.qa_multilot_type_drop_down     20
     Click Element                        css=.qa_multilot_type_drop_down
     sleep  2
@@ -887,7 +889,7 @@ Login
     Click Element                        css=.qa_button_add_new_purchase
     sleep  1
     ${create_href}=    get location
-    ${accelerator}=    set variable    ?quick_accelerator=70
+    ${accelerator}=    set variable    ?quick_accelerator=70&quick_fast_forward=1
     log to console   ${create_href}${accelerator}
     go to        ${create_href}${accelerator}
     Wait Until Page Contains Element     css=.qa_multilot_type_drop_down     20
@@ -927,8 +929,8 @@ Login
     input text  css=.qa_multilot_tender_step_auction_rate       ${lots_minimalstep}
 
     ################Добавление milestones(Додати умови оплати)##################
-    ${number_of_milestones}=      Get Length                      ${milestones}
-    set global variable                                           ${number_of_milestones}
+    ${number_of_milestones}=      Get Length                    ${milestones}
+    set global variable                                         ${number_of_milestones}
     :FOR  ${index}  IN RANGE  ${number_of_milestones}
     \  Run Keyword If  '${index}' != '0'   Click Element     xpath=(//a[contains(@class, 'qa_add_new_milestone')])[last()]
     \  Додати умови оплати    ${milestones[${index}]}    ${number_of_milestones}
@@ -971,7 +973,7 @@ Login
     Click Element                        css=.qa_button_add_new_purchase
     sleep  1
     ${create_href}=    get location
-    ${accelerator}=    set variable    ?quick_accelerator=1300&quick_fast_forward=1
+    ${accelerator}=    set variable    ?quick_accelerator=620
     log to console   ${create_href}${accelerator}
     go to        ${create_href}${accelerator}
     Wait Until Page Contains Element     css=.qa_multilot_type_drop_down     20
@@ -1056,7 +1058,7 @@ Login
     Click Element                        css=.qa_button_add_new_purchase
     sleep  1
     ${create_href}=    get location
-    ${accelerator}=    set variable    ?quick_accelerator=620&quick_fast_forward=1
+    ${accelerator}=    set variable    ?quick_accelerator=620
     log to console   ${create_href}${accelerator}
     go to        ${create_href}${accelerator}
     Wait Until Page Contains Element     css=.qa_multilot_type_drop_down     20
@@ -1175,7 +1177,7 @@ Login
     Click Element                        css=.qa_button_add_new_purchase
     sleep  1
     ${create_href}=    get location
-    ${accelerator}=    set variable    ?quick_accelerator=1440&quick_fast_forward=1
+    ${accelerator}=    set variable    ?quick_accelerator=620
     log to console   ${create_href}${accelerator}
     go to        ${create_href}${accelerator}
     Wait Until Page Contains Element     css=.qa_multilot_type_drop_down     20
@@ -1271,7 +1273,7 @@ Login
     Click Element                        css=.qa_button_add_new_purchase
     sleep  1
     ${create_href}=    get location
-    ${accelerator}=    set variable    ?quick_accelerator=1440&quick_fast_forward=1
+    ${accelerator}=    set variable    ?quick_accelerator=620
     log to console   ${create_href}${accelerator}
     go to        ${create_href}${accelerator}
     Wait Until Page Contains Element     css=.qa_multilot_type_drop_down     20
@@ -1391,7 +1393,7 @@ Login
     Click Element                        css=.qa_button_add_new_purchase
     sleep  1
     ${create_href}=    get location
-    ${accelerator}=    set variable    ?quick_accelerator=1200&quick_fast_forward=1
+    ${accelerator}=    set variable    ?quick_accelerator=800
     log to console   ${create_href}${accelerator}
     go to        ${create_href}${accelerator}
     Wait Until Page Contains Element     css=.qa_multilot_type_drop_down     20
@@ -1520,7 +1522,7 @@ Login
     Click Element                        css=.qa_button_add_new_purchase
     sleep  1
     ${create_href}=    get location
-    ${accelerator}=    set variable    ?quick_accelerator=1440&quick_fast_forward=1
+    ${accelerator}=    set variable    ?quick_accelerator=1440
     log to console   ${create_href}${accelerator}
     go to        ${create_href}${accelerator}
     Wait Until Page Contains Element     css=.qa_multilot_type_drop_down     20
@@ -2160,7 +2162,7 @@ Login
 
 Отримати інформацію із лота тендера
     [Arguments]      ${field_name}
-
+    log to console  ***Отримати інформацію із лота тендера***
     ${return_value}=    Run Keyword If   '${procurement_method_type}' == 'belowThreshold'       Отримати інформацію із лота тендер belowThreshold      ${field_name}
     ...  ELSE IF    '${procurement_method_type}' == 'negotiation'          Отримати інформацію із лота тендера negotiation        ${field_name}
     ...  ELSE IF    '${procurement_method_type}' == 'reporting'          Отримати інформацію із лота тендера negotiation        ${field_name}
@@ -2919,7 +2921,6 @@ Login
     prom.Пошук тендера по ідентифікатору    ${username}  ${tender_uaid}
     sleep   120
 
-
 Змінити лот
     [Arguments]  ${username}   ${tender_uaid}   ${lot_id}   ${fieldname}    ${fieldvalue}
     log to console  ------=-=-=-=-=-=-=-=23-4=2-
@@ -3198,7 +3199,7 @@ Login
     Wait Until Element Is Visible   css=.qa_lot_title     10
     Wait Until Element Is Visible     xpath=//a[contains(@data-afip-url , 'complete_prequalification')]
     click element  xpath=//a[contains(@data-afip-url , 'complete_prequalification')]
-    sleep  2
+    sleep  5
     click element  xpath=//form[contains(@action, 'complete_prequalification')]//button[@id='submit_button']
     sleep  10
     reload page
@@ -3376,9 +3377,35 @@ Login
 
 Підтвердити підписання контракту
     [Arguments]    ${username}   ${tender_uaid}   ${contract_num}
-
+    log to console  ***Підтвердити підписання контракту***
     Run Keyword If          '${procurement_method_type}' == 'negotiation'       Підтвердити підписання контракту negotiation    ${username}   ${tender_uaid}   ${contract_num}
     Run Keyword If          '${procurement_method_type}' == 'reporting'         Підтвердити підписання контракту reporting      ${username}   ${tender_uaid}   ${contract_num}
+    ...     ELSE  Підтвердити підписання контракту для інших процедур                                                           ${username}   ${tender_uaid}   ${contract_num}
+
+Підтвердити підписання контракту для інших процедур
+    [Arguments]    ${username}   ${tender_uaid}   ${contract_num}
+    log to console  ***Підтвердити підписання контракту для інших процедур***
+    CLICK ELEMENT    css=.qa_lot_button
+    Wait Until Element Is Visible   css=.qa_lot_title     10
+    Wait Until Keyword Succeeds     300      10          Run Keywords
+    ...   Sleep  3
+    ...   AND     Reload Page
+    ...   AND     sleep   2
+    ...   AND     Wait Until Element Is Enabled       xpath=//span[contains(text(), 'Підписати ЕЦП/КЕП')]
+    click element  xpath=//span[contains(text(), 'Підписати ЕЦП/КЕП')]
+    sleep  10
+    prom.Подписание ЕЦП
+    sleep  5
+     Wait Until Keyword Succeeds     300      10          Run Keywords
+    ...   Sleep  3
+    ...   AND     Reload Page
+    ...   AND     sleep   2
+    ...   AND     Wait Until Element Is Enabled       xpath=//button[contains(@data-afip-url, 'state_award/sign_contract')]
+    click element  xpath=//button[contains(@data-afip-url, 'state_award/sign_contract')]
+    sleep   3
+    click element   css=[type="submit"]
+    sleep   5
+    prom.Пошук тендера по ідентифікатору    ${username}  ${tender_uaid}
 
 Підтвердити підписання контракту negotiation
     [Arguments]    ${username}   ${tender_uaid}   ${contract_num}
@@ -3509,7 +3536,7 @@ Login
 Редагувати угоду
     [Arguments]    ${username}   ${tender_uaid}   ${contract_index}    ${fieldname}    ${fieldvalue}
 
-    Run Keyword If          '${procurement_method_type}' == 'negotiation'       Редагувати угоду negotiation          ${username}   ${tender_uaid}   ${contract_index}    ${fieldname}    ${fieldvalue}
+    Run Keyword If          '${procurement_method_type}' == 'negotiation'       Редагувати угоду negotiation      ${username}   ${tender_uaid}   ${contract_index}    ${fieldname}    ${fieldvalue}
     Run Keyword If          '${procurement_method_type}' == 'reporting'         Редагувати угоду reporting        ${username}   ${tender_uaid}   ${contract_index}    ${fieldname}    ${fieldvalue}
     sleep  2
     capture page screenshot
@@ -3550,6 +3577,90 @@ Login
     click element   css=#submit_button
     sleep  5
     capture page screenshot
+
+Встановити дату підписання угоди
+    [Arguments]    ${username}   ${tender_uaid}   ${contract_index}    ${fieldvalue}
+    log to console  ***Встановити дату підписання угоди***
+    log to console  ${fieldvalue}
+    CLICK ELEMENT    css=.qa_lot_button
+    Wait Until Element Is Visible   css=.qa_lot_title     10
+    Wait Until Keyword Succeeds     300      10          Run Keywords
+    ...   Sleep  3
+    ...   AND     Reload Page
+    ...   AND     sleep   2
+    ...   AND     Wait Until Element Is Enabled       css=[href*='state_purchase_lot/complete']
+    click element  css=[href*='state_purchase_lot/complete']
+    Wait Until Element Is Visible   css=#contract_number     10
+    ${filepath}=        create_random_file
+    choose file    xpath=//input[contains(@class, 'qa_state_offer_add_field')]   ${filepath}
+    sleep  10
+    input text  css=#contract_number    12355
+    sleep   3
+    ${amaunt_net}=  Get Element Attribute   xpath=//input[@name="contract_value_amount"]@value
+    ${amaunt_net}=  convert to number  ${amaunt_net}
+    ${amaunt_net}=  value_percentage   ${amaunt_net}
+    ${amaunt_net}=  convert to string  ${amaunt_net}
+    clear element text   css=[name="contract_value_amount_net"]
+    sleep  2
+    input text   css=[name="contract_value_amount_net"]     ${amaunt_net}
+    ${fieldvalue}=  convert_iso_date_to_prom                ${fieldvalue}
+    input text  css=[name="contract_sign_date"]             ${fieldvalue}
+    sleep   3
+    ${startDate}=   delivery_date_start
+    ${endDate}=     delivery_date_end
+    input text  css=[name="contract_period_start"]          ${startDate}
+    sleep  3
+    input text  css=[name="contract_period_end"]            ${endDate}
+    sleep  2
+    click element   xpath=//span[text()='Завантажити']
+    Wait Until Element Is Visible   css=.qa_lot_title     30
+    prom.Пошук тендера по ідентифікатору    ${username}  ${tender_uaid}
+
+Вказати період дії угоди
+    [Arguments]    ${username}   ${tender_uaid}   ${contract_index}    ${startDate}    ${endDate}
+    log to console  ***Вказати період дії угоди***
+    log to console  ${startDate}
+    log to console  ${endDate}
+    CLICK ELEMENT    css=.qa_lot_button
+    Wait Until Element Is Visible   css=.qa_lot_title     10
+    Wait Until Keyword Succeeds     300      10          Run Keywords
+    ...   Sleep  3
+    ...   AND     Reload Page
+    ...   AND     sleep   2
+    ...   AND     Wait Until Element Is Enabled       css=[href*='state_purchase_lot/complete']
+    click element  css=[href*='state_purchase_lot/complete']
+    Wait Until Element Is Visible   css=#contract_number     10
+    ${startDate}=  convert_iso_date_to_prom_without_time            ${startDate}
+    ${endDate}=  convert_iso_date_to_prom_without_time              ${endDate}
+    clear element text  css=[name="contract_period_start"]
+    sleep   2
+    clear element text  css=[name="contract_period_end"]
+    sleep   2
+    input text  css=[name="contract_period_start"]          ${startDate}
+    sleep  3
+    input text  css=[name="contract_period_end"]            ${endDate}
+    sleep  3
+    click element   xpath=//span[text()='Завантажити']
+    Wait Until Element Is Visible   css=.qa_lot_title     30
+    prom.Пошук тендера по ідентифікатору    ${username}  ${tender_uaid}
+
+Завантажити документ в угоду
+    [Arguments]    ${username}  ${file_path}  ${tender_uaid}  ${contract_index}
+    log to console  ***Завантажити документ в угоду***
+    CLICK ELEMENT    css=.qa_lot_button
+    Wait Until Element Is Visible   css=.qa_lot_title     10
+    Wait Until Keyword Succeeds     300      10          Run Keywords
+    ...   Sleep  3
+    ...   AND     Reload Page
+    ...   AND     sleep   2
+    ...   AND     Wait Until Element Is Enabled       css=[href*='state_purchase_lot/complete']
+    click element  css=[href*='state_purchase_lot/complete']
+    Wait Until Element Is Visible   css=#contract_number     10
+    choose file    xpath=//input[contains(@class, 'qa_state_offer_add_field')]   ${file_path}
+    sleep   10
+    click element   xpath=//span[text()='Завантажити']
+    Wait Until Element Is Visible   css=.qa_lot_title     30
+    prom.Пошук тендера по ідентифікатору    ${username}  ${tender_uaid}
 
 ################################## competitiveDialogueEU #######################
 Перевести тендер на статус очікування обробки мостом
@@ -3593,6 +3704,7 @@ Login
     sleep   3
     click element   css=.qa_submit_tender
     sleep   10
+    prom.Пошук тендера по ідентифікатору    ${username}  ${tender_uaid}
 
 ################################## Claim ######################################
 Створити вимогу про виправлення умов закупівлі

@@ -412,7 +412,7 @@ Login
     Click Element                        css=.qa_button_add_new_purchase
     log to console  ${SUITE NAME}
     sleep  1
-    ${accelerator_open_ua}=   set variable    ?quick_accelerator=620
+    ${accelerator_open_ua}=   set variable    ?quick_accelerator=1440
     ${accelerator}=   set variable    ?quick_accelerator=70&quick_fast_forward=1
     ${create_href}=    get location
     run keyword if  '${SUITE NAME}' == 'Tests Files.openProcedure'      go to  ${create_href}${accelerator_open_ua}
@@ -547,8 +547,8 @@ Login
     Click Element                        css=.qa_button_add_new_purchase
     log to console  ${SUITE NAME}
     sleep  1
-    ${accelerator_open_ua}=   set variable    ?quick_accelerator=620
-    ${accelerator}=   set variable    ?quick_accelerator=70&quick_fast_forward=1
+    ${accelerator_open_ua}=   set variable    ?quick_accelerator=1440
+    ${accelerator}=   set variable    ?quick_accelerator=700&quick_fast_forward=1
     ${create_href}=    get location
     run keyword if  '${SUITE NAME}' == 'Tests Files.openProcedure'      go to  ${create_href}${accelerator_open_ua}
     ...  ELSE   go to   ${create_href}${accelerator}
@@ -889,7 +889,7 @@ Login
     Click Element                        css=.qa_button_add_new_purchase
     sleep  1
     ${create_href}=    get location
-    ${accelerator}=    set variable    ?quick_accelerator=70&quick_fast_forward=1
+    ${accelerator}=    set variable    ?quick_accelerator=700&quick_fast_forward=1
     log to console   ${create_href}${accelerator}
     go to        ${create_href}${accelerator}
     Wait Until Page Contains Element     css=.qa_multilot_type_drop_down     20
@@ -973,7 +973,7 @@ Login
     Click Element                        css=.qa_button_add_new_purchase
     sleep  1
     ${create_href}=    get location
-    ${accelerator}=    set variable    ?quick_accelerator=620
+    ${accelerator}=    set variable    ?quick_accelerator=1440
     log to console   ${create_href}${accelerator}
     go to        ${create_href}${accelerator}
     Wait Until Page Contains Element     css=.qa_multilot_type_drop_down     20
@@ -1058,7 +1058,7 @@ Login
     Click Element                        css=.qa_button_add_new_purchase
     sleep  1
     ${create_href}=    get location
-    ${accelerator}=    set variable    ?quick_accelerator=620
+    ${accelerator}=    set variable    ?quick_accelerator=1440
     log to console   ${create_href}${accelerator}
     go to        ${create_href}${accelerator}
     Wait Until Page Contains Element     css=.qa_multilot_type_drop_down     20
@@ -1177,7 +1177,7 @@ Login
     Click Element                        css=.qa_button_add_new_purchase
     sleep  1
     ${create_href}=    get location
-    ${accelerator}=    set variable    ?quick_accelerator=620
+    ${accelerator}=    set variable    ?quick_accelerator=1440
     log to console   ${create_href}${accelerator}
     go to        ${create_href}${accelerator}
     Wait Until Page Contains Element     css=.qa_multilot_type_drop_down     20
@@ -1273,7 +1273,7 @@ Login
     Click Element                        css=.qa_button_add_new_purchase
     sleep  1
     ${create_href}=    get location
-    ${accelerator}=    set variable    ?quick_accelerator=620
+    ${accelerator}=    set variable    ?quick_accelerator=1440
     log to console   ${create_href}${accelerator}
     go to        ${create_href}${accelerator}
     Wait Until Page Contains Element     css=.qa_multilot_type_drop_down     20
@@ -1522,7 +1522,7 @@ Login
     Click Element                        css=.qa_button_add_new_purchase
     sleep  1
     ${create_href}=    get location
-    ${accelerator}=    set variable    ?quick_accelerator=1440
+    ${accelerator}=    set variable    ?quick_accelerator=1200
     log to console   ${create_href}${accelerator}
     go to        ${create_href}${accelerator}
     Wait Until Page Contains Element     css=.qa_multilot_type_drop_down     20
@@ -2124,6 +2124,7 @@ Login
     log to console   ${KeyIslot}
     log to console  -----------------
     Sleep  2
+
 
 Оновити сторінку з тендером
     [Arguments]    ${username}    ${tender_uaid}
@@ -3378,9 +3379,9 @@ Login
 Підтвердити підписання контракту
     [Arguments]    ${username}   ${tender_uaid}   ${contract_num}
     log to console  ***Підтвердити підписання контракту***
-    Run Keyword If          '${procurement_method_type}' == 'negotiation'       Підтвердити підписання контракту negotiation    ${username}   ${tender_uaid}   ${contract_num}
-    Run Keyword If          '${procurement_method_type}' == 'reporting'         Підтвердити підписання контракту reporting      ${username}   ${tender_uaid}   ${contract_num}
-    ...     ELSE  Підтвердити підписання контракту для інших процедур                                                           ${username}   ${tender_uaid}   ${contract_num}
+    Run Keyword If          '${procurement_method_type}' == 'negotiation'       Підтвердити підписання контракту negotiation            ${username}   ${tender_uaid}   ${contract_num}
+    Run Keyword If          '${procurement_method_type}' == 'reporting'         Підтвердити підписання контракту reporting              ${username}   ${tender_uaid}   ${contract_num}
+    Run Keyword If          '${procurement_method_type}' != 'belowThreshold'    Підтвердити підписання контракту для інших процедур     ${username}   ${tender_uaid}   ${contract_num}
 
 Підтвердити підписання контракту для інших процедур
     [Arguments]    ${username}   ${tender_uaid}   ${contract_num}

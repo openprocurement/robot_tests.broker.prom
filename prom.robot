@@ -3597,13 +3597,13 @@ Login
     sleep  10
     input text  css=#contract_number    12355
     sleep   3
-    ${amaunt_net}=  Get Element Attribute   xpath=//input[@name="contract_value_amount"]@value
-    ${amaunt_net}=  convert to number  ${amaunt_net}
-    ${amaunt_net}=  value_percentage   ${amaunt_net}
-    ${amaunt_net}=  convert to string  ${amaunt_net}
+    ${amount_net}=  Get Element Attribute   xpath=//input[@name="contract_value_amount"]@value
+    ${amount_net}=  convert to number       ${amount_net}
+    ${amount_net}=  convert_amount_net      ${amount_net}
+    ${amount_net}=  convert to string       ${amount_net}
     clear element text   css=[name="contract_value_amount_net"]
     sleep  2
-    input text   css=[name="contract_value_amount_net"]     ${amaunt_net}
+    input text   css=[name="contract_value_amount_net"]     ${amount_net}
     ${fieldvalue}=  convert_iso_date_to_prom                ${fieldvalue}
     input text  css=[name="contract_sign_date"]             ${fieldvalue}
     sleep   3

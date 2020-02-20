@@ -237,6 +237,10 @@ def download_file(url, file_name, output_dir):
     urllib.urlretrieve(url, ('{}/{}'.format(output_dir, file_name)))
 
 
+def convert_amount_net(value):
+    return float(value * 0.9)
+
+
 def covert_features(features):
     return int(features * 100)
 

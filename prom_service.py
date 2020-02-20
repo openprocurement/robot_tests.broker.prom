@@ -37,6 +37,11 @@ def delivery_date_end():
     return next_date.strftime("%d.%m.%Y")
 
 
+def tender_end_date_negotiation(date):
+    convert_date = dateutil.parser.parse(date) + timedelta(minutes=10)
+    return convert_date.strftime("%d.%m.%Y %H:%M")
+
+
 def convert_period_to_closeframeworkagreement(date):
     convert_date = dateutil.parser.parse(date)
     return convert_date.strftime("%Y")
@@ -237,7 +242,7 @@ def covert_features(features):
 
 
 def value_percentage(value):
-    return float(value * 0.9)
+    return int(value * 0.9)
 
 
 def value_percentage_sum(value):

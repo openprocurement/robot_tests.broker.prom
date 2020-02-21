@@ -248,6 +248,8 @@ Login
     ...      ELSE IF        '${unit_name}' == 'лот'              Click Element    xpath=(//li[@data-value="77"])[last()]
     ...      ELSE           '${unit_name}' == 'pct'              Click Element    xpath=(//li[@data-value="249"])[last()]
     SLEEP  1
+    click element       css=#state_purchases_items_list-0-date_delivery_end
+    sleep   2
     input text          css=#state_purchases_items_list-0-date_delivery_end     ${endDate}
     sleep  2
     click element       css=#state_purchases_items_list-0-date_delivery_end
@@ -4198,9 +4200,9 @@ Login
 ###############################################################################
 Отримати qualificationPeriod.endDate
     log to console  ***Отримати qualificationPeriod.endDate***
-    sleep   5
+    sleep   60
     Reload Page
-    sleep  3
+    sleep  5
     ${return_value}=  run keyword if  '${procurement_method_type}' == 'closeFrameworkAgreementUA'   Get Element Attribute   xpath=//span[contains(@class, 'qa_qualification_period')]//span[contains(@class, 'qa_date_time_end')]@data-period-date-end
     ...  ELSE  Get Element Attribute   xpath=//div[@class='qa_active_pre_qualification']@data-qa
     log to console  ${return_value}

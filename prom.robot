@@ -3597,13 +3597,13 @@ Login
     sleep  10
     input text  css=#contract_number    12355
     sleep   3
-    ${amaunt_net}=  Get Element Attribute   xpath=//input[@name="contract_value_amount"]@value
-    ${amaunt_net}=  convert to number  ${amaunt_net}
-    ${amaunt_net}=  value_percentage   ${amaunt_net}
-    ${amaunt_net}=  convert to string  ${amaunt_net}
+    ${amount_net}=  Get Element Attribute   xpath=//input[@name="contract_value_amount"]@value
+    ${amount_net}=  convert to number       ${amount_net}
+    ${amount_net}=  convert_amount_net      ${amount_net}
+    ${amount_net}=  convert to string       ${amount_net}
     clear element text   css=[name="contract_value_amount_net"]
     sleep  2
-    input text   css=[name="contract_value_amount_net"]     ${amaunt_net}
+    input text   css=[name="contract_value_amount_net"]     ${amount_net}
     ${fieldvalue}=  convert_iso_date_to_prom                ${fieldvalue}
     input text  css=[name="contract_sign_date"]             ${fieldvalue}
     sleep   3
@@ -3944,7 +3944,8 @@ Login
     log to console   ${award_num}
     CLICK ELEMENT    css=.qa_lot_button
     Wait Until Element Is Visible   css=.qa_lot_title     10
-    Run Keyword If  '${procurement_method_type}' == 'closeFrameworkAgreementUA'   Завантажити документ рішення кваліфікаційної комісії для closeFrameworkAgreementUA    ${document}    ${award_num}
+    Run Keyword If  '${procurement_method_type}' == 'closeFrameworkAgreementUA'                                                                 Завантажити документ рішення кваліфікаційної комісії для closeFrameworkAgreementUA    ${document}    ${award_num}
+    Run Keyword If  '${procurement_method_type}' in ['aboveThresholdUA', 'aboveThresholdUA.defense', 'competitiveDialogueUA.stage2']            Завантажити документ рішення кваліфікаційної комісії для aboveThresholdUA             ${document}
     ...  ELSE   Завантажити документ рішення кваліфікаційної комісії для інших процедур     ${document}
     prom.Пошук тендера по ідентифікатору    ${username}  ${tender_uaid}
 
@@ -4153,17 +4154,22 @@ Login
     click element        xpath=//a[contains(@href,'/state_purchase_complaint/purchase_claims')]
     Wait Until Page Contains Element     css=[data-qa="claim_tender"]    30
     click element        xpath=(//p[text()='${complaintID}']//../span)
-    sleep  1
+    sleep  2
+    Wait Until Keyword Succeeds     300      10          Run Keywords
+    ...   Sleep  3
+    ...   AND     Reload Page
+    ...   AND     sleep   1
+    ...   AND     Wait Until Element Is Enabled       css=[data-qa="answer_claim"]
     click element  css=[data-qa="answer_claim"]
-    sleep  1
+    sleep  2
     click element  css=[data-qa="answer_type_dd"]
-    sleep  1
+    sleep  2
     run keyword if   '${answer_type}' == 'resolved'     click element  xpath=//div[text()='Задовольнити вимогу']
     run keyword if   '${answer_type}' == 'declined'     click element  xpath=//div[text()='Відхилити вимогу']
     run keyword if   '${answer_type}' == 'invalid'      click element  xpath=//div[text()='Відхилити вимогу як недійсну']
-    sleep  1
+    sleep  2
     input text  css=[id="comment"]      ${description}
-    sleep  1
+    sleep  2
     click element  xpath=(//button[@type="button"])[1]
     sleep  2
 
@@ -4220,6 +4226,29 @@ Login
     click element    xpath=(//div[text()='Протокол розгляду'])[last()]
     sleep  3
     click element    xpath=//div[@data-qa-award="${award}"]//button[@data-qa="ok"]
+    sleep  7
+
+Завантажити документ рішення кваліфікаційної комісії для aboveThresholdUA
+    [Arguments]  ${document}
+    log to console  ***Завантажити документ рішення кваліфікаційної комісії для aboveThresholdUA***
+    Wait Until Keyword Succeeds     300      10          Run Keywords
+    ...   Sleep  3
+    ...   AND     Reload Page
+    ...   AND     sleep   2
+    ...   AND     Wait Until Element Is Enabled       css=[data-afip-url*="/cabinet/purchases/state_award/active"]
+    click element    css=[data-afip-url*="/cabinet/purchases/state_award/active"]
+    sleep  2
+    Choose File      css=.qa_state_offer_add_field    ${document}
+    sleep  7
+    click element    css=.qa_type_file
+    sleep  10
+    click element    xpath=//div[text()='Протокол розгляду']
+    sleep  4
+    click element    css=#self_qualified
+    sleep  2
+    click element    css=#self_eligible
+    sleep   2
+    click element    css=[id="submit_button"]
     sleep  7
 
 Завантажити документ рішення кваліфікаційної комісії для інших процедур

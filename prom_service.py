@@ -37,18 +37,20 @@ def delivery_date_end():
     return next_date.strftime("%d.%m.%Y")
 
 
+def tender_end_date_negotiation(date):
+    convert_date = dateutil.parser.parse(date) + timedelta(minutes=10)
+    return convert_date.strftime("%d.%m.%Y %H:%M")
+
+
 def convert_period_to_closeframeworkagreement(date):
     convert_date = dateutil.parser.parse(date)
-    return convert_date.strftime("%Y" )
+    return convert_date.strftime("%Y")
 
 
 def tender_end_date(date):
     convert_date = dateutil.parser.parse(date) + timedelta(minutes=15)
     return convert_date.strftime("%d.%m.%Y %H:%M")
 
-def tender_end_date_negotiation(date):
-    convert_date = dateutil.parser.parse(date) + timedelta(minutes=10)
-    return convert_date.strftime("%d.%m.%Y %H:%M")
 
 def tender_end_date_esco(date):
     convert_date = dateutil.parser.parse(date) + timedelta(minutes=20)
@@ -147,7 +149,6 @@ def convert_tender_status(string):
         u"Кандидат, очікує рішення": u"pending",
         u"Прекваліфікація: період оскарження": u"active.pre-qualification.stand-still",
         u"очікує розгляду": u"invalid",
-        u"Визнаний переможцем": u"active",
         u"Очікує оголошення другого етапу": u"active.stage2.pending",
         u"Завершено": u"complete"
     }.get(string, string)
@@ -166,53 +167,63 @@ def convert_negotiation_cause_type(string):
 
 def revert_negotiation_cause_type(string):
     return {
-         u"ст. 35, п. 4 Закупівля проведена попередньо двічі невдало": u"twiceUnsuccessful",
-         u"cт. 35, п. 1 Закупівля творів мистецтва": u"artContestIP",
-         u"cт. 35, п. 7 Закупівля юридичних послуг": u"stateLegalServices",
-         u"cт. 35, п. 5 Додаткова закупівля": u"additionalPurchase",
-         u"cт. 35, п. 6 Додаткові будівельні роботи": u"additionalConstruction",
-         u"cт. 35, п. 2 Відсутність конкуренції": u"noCompetition",
+        u"ст. 35, п. 4 Закупівля проведена попередньо двічі невдало": u"twiceUnsuccessful",
+        u"cт. 35, п. 1 Закупівля творів мистецтва": u"artContestIP",
+        u"cт. 35, п. 7 Закупівля юридичних послуг": u"stateLegalServices",
+        u"cт. 35, п. 5 Додаткова закупівля": u"additionalPurchase",
+        u"cт. 35, п. 6 Додаткові будівельні роботи": u"additionalConstruction",
+        u"cт. 35, п. 2 Відсутність конкуренції": u"noCompetition",
     }.get(string, string)
 
 
 def adapt_owner(tender_data):
-    tender_data['data']['procuringEntity']['identifier']['legalName'] = u'ТОВ "Prom_Owner"'
+    tender_data['data']['procuringEntity']['identifier'][
+        'legalName'] = u'ТОВ "Prom_Owner"'
     tender_data['data']['procuringEntity']['identifier']['id'] = u'5555555'
     tender_data['data']['procuringEntity']['identifier']['scheme'] = u'UA-EDR'
-    tender_data['data']['procuringEntity']['contactPoint']['url'] = u'http://www.mysite1.com/'
-    tender_data['data']['procuringEntity']['contactPoint']['telephone'] = u'+380501234578'
-    tender_data['data']['procuringEntity']['contactPoint']['name'] = u'тест тест'
+    tender_data['data']['procuringEntity']['contactPoint'][
+        'url'] = u'http://www.mysite1.com/'
+    tender_data['data']['procuringEntity']['contactPoint'][
+        'telephone'] = u'+380501234578'
+    tender_data['data']['procuringEntity']['contactPoint'][
+        'name'] = u'тест тест'
     tender_data['data']['procuringEntity']['address']['postalCode'] = u'00000'
     tender_data['data']['procuringEntity']['address']['region'] = u'Київ'
-    tender_data['data']['procuringEntity']['address']['streetAddress'] = u'вулиця Тестова, 2'
+    tender_data['data']['procuringEntity']['address'][
+        'streetAddress'] = u'вулиця Тестова, 2'
     tender_data['data']['procuringEntity']['name'] = u'ТОВ "Prom_Owner"'
     return tender_data
 
 
 def adapt_viewer(tender_data):
-    tender_data['data']['procuringEntity']['identifier']['legalName'] = u'ТОВ "Prom_Viewer"'
+    tender_data['data']['procuringEntity']['identifier'][
+        'legalName'] = u'ТОВ "Prom_Viewer"'
     tender_data['data']['procuringEntity']['identifier']['scheme'] = u'UA-EDR'
-    tender_data['data']['procuringEntity']['contactPoint']['url'] = u'http://webpage.org.ua/'
+    tender_data['data']['procuringEntity']['contactPoint'][
+        'url'] = u'http://webpage.org.ua/'
     tender_data['data']['procuringEntity']['name'] = u'тест тест'
     return tender_data
 
 
 def adapt_provider(tender_data):
-    tender_data['data']['procuringEntity']['identifier']['legalName'] = u'ТОВ "Prom_Provider"'
+    tender_data['data']['procuringEntity']['identifier'][
+        'legalName'] = u'ТОВ "Prom_Provider"'
     tender_data['data']['procuringEntity']['identifier']['scheme'] = u'UA-EDR'
     tender_data['data']['procuringEntity']['name'] = u'тест тест'
     return tender_data
 
 
 def adapt_provider1(tender_data):
-    tender_data['data']['procuringEntity']['identifier']['legalName'] = u'ТОВ "Prom_Provider1"'
+    tender_data['data']['procuringEntity']['identifier'][
+        'legalName'] = u'ТОВ "Prom_Provider1"'
     tender_data['data']['procuringEntity']['identifier']['scheme'] = u'UA-EDR'
     tender_data['data']['procuringEntity']['name'] = u'тест тест'
     return tender_data
 
 
 def adapt_provider2(tender_data):
-    tender_data['data']['procuringEntity']['identifier']['legalName'] = u'ТОВ "Prom_Provider2"'
+    tender_data['data']['procuringEntity']['identifier'][
+        'legalName'] = u'ТОВ "Prom_Provider2"'
     tender_data['data']['procuringEntity']['identifier']['scheme'] = u'UA-EDR'
     tender_data['data']['procuringEntity']['name'] = u'тест тест'
     return tender_data
@@ -224,6 +235,10 @@ def get_ecp_key(path):
 
 def download_file(url, file_name, output_dir):
     urllib.urlretrieve(url, ('{}/{}'.format(output_dir, file_name)))
+
+
+def convert_amount_net(value):
+    return float(value * 0.9)
 
 
 def covert_features(features):
@@ -254,7 +269,7 @@ def convert_complaints_status(string):
         u"відхилена": u"declined",
         u"розглянута": u"resolved",
         u"недійсна": u"invalid",
-        u"залишилася без відповіді": u"ignored",
+        u"залишилася без відповіді": u"ignored"
     }.get(string, string)
 
 
@@ -291,7 +306,8 @@ def convert_procurementmethodtype(string):
         u"Звіт про укладений договір": u"reporting",
         u"Відкриті торги з публікацією англійською мовою": u"aboveThresholdEU",
         u"Відкриті торги": u"aboveThresholdUA",
-        u"Конкурентний діалог": u"competitiveDialogueUA",
+        u"Конкурентний діалог. Етап 2": u"competitiveDialogueUA.stage2"
+        
     }.get(string, string)
 
 

@@ -128,7 +128,9 @@ def convert_contract_status(string):
         u"Подписанный": u"active",
         u"неактивно": u"invalid",
         u"очікує розгляду": u"invalid",
-        u"Завершено": u"complete"
+        u"Завершено": u"complete",
+        u"Визнаний переможцем": u"active",
+        u"Відмінено": u"active"
     }.get(string, string)
 
 
@@ -306,8 +308,8 @@ def convert_procurementmethodtype(string):
         u"Звіт про укладений договір": u"reporting",
         u"Відкриті торги з публікацією англійською мовою": u"aboveThresholdEU",
         u"Відкриті торги": u"aboveThresholdUA",
-        u"Конкурентний діалог. Етап 2": u"competitiveDialogueUA.stage2"
-        
+        u"Конкурентний діалог. Етап 2": u"competitiveDialogueUA.stage2",
+        u"Конкурентний діалог": u"competitiveDialogueUA"
     }.get(string, string)
 
 

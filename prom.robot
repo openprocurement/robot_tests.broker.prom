@@ -891,7 +891,7 @@ Login
     Click Element                        css=.qa_button_add_new_purchase
     sleep  1
     ${create_href}=    get location
-    ${accelerator}=    set variable    ?quick_accelerator=700&quick_fast_forward=1
+    ${accelerator}=    set variable    ?quick_accelerator=500&quick_fast_forward=1
     log to console   ${create_href}${accelerator}
     go to        ${create_href}${accelerator}
     Wait Until Page Contains Element     css=.qa_multilot_type_drop_down     20
@@ -3109,6 +3109,7 @@ Login
     click element  css=.qa_submit_tender
 
 Відповісти на запитання
+    log to console  ***Відповісти на запитання***
     [Arguments]   ${username}   ${tender_uaid}    ${answer_data}    ${question_id}
     Sleep   2
     Wait Until Page Contains Element      css=#qa_question_and_answer
@@ -4113,6 +4114,39 @@ Login
     Wait Until Element Is Visible   css=.qa_lot_button    10
     capture page screenshot
     log to console   ***Створити вимогу про виправлення визначення переможця***
+    [Return]  ${return_value}
+
+Створити скаргу про виправлення визначення переможця
+    [Arguments]  ${username}  ${tender_uaid}  ${claim}  ${award_index}  ${document}=${None}
+    log to console   ***Створити скаргу про виправлення визначення переможця***
+    ${title}=        Get From Dictionary    ${claim.data}               title
+    ${description}=  Get From Dictionary    ${claim.data}               description
+    CLICK ELEMENT    css=.qa_lot_button
+    Wait Until Element Is Visible   css=.qa_lot_title     10
+    click element        xpath=//a[contains(@href,'/state_purchase_lot_complaint/lot_complaints')]
+    sleep   5
+    click element        xpath=(//a[contains(@href,'/state_purchase_lot_complaint/lot_complaints')])[2]
+    sleep   3
+    click element        css=.dropdownSimple__dropdownValue__1Bt3D
+    sleep  2
+    click element   xpath=(//div[@data-qa="dd_lists"])[last()]
+    sleep  2
+    input text  css=[id="name"]                 ${title}
+    sleep  1
+    input text  css=[id="description"]          ${description}
+    sleep  1
+    Run Keyword And Ignore Error  Choose File  xpath=(//input[@data-qa="upload_file"])[1]  ${document}
+    sleep  5
+    click element   css=[data-qa="create_complaint_button"]
+    sleep  5
+    Wait Until Keyword Succeeds     300      10          Run Keywords
+    ...   Sleep  3
+    ...   AND     Reload Page
+    ...   AND     sleep   1
+    ...   AND     Wait Until Element Is Visible       xpath=(//div[@class='defenitionList__text__2uupi'])[8]
+    ${return_value}=    get text    xpath=(//div[@class='defenitionList__text__2uupi'])[8]
+    click element  xpath=(//a[contains(@href,'cabinet/purchases/state_purchase/view')])
+    Wait Until Element Is Visible   css=.qa_lot_button    10
     [Return]  ${return_value}
 
 Скасувати вимогу про виправлення визначення переможця

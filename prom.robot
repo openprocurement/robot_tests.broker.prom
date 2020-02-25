@@ -891,7 +891,7 @@ Login
     Click Element                        css=.qa_button_add_new_purchase
     sleep  1
     ${create_href}=    get location
-    ${accelerator}=    set variable    ?quick_accelerator=500&quick_fast_forward=1
+    ${accelerator}=    set variable    ?quick_accelerator=100&quick_fast_forward=1
     log to console   ${create_href}${accelerator}
     go to        ${create_href}${accelerator}
     Wait Until Page Contains Element     css=.qa_multilot_type_drop_down     20
@@ -2219,6 +2219,7 @@ Login
     ...  ELSE IF    '${field_name}' == 'lots[0].title'                                          get text   xpath=//span[contains(@class, 'qa_lot_title')]
     ...  ELSE IF    '${field_name}' == 'contracts[0].dateSigned'                                get element attribute  xpath=//span[contains(@class, 'qa_date_tender_terms')]@data-qa-date
     ...  ELSE IF    '${field_name}' == 'lots[0].auctionPeriod.startDate'                        Get Element Attribute    xpath=//dd[contains(@class, 'qa_date_time_auction')]//span[@class="qa_date_time_start"]@data-period-date-start
+    ${return_value}=   Run Keyword If    '${field_name}' == 'contracts[1].status'        convert_contract_status        ${return_value}
     sleep  2
     CLICK ELEMENT    xpath=(//a[contains(@href, "state_purchase/view")])[2]
     Wait Until Element Is Visible   css=.qa_lot_button     10
@@ -3558,8 +3559,9 @@ Login
 
 Редагувати угоду reporting
     [Arguments]    ${username}   ${tender_uaid}   ${contract_index}    ${fieldname}    ${fieldvalue}
-
-    Wait Until Keyword Succeeds     30      5          Run Keywords
+    sleep  30
+    reload page
+    Wait Until Keyword Succeeds     60      10          Run Keywords
     ...   Sleep  2
     ...   AND     Reload Page
     ...   AND     Sleep  2
@@ -4086,12 +4088,17 @@ Login
     CLICK ELEMENT    css=.qa_lot_button
     Wait Until Element Is Visible   css=.qa_lot_title     10
     click element        xpath=//a[contains(@href,'/state_purchase_lot_complaint/lot_claims')]
+    sleep  6
     capture page screenshot
-    Wait Until Page Contains Element     xpath=//a[@data-qa="qa_apply_requirement"]    30
+    Wait Until Keyword Succeeds     300      10          Run Keywords
+    ...   Sleep  3
+    ...   AND     Reload Page
+    ...   AND     sleep   1
+    ...   AND     Wait Until Element Is Visible       xpath=//a[@data-qa="qa_apply_requirement"]
     capture page screenshot
     reload page
     click element        xpath=//a[@data-qa="qa_apply_requirement"]
-    sleep  2
+    sleep  5
     click element        css=.dropdownSimple__dropdownValue__1Bt3D
     sleep  2
     click element   xpath=(//div[@data-qa="dd_lists"])[last()]
@@ -4135,7 +4142,8 @@ Login
     sleep  1
     input text  css=[id="description"]          ${description}
     sleep  1
-    Run Keyword And Ignore Error  Choose File  xpath=(//input[@data-qa="upload_file"])[1]  ${document}
+    ${filepath}=        create_random_file
+    Run Keyword And Ignore Error  Choose File  xpath=(//input[@data-qa="upload_file"])[1]  ${filepath}
     sleep  5
     click element   css=[data-qa="create_complaint_button"]
     sleep  5
@@ -4157,6 +4165,8 @@ Login
     ${cancellationReason}=   Get From Dictionary  ${cancellation_data.data}   cancellationReason
     CLICK ELEMENT    css=.qa_lot_button
     Wait Until Element Is Visible   css=.qa_lot_title     10
+    ${complaint}=          Get From Dictionary   ${cancellation_data.data}         status
+    Run Keyword If  '${complaint}' == 'stopping'   Скасувати скаргу про виправлення визначення переможця   ${cancellationReason}
     click element        xpath=//a[contains(@href,'/state_purchase_lot_complaint/lot_claims')]
     Wait Until Page Contains Element     xpath=//a[@data-qa="qa_apply_requirement"]    30
     click element        xpath=(//p[text()='${complaintID}']//../span)
@@ -4176,6 +4186,22 @@ Login
     Wait Until Element Is Visible   css=.qa_lot_button    10
     capture page screenshot
     log to console   ***Скасувати вимогу про виправлення визначення переможця***
+
+Скасувати скаргу про виправлення визначення переможця
+    [Arguments]  ${cancellationReason}
+    log to console  ***Скасувати скаргу про виправлення визначення переможця***
+    click element        xpath=//a[contains(@href,'/state_purchase_lot_complaint/lot_complaints')]
+    sleep   5
+    click element   css=[data-qa="title"]
+    sleep   5
+    click element   css=[data-qa="cancel"]
+    sleep   5
+    input text  css=[id='reason']    ${cancellationReason}
+    sleep   3
+    click element  css=[data-qa='ok']
+    sleep   3
+    click element  xpath=(//a[contains(@href,'cabinet/purchases/state_purchase/view')])[1]
+    Wait Until Element Is Visible   css=.qa_lot_button    10
 
 Відповісти на вимогу про виправлення визначення переможця
     [Arguments]  ${username}  ${tender_uaid}  ${complaintID}  ${answer_data}  ${award_index}

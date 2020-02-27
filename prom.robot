@@ -2175,7 +2175,7 @@ Login
 Отримати інформацію із лота тендера для остальных
     [Arguments]      ${field_name}
     log to console  ***Отримати інформацію із лота тендера для остальных***
-    sleep  1
+    sleep  2
     reload page
     Wait Until Element Is Visible    css=.qa_lot_button
     CLICK ELEMENT    css=.qa_lot_button
@@ -2219,7 +2219,6 @@ Login
     ...  ELSE IF    '${field_name}' == 'lots[0].title'                                          get text   xpath=//span[contains(@class, 'qa_lot_title')]
     ...  ELSE IF    '${field_name}' == 'contracts[0].dateSigned'                                get element attribute  xpath=//span[contains(@class, 'qa_date_tender_terms')]@data-qa-date
     ...  ELSE IF    '${field_name}' == 'lots[0].auctionPeriod.startDate'                        Get Element Attribute    xpath=//dd[contains(@class, 'qa_date_time_auction')]//span[@class="qa_date_time_start"]@data-period-date-start
-    ${return_value}=   Run Keyword If    '${field_name}' == 'contracts[1].status'        convert_contract_status        ${return_value}
     sleep  2
     CLICK ELEMENT    xpath=(//a[contains(@href, "state_purchase/view")])[2]
     Wait Until Element Is Visible   css=.qa_lot_button     10
@@ -2432,7 +2431,7 @@ Login
     ...  ELSE IF    '${field_name}' == 'auctionPeriod.startDate'                            Отримати інформацію із лота тендера      ${field_name}
     ...  ELSE IF    '${field_name}' == 'lots[0].auctionPeriod.startDate'                    Отримати інформацію із лота тендера      ${field_name}
     reload page
-    sleep  1
+    sleep  2
     ${return_value}=   Run Keyword If    '${field_name}' == 'mainProcurementCategory'       convert_prom_string_to_common_string            ${return_value}
     ...  ELSE IF    '${field_name}' == 'procurementMethodType'                              convert_procurementmethodtype                   ${return_value}
     ...  ELSE IF    '${field_name}' == 'value.valueAddedTaxIncluded'                        convert_prom_string_to_common_string            ${return_value}
@@ -2518,9 +2517,8 @@ Login
 Отримати інформацію із лоту
     [Arguments]   ${username}   ${tender_uaid}   ${lot_id}   ${field_name}
     sleep  4
-    log to console  %%%%%%%%%%%%%%%%%%%%%%%
+    log to console  ***Отримати інформацію із лоту***
     log to console   ${field_name}
-    log to console  %%%%%%%%%%%%%%%%%%%%%%%
     CLICK ELEMENT    css=.qa_lot_button
     Wait Until Element Is Visible   css=.qa_lot_title     10
     ${return_value}=     Run Keyword If            '${field_name}' == 'title'       Get Text   css=.qa_lot_title
@@ -2666,9 +2664,36 @@ Login
     log to console  -=-=-=-=-=-_+__+_=-=-=--=-=-
     log to console    ${procurement_method_type}
     log to console  -=-=-=-=-=-_+__+_=-=-=--=-=-
-    ${return_value}=   Run Keyword If    '${procurement_method_type}' == 'esco'     Додати лот у esco     ${bid}    ${lots_ids}
-    ...  ELSE IF    '${procurement_method_type}' == 'belowThreshold'    Додати лот у belowThreshold   ${bid}    ${lots_ids}
+    ${return_value}=   Run Keyword If    '${procurement_method_type}' == 'esco'     Додати лот у esco                       ${bid}    ${lots_ids}
+    ...  ELSE IF    '${procurement_method_type}' == 'belowThreshold'                Додати лот у belowThreshold             ${bid}    ${lots_ids}
+    ...  ELSE IF    '${procurement_method_type}' == 'competitiveDialogueUA'         Додати лот у competitiveDialogueUA      ${bid}
     ...  ELSE      Додати лот у звичайну процедуру     ${bid}    ${lots_ids}
+
+Додати лот у competitiveDialogueUA
+    [Arguments]   ${bid}
+    log to console  ***Додати лот у competitiveDialogueUA***
+    ${amount}=      Get From Dictionary     ${bid.data.lotValues[0].value}       amount
+
+    Click Element       xpath=(//a[contains(@class, 'qa_add_new_offer')]//span)[last()]
+    Wait Until Page Contains Element     css=[data-qa="add_file"]    10
+    Click Element   css=[data-qa="participate"]
+    sleep   2
+    ${bid_amount_str}=     convert to string    ${amount}
+    ${field_amount}=   Run Keyword And Return Status      Element Should Be Enabled     css=[@data-qa="lot_price"]
+    Run Keyword If   '${field_amount}' == 'True'     input Text          css=[@data-qa="lot_price"]    ${bid_amount_str}
+    sleep  2
+    Click Element       css=[data-qa="chbx_accept"]
+    sleep  2
+    Click Element       css=[data-qa="chbx_rule"]
+    sleep  2
+    Click Element       css=[data-qa="chbx_qualification"]
+    sleep  2
+    Click Element       css=[data-qa="submit_payment"]
+    sleep  3
+    ${pop_up}=  Run Keyword And Return Status    Element Should Be Visible     xpath=//button[@data-qa="ok"]
+    Run Keyword If    '${pop_up}' == 'True'    Click Element       xpath=//button[@data-qa="ok"]
+    Sleep   90
+    reload page
 
 Додати лот у звичайну процедуру
     [Arguments]   ${bid}   ${lots_ids}
@@ -4166,7 +4191,12 @@ Login
     CLICK ELEMENT    css=.qa_lot_button
     Wait Until Element Is Visible   css=.qa_lot_title     10
     ${complaint}=          Get From Dictionary   ${cancellation_data.data}         status
-    Run Keyword If  '${complaint}' == 'stopping'   Скасувати скаргу про виправлення визначення переможця   ${cancellationReason}
+    Run Keyword If  '${complaint}' == 'stopping'   Скасувати скаргу   ${cancellationReason}
+    ...     ELSE   Скасувати вимогу     ${complaintID}  ${cancellationReason}
+
+Скасувати вимогу
+    [Arguments]    ${complaintID}  ${cancellationReason}
+    log to console  ***Скасувати вимогу***
     click element        xpath=//a[contains(@href,'/state_purchase_lot_complaint/lot_claims')]
     Wait Until Page Contains Element     xpath=//a[@data-qa="qa_apply_requirement"]    30
     click element        xpath=(//p[text()='${complaintID}']//../span)
@@ -4179,15 +4209,15 @@ Login
     click element  css=[data-qa='cancel_claim']
     sleep  2
     input text  css=[id='reason']    ${cancellationReason}
-    sleep  1
+    sleep  3
     click element  css=[data-qa='ok']
-    sleep  2
+    sleep  10
     click element  xpath=(//a[contains(@href,'cabinet/purchases/state_purchase/view')])[1]
     Wait Until Element Is Visible   css=.qa_lot_button    10
     capture page screenshot
     log to console   ***Скасувати вимогу про виправлення визначення переможця***
 
-Скасувати скаргу про виправлення визначення переможця
+Скасувати скаргу
     [Arguments]  ${cancellationReason}
     log to console  ***Скасувати скаргу про виправлення визначення переможця***
     click element        xpath=//a[contains(@href,'/state_purchase_lot_complaint/lot_complaints')]
@@ -4216,7 +4246,8 @@ Login
     click element        xpath=//a[contains(@href,'/state_purchase_complaint/purchase_claims')]
     Wait Until Page Contains Element     css=[data-qa="claim_tender"]    30
     click element        xpath=(//p[text()='${complaintID}']//../span)
-    sleep  2
+    sleep  4
+    capture page screenshot
     Wait Until Keyword Succeeds     300      10          Run Keywords
     ...   Sleep  3
     ...   AND     Reload Page
@@ -4229,11 +4260,11 @@ Login
     run keyword if   '${answer_type}' == 'resolved'     click element  xpath=//div[text()='Задовольнити вимогу']
     run keyword if   '${answer_type}' == 'declined'     click element  xpath=//div[text()='Відхилити вимогу']
     run keyword if   '${answer_type}' == 'invalid'      click element  xpath=//div[text()='Відхилити вимогу як недійсну']
-    sleep  2
+    sleep  3
     input text  css=[id="comment"]      ${description}
-    sleep  2
+    sleep  3
     click element  xpath=(//button[@type="button"])[1]
-    sleep  2
+    sleep  3
 
 Підтвердити вирішення вимоги про виправлення визначення переможця
     [Arguments]  ${username}  ${tender_uaid}  ${complaintID}  ${confirmation_data}  ${award_index}

@@ -1395,7 +1395,7 @@ Login
     Click Element                        css=.qa_button_add_new_purchase
     sleep  1
     ${create_href}=    get location
-    ${accelerator}=    set variable    ?quick_accelerator=800
+    ${accelerator}=    set variable    ?quick_accelerator=1000
     log to console   ${create_href}${accelerator}
     go to        ${create_href}${accelerator}
     Wait Until Page Contains Element     css=.qa_multilot_type_drop_down     20
@@ -2105,6 +2105,7 @@ Login
     sleep  2
     Run Keyword If   '${username}' == 'Prom_Provider'    prom.Пошук тендера для провайдера  ${tender_uaid}
     Run Keyword If   '${username}' == 'Prom_Provider1'   prom.Пошук тендера для провайдера  ${tender_uaid}
+    Run Keyword If   '${username}' == 'Prom_Provider2'   prom.Пошук тендера для провайдера  ${tender_uaid}
 
     Run Keyword If   '${username}' == 'Prom_Owner' or '${username}' == 'Prom_Viewer'    prom.Пошук тендера для Овнера    ${tender_uaid}
 
@@ -2212,7 +2213,7 @@ Login
     ...  ELSE IF    '${field_name}' == 'contracts[0].value.amountNet'                           Get Element Attribute   xpath=//div[@data-qa="award_amount"]@data-qa-value
     ...  ELSE IF    '${field_name}' == 'contracts[0].value.amount'                              Get Element Attribute   xpath=(//div[@data-qa="award_amount"])[1]@data-qa-value
     ...  ELSE IF    '${field_name}' == 'contracts[0].status'                                    Get Text   xpath=(//td[contains(@class, 'qa_status_award')])[1]
-    ...  ELSE IF    '${field_name}' == 'contracts[1].status'                                    Get Text   xpath=(//td[contains(@class, 'qa_status_award')])[2]
+    ...  ELSE IF    '${field_name}' == 'contracts[1].status'                                    Get Text   xpath=(//td[contains(@class, 'qa_status_award')])[1]
     ...  ELSE IF    '${field_name}' == 'contracts[1].value.amountNet'                           Get Element Attribute    xpath=(//div[@data-qa="qa_user_award"])[2]@data-qa-value
     ...  ELSE IF    '${field_name}' == 'contracts[1].value.amount'                              Get Element Attribute    xpath=(//div[@data-qa="qa_user_award"])[2]@data-qa-value
     ...  ELSE IF    '${field_name}' == 'auctionPeriod.startDate'                                Get Element Attribute    xpath=//dd[contains(@class, 'qa_date_time_auction')]//span[@class="qa_date_time_start"]@data-period-date-start
@@ -2681,13 +2682,11 @@ Login
     ${bid_amount_str}=     convert to string    ${amount}
     ${field_amount}=   Run Keyword And Return Status      Element Should Be Enabled     css=[@data-qa="lot_price"]
     Run Keyword If   '${field_amount}' == 'True'     input Text          css=[@data-qa="lot_price"]    ${bid_amount_str}
-    sleep  2
-    Click Element       css=[data-qa="chbx_accept"]
-    sleep  2
+    sleep  3
     Click Element       css=[data-qa="chbx_rule"]
     sleep  2
     Click Element       css=[data-qa="chbx_qualification"]
-    sleep  2
+    sleep  3
     Click Element       css=[data-qa="submit_payment"]
     sleep  3
     ${pop_up}=  Run Keyword And Return Status    Element Should Be Visible     xpath=//button[@data-qa="ok"]
@@ -3239,7 +3238,7 @@ Login
 
 Створити постачальника, додати документацію і підтвердити його
     [Arguments]   ${username}   ${tender_uaid}   ${supplier_data}   ${document}
-
+    log to console  ***Створити постачальника, додати документацію і підтвердити його***
     Run Keyword If          '${procurement_method_type}' == 'negotiation'       Створити постачальника negotiation    ${username}   ${tender_uaid}   ${supplier_data}   ${document}
     Run Keyword If          '${procurement_method_type}' == 'reporting'         Створити постачальника reporting      ${username}   ${tender_uaid}   ${supplier_data}   ${document}
 
@@ -3346,6 +3345,7 @@ Login
 
 Створити постачальника reporting
     [Arguments]   ${username}   ${tender_uaid}   ${supplier_data}   ${document}
+    log to console  ***Створити постачальника reporting***
 
     ${locality}=                            Get From Dictionary         ${supplier_data.data.suppliers[0].address}                                         locality
     ${zip_code}=                            Get From Dictionary         ${supplier_data.data.suppliers[0].address}                                         postalCode
@@ -3368,7 +3368,7 @@ Login
     click element   xpath=//button[contains(@data-sign-template-url, 'state_purchase/signature_template')]
     sleep  2
     prom.Подписание ЕЦП
-    sleep  10
+    sleep  30
     capture page screenshot
 
     Wait Until Keyword Succeeds     30      5          Run Keywords
@@ -3381,7 +3381,14 @@ Login
     choose file    xpath=//input[contains(@class, 'qa_state_offer_add_field')]   ${document}
     sleep  3
     input text   css=#contract_number    2342345
+    sleep  3
+    ${amount_net}=  Get Element Attribute   xpath=//input[@name="contract_value_amount"]@value
+    ${amount_net}=  convert to number       ${amount_net}
+    ${amount_net}=  convert_amount_net      ${amount_net}
+    ${amount_net}=  convert to string       ${amount_net}
+    clear element text   css=[name="contract_value_amount_net"]
     sleep  2
+    input text   css=[name="contract_value_amount_net"]     ${amount_net}
 
     capture page screenshot
     sleep  1
@@ -3402,7 +3409,8 @@ Login
     click element   css=#contract_period_end
     sleep  2
     click element   css=#submit_button
-    sleep  5
+    sleep  20
+    Reload Page
     capture page screenshot
 
 Підтвердити підписання контракту
@@ -3410,7 +3418,7 @@ Login
     log to console  ***Підтвердити підписання контракту***
     Run Keyword If          '${procurement_method_type}' == 'negotiation'       Підтвердити підписання контракту negotiation            ${username}   ${tender_uaid}   ${contract_num}
     Run Keyword If          '${procurement_method_type}' == 'reporting'         Підтвердити підписання контракту reporting              ${username}   ${tender_uaid}   ${contract_num}
-    Run Keyword If          '${procurement_method_type}' != 'belowThreshold'    Підтвердити підписання контракту для інших процедур     ${username}   ${tender_uaid}   ${contract_num}
+    Run Keyword If          '${procurement_method_type}' not in ['belowThreshold', 'reporting']     Підтвердити підписання контракту для інших процедур     ${username}   ${tender_uaid}   ${contract_num}
 
 Підтвердити підписання контракту для інших процедур
     [Arguments]    ${username}   ${tender_uaid}   ${contract_num}
@@ -3534,38 +3542,16 @@ Login
 
 Підтвердити підписання контракту reporting
     [Arguments]    ${username}   ${tender_uaid}   ${contract_num}
+    log to console  ***Підтвердити підписання контракту reporting***
 
-    Wait Until Keyword Succeeds     100      5          Run Keywords
-    ...   Sleep  2
-    ...   AND     Reload Page
-    ...   AND     Sleep  2
-    ...   AND     Wait Until Element Is Visible        xpath=//div[contains(@data-sign-process-url, 'state_award/process_contract_signature/')]
-    click element  xpath=//div[contains(@data-sign-process-url, 'state_award/process_contract_signature/')]
-    sleep  30
-    capture page screenshot
-    Wait Until Keyword Succeeds     100      5          Run Keywords
-    ...   Sleep  2
-    ...   AND     Wait Until Element Is Visible       css=#CAsServersSelect
-    capture page screenshot
-    click element    css=#CAsServersSelect
-    sleep  3
-    CLICK ELEMENT    xpath=//*[contains(text(), 'АЦСК ТОВ "КС"')]
-    sleep  4
-    click element    css=#CAsServersSelect
-    sleep  2
-    ${file_path}=    get_ecp_key    src/robot_tests.broker.prom/Key-6.dat
-    Choose File       css=#PKeyFileInput      ${file_path}
-    sleep  3
-    Input Text    css=#PKeyPassword    1234
-    sleep  7
-    capture page screenshot
-    Click Element  css=#SignDataButton
-    sleep  30
-    capture page screenshot
+    click element   css=[data-afip-url*='sign_contract']
+    sleep   3
+    click element   css=[type="submit"]
+    sleep   20
 
 Редагувати угоду
     [Arguments]    ${username}   ${tender_uaid}   ${contract_index}    ${fieldname}    ${fieldvalue}
-
+    log to console  ***Редагувати угоду***
     Run Keyword If          '${procurement_method_type}' == 'negotiation'       Редагувати угоду negotiation      ${username}   ${tender_uaid}   ${contract_index}    ${fieldname}    ${fieldvalue}
     Run Keyword If          '${procurement_method_type}' == 'reporting'         Редагувати угоду reporting        ${username}   ${tender_uaid}   ${contract_index}    ${fieldname}    ${fieldvalue}
     sleep  2
@@ -3584,6 +3570,7 @@ Login
 
 Редагувати угоду reporting
     [Arguments]    ${username}   ${tender_uaid}   ${contract_index}    ${fieldname}    ${fieldvalue}
+    log to console  ***Редагувати угоду reporting***
     sleep  30
     reload page
     Wait Until Keyword Succeeds     60      10          Run Keywords
@@ -3592,6 +3579,8 @@ Login
     ...   AND     Sleep  2
     ...   AND     Wait Until Element Is Visible        xpath=//a[contains(@href, 'state_purchase/complete')]
     sleep  3
+    click element   xpath=//a[contains(@href, 'state_purchase/complete')]
+    sleep   5
     ${value_net}=     Run Keyword If                 '${fieldname}' == 'value.amountNet'             convert to string    ${fieldvalue}
 
     Run Keyword If                 '${fieldname}' == 'value.amountNet'             clear element text   css=#contract_value_amount_net
@@ -3710,7 +3699,7 @@ Login
     [Arguments]    ${username}   ${tender_uaid}
     log to console  ***Отримати тендер другого етапу та зберегти його***
     log to console  ${tender_uaid}
-    prom.Пошук тендера по ідентифікатору    ${username}  ${tender_uaid}
+    prom.Пошук тендера по ідентифікатору    ${username}  ${tender_uaid}   ${second_stage_data}=None
 
 Активувати другий етап
     [Arguments]    ${username}   ${tender_uaid}

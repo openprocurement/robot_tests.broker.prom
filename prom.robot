@@ -1395,7 +1395,7 @@ Login
     Click Element                        css=.qa_button_add_new_purchase
     sleep  1
     ${create_href}=    get location
-    ${accelerator}=    set variable    ?quick_accelerator=1000
+    ${accelerator}=    set variable    ?quick_accelerator=1440
     log to console   ${create_href}${accelerator}
     go to        ${create_href}${accelerator}
     Wait Until Page Contains Element     css=.qa_multilot_type_drop_down     20

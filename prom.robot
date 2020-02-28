@@ -1524,7 +1524,7 @@ Login
     Click Element                        css=.qa_button_add_new_purchase
     sleep  1
     ${create_href}=    get location
-    ${accelerator}=    set variable    ?quick_accelerator=1200
+    ${accelerator}=    set variable    ?quick_accelerator=1440
     log to console   ${create_href}${accelerator}
     go to        ${create_href}${accelerator}
     Wait Until Page Contains Element     css=.qa_multilot_type_drop_down     20
@@ -1575,7 +1575,7 @@ Login
     sleep  2
     click element   css=.qa_multilot_end_period_adjustments
     sleep  2
-    input text      css=.qa_multilot_term_agreement                                         ${agreementduration}
+    input text      css=.qa_multilot_term_agreement                                         44
     sleep  1
     input text      css=.qa_multilot_participants_agreement                                 ${maxawardscount}
     sleep  1
@@ -2207,8 +2207,8 @@ Login
     ...  ELSE IF    '${field_name}' == 'lots[0].fundingKind'                                    Get Text   xpath=//span[contains(@class, 'qa_funding_kind')]
     ...  ELSE IF    '${field_name}' == 'lots[0].yearlyPaymentsPercentageRange'                  Get Element Attribute   xpath=//span[contains(@class, 'qa_financial_step')]@data-qa-value
     ...  ELSE IF    '${field_name}' == 'yearlyPaymentsPercentageRange'                          Get Element Attribute   xpath=//span[contains(@class, 'qa_financial_step')]@data-qa-value
-    ...  ELSE IF    '${field_name}' == 'awards[0].complaintPeriod.endDate'                      Get Element Attribute   xpath=//div[contains(@class, 'qa_qualification_end_date')]@data-qualification-date-end
-    ...  ELSE IF    '${field_name}' == 'awards[1].complaintPeriod.endDate'                      Get Element Attribute   xpath=//div[contains(@class, 'qa_qualification_end_date')]@data-qualification-date-end
+    ...  ELSE IF    '${field_name}' == 'awards[0].complaintPeriod.endDate'                      Отримати complaintPeriod.endDate
+    ...  ELSE IF    '${field_name}' == 'awards[1].complaintPeriod.endDate'                      Отримати complaintPeriod.endDate
     ...  ELSE IF    '${field_name}' == 'awards[2].complaintPeriod.endDate'                      Get Element Attribute   xpath=//div[contains(@class, 'qa_qualification_end_date')]@data-qualification-date-end
     ...  ELSE IF    '${field_name}' == 'contracts[0].value.amountNet'                           Get Element Attribute   xpath=//div[@data-qa="award_amount"]@data-qa-value
     ...  ELSE IF    '${field_name}' == 'contracts[0].value.amount'                              Get Element Attribute   xpath=(//div[@data-qa="award_amount"])[1]@data-qa-value
@@ -2223,6 +2223,16 @@ Login
     sleep  2
     CLICK ELEMENT    xpath=(//a[contains(@href, "state_purchase/view")])[2]
     Wait Until Element Is Visible   css=.qa_lot_button     10
+    [Return]  ${return_value}
+
+Отримати complaintPeriod.endDate
+    log to console  ***Отримати complaintPeriod.endDate***
+    Wait Until Keyword Succeeds     400      15          Run Keywords
+    ...   Sleep  2
+    ...   AND     Reload Page
+    ...   AND     Sleep  2
+    ...   AND     Wait Until Element Is Visible         xpath=//div[contains(@class, 'qa_qualification_end_date')]
+    ${return_value}=      Get Element Attribute   xpath=//div[contains(@class, 'qa_qualification_end_date')]@data-qualification-date-end
     [Return]  ${return_value}
 
 Отримати інформацію із лота тендера negotiation
@@ -2465,7 +2475,7 @@ Login
     ...  ELSE IF    '${field_name}' == 'qualifications[0].status'                           convert_tender_status                           ${return_value}
     ...  ELSE IF    '${field_name}' == 'qualifications[1].status'                           convert_tender_status                           ${return_value}
     ...  ELSE IF    '${field_name}' == 'contracts[0].status'                                convert_contract_status                         ${return_value}
-    ...  ELSE IF    '${field_name}' == 'contracts[1].status'                                convert_tender_status                           ${return_value}
+    ...  ELSE IF    '${field_name}' == 'contracts[1].status'                                convert_contract_status                         ${return_value}
     ...  ELSE IF    '${field_name}' == 'minimalStep.amount'                                 convert to number                               ${return_value.replace(" ", "").replace(',', '.').replace(u'грн', '')}
     ...  ELSE IF    '${field_name}' == 'cause'                                              revert_negotiation_cause_type                   ${return_value}
     ...  ELSE IF    '${field_name}' == 'items[0].quantity'                                  convert to number                               ${return_value.replace(',', '.')}
@@ -2634,7 +2644,7 @@ Login
     sleep  1
     CLICK ELEMENT    css=.qa_lot_button
     sleep  5
-    ${return_value}=    Get Text     xpath=(//a[contains(@href, 'https://auction-staging.prozorro.gov.ua/tenders')])[2]
+    ${return_value}=    Get Text     xpath=(//a[contains(@href, 'https://auction-staging.prozorro.gov.ua')])[2]
     log to console  *^&^&^*^*&^*%^&%&%$*%*%
     log to console    ${return_value}
     log to console  *^&^&^*^*&^*%^&%&%$*%*%
@@ -2652,7 +2662,7 @@ Login
     sleep  1
     CLICK ELEMENT    css=.qa_lot_button
     sleep  5
-    ${return_value}=   Get Text   xpath=(//a[contains(@href, 'https://auction-staging.prozorro.gov.ua/tenders')])[2]
+    ${return_value}=   Get Text   xpath=(//a[contains(@href, 'https://auction-staging.prozorro.gov.ua')])[2]
     log to console  *^&^&^*^*&^*2234234%^&%&%$*%*%
     log to console    ${return_value}
     log to console  *^&^&^*^*&^234324*%^&%&%$*%*%
@@ -4287,9 +4297,16 @@ Login
     sleep   60
     Reload Page
     sleep  5
-    ${return_value}=  run keyword if  '${procurement_method_type}' == 'closeFrameworkAgreementUA'   Get Element Attribute   xpath=//span[contains(@class, 'qa_qualification_period')]//span[contains(@class, 'qa_date_time_end')]@data-period-date-end
+    ${return_value}=  run keyword if  '${procurement_method_type}' == 'closeFrameworkAgreementUA'   Отримати qualificationPeriod.endDate closeFrameworkAgreementUA
     ...  ELSE  Get Element Attribute   xpath=//div[@class='qa_active_pre_qualification']@data-qa
     log to console  ${return_value}
+    [Return]  ${return_value}
+
+Отримати qualificationPeriod.endDate closeFrameworkAgreementUA
+    log to console  ***Отримати qualificationPeriod.endDate closeFrameworkAgreementUA***
+    CLICK ELEMENT    css=.qa_lot_button
+    Wait Until Element Is Visible   css=.qa_lot_title     10
+    ${return_value}=      Get Element Attribute     xpath=//table[contains(@class, 'qa_prequalification')]//..//div[@data-qa]@data-qa
     [Return]  ${return_value}
 
 Завантажити документ рішення кваліфікаційної комісії для closeFrameworkAgreementUA

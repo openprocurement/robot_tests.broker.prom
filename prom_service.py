@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import pytz
+
 import dateutil.parser
 import urllib
 import shutil
@@ -130,7 +130,8 @@ def convert_contract_status(string):
         u"очікує розгляду": u"invalid",
         u"Завершено": u"complete",
         u"Визнаний переможцем": u"active",
-        u"Відмінено": u"active"
+        u"Відмінено": u"active",
+        u"Допущений до участі": u"active"
     }.get(string, string)
 
 

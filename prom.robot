@@ -2630,6 +2630,8 @@ Login
     log to console  ***Отримати посилання на аукціон для глядача***
     log to console  ${tender_uaid}
     log to console  ~~~~~~+++~~~
+    prom.Пошук тендера по ідентифікатору    ${username}  ${tender_uaid}
+    sleep  1
     CLICK ELEMENT    css=.qa_lot_button
     sleep  5
     ${return_value}=    Get Text     xpath=(//a[contains(@href, 'https://auction-staging.prozorro.gov.ua/tenders')])[2]
@@ -2637,8 +2639,8 @@ Login
     log to console    ${return_value}
     log to console  *^&^&^*^*&^*%^&%&%$*%*%
     sleep  2
-    CLICK ELEMENT    xpath=(//a[contains(@href, "state_purchase/view")])[2]
-    Wait Until Element Is Visible   css=.qa_lot_button     10
+    prom.Пошук тендера по ідентифікатору    ${username}  ${tender_uaid}
+    sleep  1
     [Return]  ${return_value}
 
 Отримати посилання на аукціон для учасника
@@ -2646,6 +2648,8 @@ Login
     log to console  ***Отримати посилання на аукціон для учасника***
     log to console  ${tender_uaid}
     log to console  ^%^%^%^%^%^%^%^%
+    prom.Пошук тендера по ідентифікатору    ${username}  ${tender_uaid}
+    sleep  1
     CLICK ELEMENT    css=.qa_lot_button
     sleep  5
     ${return_value}=   Get Text   xpath=(//a[contains(@href, 'https://auction-staging.prozorro.gov.ua/tenders')])[2]
@@ -2653,8 +2657,8 @@ Login
     log to console    ${return_value}
     log to console  *^&^&^*^*&^234324*%^&%&%$*%*%
     sleep  2
-    CLICK ELEMENT    xpath=(//a[contains(@href, "state_purchase/view")])[2]
-    Wait Until Element Is Visible   css=.qa_lot_button     10
+    prom.Пошук тендера по ідентифікатору    ${username}  ${tender_uaid}
+    sleep  1
     [Return]  ${return_value}
 
 Подати цінову пропозицію

@@ -1395,7 +1395,7 @@ Login
     Click Element                        css=.qa_button_add_new_purchase
     sleep  1
     ${create_href}=    get location
-    ${accelerator}=    set variable    ?quick_accelerator=2000
+    ${accelerator}=    set variable    ?quick_accelerator=2200
     log to console   ${create_href}${accelerator}
     go to        ${create_href}${accelerator}
     Wait Until Page Contains Element     css=.qa_multilot_type_drop_down     20
@@ -2083,7 +2083,7 @@ Login
     sleep  1
 
 Пошук тендера для Овнера
-    [Arguments]    ${tender_uaid}
+    [Arguments]    ${tender_uaid}    ${save_key}=tender_data
     Wait Until Page Contains Element      css=#search
     Input Text         css=#search   ${tender_uaid}
     Sleep  2
@@ -2097,7 +2097,7 @@ Login
     sleep   1
 
 Пошук тендера по ідентифікатору
-    [Arguments]    ${username}    ${tender_uaid}
+    [Arguments]    ${username}    ${tender_uaid}    ${save_key}=tender_data
     log to console  ${tender_uaid}
     log to console  --------------------------
     Switch Browser    my_custom_alias
@@ -2581,6 +2581,9 @@ Login
 Отримати інформацію із документа
     [Arguments]  ${username}  ${tender_uaid}  ${doc_id}  ${field}
     log to console   ${field}
+    log to console  ^^^^^^
+    log to console  ${doc_id}
+    log to console  ^^^^^^
     ${return_value}=   Run Keyword If    '${field}' == 'title'                         Get Text   css=.qa_file_name
     ...  ELSE IF    '${field}' == 'documentOf'                      set variable     tender
     [Return]  ${return_value}
@@ -2644,6 +2647,7 @@ Login
     sleep  1
     CLICK ELEMENT    css=.qa_lot_button
     sleep  5
+    Capture Page Screenshot  filename=auction.png
     ${return_value}=    Get Text     xpath=(//a[contains(@href, 'https://auction-staging.prozorro.gov.ua')])[2]
     log to console  *^&^&^*^*&^*%^&%&%$*%*%
     log to console    ${return_value}
@@ -2662,6 +2666,7 @@ Login
     sleep  1
     CLICK ELEMENT    css=.qa_lot_button
     sleep  5
+    Capture Page Screenshot  filename=auction_2.png
     ${return_value}=   Get Text   xpath=(//a[contains(@href, 'https://auction-staging.prozorro.gov.ua')])[2]
     log to console  *^&^&^*^*&^*2234234%^&%&%$*%*%
     log to console    ${return_value}
@@ -2843,6 +2848,8 @@ Login
     log to console  =-=-=-=-=-=-=-=
     log to console  ${tender_uaid}
     log to console  =-=-=-=-=-=-=-=
+    log to console  ${path}
+    log to console  =-=-=-=-=-=-=-=
     capture page screenshot
     Wait Until Page Contains Element      css=.qa_edit_offer     10
     Sleep   5
@@ -2948,6 +2955,9 @@ Login
 
 Завантажити документ
     [Arguments]  ${username}  ${filepath}  ${tender_uaid}
+    log to console  ***
+    log to console  ${filepath}
+    log to console  ***
     capture page screenshot
     sleep   1
     Wait Until Page Contains Element        xpath=//a[contains(@href, '/state_purchase/edit')]//span
@@ -3977,10 +3987,11 @@ Login
     log to console   ${award_num}
     CLICK ELEMENT    css=.qa_lot_button
     Wait Until Element Is Visible   css=.qa_lot_title     10
-    Run Keyword If  '${procurement_method_type}' == 'closeFrameworkAgreementUA'                                                                 Завантажити документ рішення кваліфікаційної комісії для closeFrameworkAgreementUA    ${document}    ${award_num}
-    Run Keyword If  '${procurement_method_type}' in ['aboveThresholdUA', 'aboveThresholdUA.defense', 'competitiveDialogueUA.stage2']            Завантажити документ рішення кваліфікаційної комісії для aboveThresholdUA             ${document}
-    ...  ELSE   Завантажити документ рішення кваліфікаційної комісії для інших процедур     ${document}
+    Run Keyword If  '${procurement_method_type}' == 'closeFrameworkAgreementUA'                                                                                                         Завантажити документ рішення кваліфікаційної комісії для closeFrameworkAgreementUA    ${document}    ${award_num}
+    Run Keyword If  '${procurement_method_type}' in ['aboveThresholdUA', 'aboveThresholdUA.defense', 'competitiveDialogueUA.stage2']                                                    Завантажити документ рішення кваліфікаційної комісії для aboveThresholdUA             ${document}
+    ...  ELSE    Run Keyword If  '${procurement_method_type}' not in ['aboveThresholdUA', 'aboveThresholdUA.defense', 'competitiveDialogueUA.stage2', 'closeFrameworkAgreementUA']      Завантажити документ рішення кваліфікаційної комісії для інших процедур               ${document}
     prom.Пошук тендера по ідентифікатору    ${username}  ${tender_uaid}
+
 
 Скасування рішення кваліфікаційної комісії
     [Arguments]  ${username}   ${tender_uaid}  ${award_num}

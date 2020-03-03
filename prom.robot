@@ -890,10 +890,14 @@ Login
     Wait Until Page Contains Element     css=.qa_button_add_new_purchase     20
     Click Element                        css=.qa_button_add_new_purchase
     sleep  1
-    ${create_href}=    get location
-    ${accelerator}=    set variable    ?quick_accelerator=100&quick_fast_forward=1
-    log to console   ${create_href}${accelerator}
-    go to        ${create_href}${accelerator}
+    log to console  ${SUITE NAME}
+    ${accelerator}=                     set variable    ?quick_accelerator=100&quick_fast_forward=1
+    ${accelerator_belowThreshold}=      set variable    ?quick_accelerator=2500
+    ${create_href}=                     get location
+    run keyword if  '${SUITE NAME}' == 'Tests Files.openProcedure'      go to  ${create_href}${accelerator_belowThreshold}
+    ...  ELSE   go to        ${create_href}${accelerator}
+    ${location}=  get location
+    log to console    ${location}
     Wait Until Page Contains Element     css=.qa_multilot_type_drop_down     20
     Click Element                        css=.qa_multilot_type_drop_down
     sleep  2
@@ -909,6 +913,11 @@ Login
     ...      ELSE IF        '${mainprocurementcategory}' == 'services'          Click Element    xpath=//span[text()='послуги']
     ...      ELSE IF        '${mainprocurementcategory}' == 'works'             Click Element    xpath=//span[text()='роботи']
     sleep  3
+
+    ${funders}=    Run Keyword And Return Status          Dictionary Should Contain Key           ${tender_data.data}            funders
+    Run Keyword If   '${funders}' == 'True'               Run Keywords
+    ...     click element       css=.qa_singlelot_state_funder_check
+    ...     AND     sleep  1
 
     # заполняем тендер
     input text     css=.qa_multilot_title                       ${title}
@@ -2785,11 +2794,9 @@ Login
     Click Element       xpath=(//a[contains(@class, 'qa_add_new_offer')]//span)[last()]
     Wait Until Page Contains Element     css=[data-qa="add_file"]    10
     sleep  1
-    ${chbx_rule}=   Run Keyword And Return Status      Element Should Be Enabled   css=[data-qa="chbx_rule"]
-    Run Keyword If   '${chbx_rule}' == 'True'    Click Element     css=[data-qa="chbx_rule"]
+    Click Element     css=[data-qa="chbx_rule"]
     sleep  2
-    ${chbx_qualification}=   Run Keyword And Return Status    Element Should Be Enabled     css=[data-qa="chbx_qualification"]
-    Run Keyword If   '${chbx_qualification}' == 'True'      Click Element     css=[data-qa="chbx_qualification"]
+    Click Element     css=[data-qa="chbx_qualification"]
     sleep  2
     click element       xpath=//p[contains(text(), '${lots_ids}')]/..//button[@data-qa="participate"]
     Wait Until Page Contains Element     css=[data-qa="number_days"]    10
@@ -2810,7 +2817,6 @@ Login
     :FOR  ${index}  IN RANGE  ${number_of_annual}
     \  Добавить annualCostsReduction    ${annual[${index}]}   ${index}
     capture page screenshot
-
     Click Element       css=[data-qa="submit_payment"]
     sleep  3
     capture page screenshot
@@ -2829,7 +2835,7 @@ Login
 
 Отримати інформацію із пропозиції
     [Arguments]   ${username}   ${tender_uaid}   ${field}
-
+    log to console  ***Отримати інформацію із пропозиції***
     capture page screenshot
     Wait Until Page Contains Element      xpath=(//span[@class="qa_offer_amount"])[1]     10
     ${return_value}=        Run Keyword If    '${field}' == 'lotValues[0].value.amount'       Get Text   xpath=(//span[@class="qa_offer_amount"])[1]
@@ -2840,7 +2846,6 @@ Login
     ...  ELSE        convert_prom_string_to_common_string       ${return_value}
     sleep  3
     reload page
-
     [Return]    ${return_value}
 
 Завантажити документ в ставку
@@ -3723,7 +3728,7 @@ Login
     [Arguments]    ${username}   ${tender_uaid}
     log to console  ***Отримати тендер другого етапу та зберегти його***
     log to console  ${tender_uaid}
-    prom.Пошук тендера по ідентифікатору    ${username}  ${tender_uaid}   ${second_stage_data}=None
+    prom.Пошук тендера по ідентифікатору    ${username}  ${tender_uaid}
 
 Активувати другий етап
     [Arguments]    ${username}   ${tender_uaid}
@@ -4119,6 +4124,7 @@ Login
 Створити вимогу про виправлення визначення переможця
     [Arguments]  ${username}  ${tender_uaid}  ${claim}  ${award_index}  ${document}=${None}
     log to console   ***Створити вимогу про виправлення визначення переможця***
+    prom.Пошук тендера по ідентифікатору     ${username}    ${tender_uaid}
     log to console   ${username}
     log to console   ${tender_uaid}
     log to console   ${claim}
@@ -4250,6 +4256,7 @@ Login
 Відповісти на вимогу про виправлення визначення переможця
     [Arguments]  ${username}  ${tender_uaid}  ${complaintID}  ${answer_data}  ${award_index}
     log to console   ***Відповісти на вимогу про виправлення визначення переможця***
+    prom.Пошук тендера по ідентифікатору     ${username}    ${tender_uaid}
     log to console   ${username}
     log to console   ${tender_uaid}
     log to console   ${complaintID}

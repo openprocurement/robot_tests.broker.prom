@@ -2693,14 +2693,14 @@ Login
     log to console  -=-=-=-=-=-_+__+_=-=-=--=-=-
     log to console    ${procurement_method_type}
     log to console  -=-=-=-=-=-_+__+_=-=-=--=-=-
-    ${return_value}=   Run Keyword If    '${procurement_method_type}' == 'esco'     Додати лот у esco                       ${bid}    ${lots_ids}
-    ...  ELSE IF    '${procurement_method_type}' == 'belowThreshold'                Додати лот у belowThreshold             ${bid}    ${lots_ids}
-    ...  ELSE IF    '${procurement_method_type}' == 'competitiveDialogueUA'         Додати лот у competitiveDialogueUA      ${bid}
+    ${return_value}=   Run Keyword If    '${procurement_method_type}' == 'esco'                                 Додати лот у esco                       ${bid}    ${lots_ids}
+    ...  ELSE IF    '${procurement_method_type}' == 'belowThreshold'                                            Додати лот у belowThreshold             ${bid}    ${lots_ids}
+    ...  ELSE IF    '${procurement_method_type}' in ['competitiveDialogueUA', 'competitiveDialogueEU']          Додати лот у competitiveDialogue        ${bid}
     ...  ELSE      Додати лот у звичайну процедуру     ${bid}    ${lots_ids}
 
-Додати лот у competitiveDialogueUA
+Додати лот у competitiveDialogue
     [Arguments]   ${bid}
-    log to console  ***Додати лот у competitiveDialogueUA***
+    log to console  ***Додати лот у competitiveDialogue***
     ${amount}=      Get From Dictionary     ${bid.data.lotValues[0].value}       amount
 
     Click Element       xpath=(//a[contains(@class, 'qa_add_new_offer')]//span)[last()]
@@ -3445,9 +3445,9 @@ Login
 Підтвердити підписання контракту
     [Arguments]    ${username}   ${tender_uaid}   ${contract_num}
     log to console  ***Підтвердити підписання контракту***
-    Run Keyword If          '${procurement_method_type}' == 'negotiation'       Підтвердити підписання контракту negotiation            ${username}   ${tender_uaid}   ${contract_num}
-    Run Keyword If          '${procurement_method_type}' == 'reporting'         Підтвердити підписання контракту reporting              ${username}   ${tender_uaid}   ${contract_num}
-    Run Keyword If          '${procurement_method_type}' not in ['belowThreshold', 'reporting']     Підтвердити підписання контракту для інших процедур     ${username}   ${tender_uaid}   ${contract_num}
+    Run Keyword If          '${procurement_method_type}' == 'negotiation'                                           Підтвердити підписання контракту negotiation            ${username}   ${tender_uaid}   ${contract_num}
+    Run Keyword If          '${procurement_method_type}' == 'reporting'                                             Підтвердити підписання контракту reporting              ${username}   ${tender_uaid}   ${contract_num}
+    Run Keyword If          '${procurement_method_type}' not in ['belowThreshold', 'reporting', 'negotiation']      Підтвердити підписання контракту для інших процедур     ${username}   ${tender_uaid}   ${contract_num}
 
 Підтвердити підписання контракту для інших процедур
     [Arguments]    ${username}   ${tender_uaid}   ${contract_num}
@@ -3476,6 +3476,7 @@ Login
 
 Підтвердити підписання контракту negotiation
     [Arguments]    ${username}   ${tender_uaid}   ${contract_num}
+    log to console  ***Підтвердити підписання контракту negotiation***
     capture page screenshot
 
     Wait Until Page Contains Element        css=.qa_lot_button

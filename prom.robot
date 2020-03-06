@@ -918,6 +918,10 @@ Login
     Run Keyword If   '${funders}' == 'True'               Run Keywords
     ...     click element       css=.qa_singlelot_state_funder_check
     ...     AND     sleep  1
+    ...     AND     click element     xpath=(//div[contains(@class, 'qa_drop_down_currency')])[1]
+    ...     AND      sleep  2
+    ...     AND      click element     xpath=//li[contains(text(), '${tender_data.data.funders[0].name}')]
+    ...     AND      sleep  2
 
     # заполняем тендер
     input text     css=.qa_multilot_title                       ${title}
@@ -2137,7 +2141,6 @@ Login
     log to console  -----------------
     Sleep  2
 
-
 Оновити сторінку з тендером
     [Arguments]    ${username}    ${tender_uaid}
     prom.Пошук тендера по ідентифікатору     ${username}    ${tender_uaid}
@@ -2342,6 +2345,9 @@ Login
     ...  ELSE IF    '${field_name}' == 'funders[0].address.postalCode'                      Отримати інформацію із донора   ${field_name}
     ...  ELSE IF    '${field_name}' == 'funders[0].address.region'                          Отримати інформацію із донора   ${field_name}
     ...  ELSE IF    '${field_name}' == 'funders[0].address.streetAddress'                   Отримати інформацію із донора   ${field_name}
+    ...  ELSE IF    '${field_name}' == 'funders[0].identifier.id'                           Отримати інформацію із донора   ${field_name}
+    ...  ELSE IF    '${field_name}' == 'funders[0].identifier.legalName'                    Отримати інформацію із донора   ${field_name}
+    ...  ELSE IF    '${field_name}' == 'funders[0].identifier.scheme'                       Отримати інформацію із донора   ${field_name}
     ...  ELSE IF    '${field_name}' == 'tenderID'                                           Get Text   css=.qa_tender_id
     ...  ELSE IF    '${field_name}' == 'mainProcurementCategory'                            Get Text   css=.qa_procurement_category_choices
     ...  ELSE IF    '${field_name}' == 'procurementMethodType'                              get text   css=.qa_purchase_procedure
@@ -2520,12 +2526,37 @@ Login
     click element   css=.qa_donor_popup
     sleep  2
     ${return_value}=   Run Keyword If     '${field_name}' == 'funders[0].address.countryName'      Get Text    xpath=(//span[@class='qa_donor_address_country'])[2]
-    ...  ELSE IF     '${field_name}' == 'funders[0].address.locality'         Get Text    xpath=(//span[contains(@class, 'qa_donor_locality')])[2]
-    ...  ELSE IF     '${field_name}' == 'funders[0].address.postalCode'       Get Text    xpath=(//span[contains(@class, 'qa_donor_postal_code')])[2]
-    ...  ELSE IF     '${field_name}' == 'funders[0].address.region'           Get Text    xpath=(//span[contains(@class, 'qa_donor_region')])[2]
-    ...  ELSE IF     '${field_name}' == 'funders[0].address.streetAddress'    Get Text    xpath=(//span[contains(@class, 'qa_donor_street')])[2]
+    ...  ELSE IF     '${field_name}' == 'funders[0].address.locality'           Get Text    xpath=(//span[contains(@class, 'qa_donor_locality')])[2]
+    ...  ELSE IF     '${field_name}' == 'funders[0].address.postalCode'         Get Text    xpath=(//span[contains(@class, 'qa_donor_postal_code')])[2]
+    ...  ELSE IF     '${field_name}' == 'funders[0].address.region'             Get Text    xpath=(//span[contains(@class, 'qa_donor_region')])[2]
+    ...  ELSE IF     '${field_name}' == 'funders[0].address.streetAddress'      Get Text    xpath=(//span[contains(@class, 'qa_donor_street')])[2]
+    ...  ELSE IF     '${field_name}' == 'funders[0].identifier.id'              Get Text    xpath=(//span[@class='qa_donor_id'])[2]
+    ...  ELSE IF     '${field_name}' == 'funders[0].identifier.legalName'       Get Text    xpath=(//span[@class='qa_donor_legal_name'])[2]
+    ...  ELSE IF     '${field_name}' == 'funders[0].identifier.scheme'          Get Text    xpath=(//span[@class='qa_donor_scheme'])[2]
     log to console  ${return_value}
     [Return]  ${return_value}
+
+Видалити донора
+  [Arguments]  ${username}  ${tender_uaid}  ${funders_index}
+  log to console  ***Видалити донора***
+  click element     xpath=//a[contains(@href, '/state_purchase/edit')]//span
+  sleep  5
+  click element     css=.qa_singlelot_state_funder_check
+  sleep  2
+  click element     css=.qa_submit_tender
+
+Додати донора
+  [Arguments]  ${username}  ${tender_uaid}  ${funders_data}
+  log to console  ***Додати донора***
+  click element     xpath=//a[contains(@href, '/state_purchase/edit')]//span
+  sleep  5
+  click element     css=.qa_singlelot_state_funder_check
+  sleep  2
+  click element     xpath=(//div[contains(@class, 'qa_drop_down_currency')])[1]
+  sleep  2
+  click element     xpath=//li[contains(text(), '${funders_data.name}')]
+  sleep  2
+  click element     css=.qa_submit_tender
 
 Отримати інформацію із предмету
     [Arguments]   ${username}   ${tender_uaid}   ${item_id}   ${field_name}

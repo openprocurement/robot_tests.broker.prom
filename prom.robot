@@ -2336,6 +2336,12 @@ Login
     ${return_value}=        Run Keyword If        '${field_name}' == 'awards[0].documents[0].title'                       sleep  5
     ${return_value}=        Run Keyword If        '${field_name}' == 'title'                Get Text   xpath=(//h1)[1]
     ...  ELSE IF    '${field_name}' == 'description'                                        Get Text   xpath=(//p[@class])[3]
+    ...  ELSE IF    '${field_name}' == 'funders[0].name'                                    Get Text   css=.qa_donor_popup
+    ...  ELSE IF    '${field_name}' == 'funders[0].address.countryName'                     Отримати інформацію із донора   ${field_name}
+    ...  ELSE IF    '${field_name}' == 'funders[0].address.locality'                        Отримати інформацію із донора   ${field_name}
+    ...  ELSE IF    '${field_name}' == 'funders[0].address.postalCode'                      Отримати інформацію із донора   ${field_name}
+    ...  ELSE IF    '${field_name}' == 'funders[0].address.region'                          Отримати інформацію із донора   ${field_name}
+    ...  ELSE IF    '${field_name}' == 'funders[0].address.streetAddress'                   Отримати інформацію із донора   ${field_name}
     ...  ELSE IF    '${field_name}' == 'tenderID'                                           Get Text   css=.qa_tender_id
     ...  ELSE IF    '${field_name}' == 'mainProcurementCategory'                            Get Text   css=.qa_procurement_category_choices
     ...  ELSE IF    '${field_name}' == 'procurementMethodType'                              get text   css=.qa_purchase_procedure
@@ -2504,7 +2510,21 @@ Login
     ...  ELSE IF    '${field_name}' == 'lots[0].minimalStepPercentage'                      convert to number                               ${return_value}
     ...  ELSE IF    '${field_name}' == 'yearlyPaymentsPercentageRange'                      convert to number                               ${return_value}
     ...  ELSE IF    '${field_name}' == 'lots[0].yearlyPaymentsPercentageRange'              convert to number                               ${return_value}
+    ...  ELSE IF    '${field_name}' == 'funders[0].address.region'                          convert_founders                                ${return_value}
     ...  ELSE        convert_prom_string_to_common_string       ${return_value}
+    [Return]  ${return_value}
+
+Отримати інформацію із донора
+    [Arguments]   ${field_name}
+    sleep  3
+    click element   css=.qa_donor_popup
+    sleep  2
+    ${return_value}=   Run Keyword If     '${field_name}' == 'funders[0].address.countryName'      Get Text    xpath=(//span[@class='qa_donor_address_country'])[2]
+    ...  ELSE IF     '${field_name}' == 'funders[0].address.locality'         Get Text    xpath=(//span[contains(@class, 'qa_donor_locality')])[2]
+    ...  ELSE IF     '${field_name}' == 'funders[0].address.postalCode'       Get Text    xpath=(//span[contains(@class, 'qa_donor_postal_code')])[2]
+    ...  ELSE IF     '${field_name}' == 'funders[0].address.region'           Get Text    xpath=(//span[contains(@class, 'qa_donor_region')])[2]
+    ...  ELSE IF     '${field_name}' == 'funders[0].address.streetAddress'    Get Text    xpath=(//span[contains(@class, 'qa_donor_street')])[2]
+    log to console  ${return_value}
     [Return]  ${return_value}
 
 Отримати інформацію із предмету

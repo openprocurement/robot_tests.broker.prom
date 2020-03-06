@@ -157,6 +157,13 @@ def convert_tender_status(string):
     }.get(string, string)
 
 
+def convert_founders(string):
+    return {
+        "District Columbia": "DC",
+        u"Сполучені Штати Америки": "USA"
+    }.get(string, string)
+
+
 def convert_negotiation_cause_type(string):
     return {
         u"twiceUnsuccessful": u"ст. 35, п. 4 Закупівля проведена попередньо двічі невдало",

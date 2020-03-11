@@ -2517,6 +2517,7 @@ Login
     ...  ELSE IF    '${field_name}' == 'yearlyPaymentsPercentageRange'                      convert to number                               ${return_value}
     ...  ELSE IF    '${field_name}' == 'lots[0].yearlyPaymentsPercentageRange'              convert to number                               ${return_value}
     ...  ELSE IF    '${field_name}' == 'funders[0].address.region'                          convert_founders                                ${return_value}
+    ...  ELSE IF    '${field_name}' == 'funders[0].address.countryName'                     convert_founders                                ${return_value}
     ...  ELSE        convert_prom_string_to_common_string       ${return_value}
     [Return]  ${return_value}
 
@@ -2561,7 +2562,7 @@ Login
 Отримати інформацію із предмету
     [Arguments]   ${username}   ${tender_uaid}   ${item_id}   ${field_name}
     sleep  4
-    CLICK ELEMENT    css=.qa_lot_button
+    Run keyword if   '${KeyIslot}' == 'True'   CLICK ELEMENT    css=.qa_lot_button
     Wait Until Element Is Visible   css=.qa_lot_title     10
     ${return_value}=     Run Keyword If                 '${field_name}' == 'description'             Get Text   xpath=//div[contains(text(), '${item_id}')][contains(@class, 'qa_item_description')]
     ...  ELSE IF    '${field_name}' == 'deliveryDate.startDate'                    Get Element Attribute   xpath=//div[contains(text(), '${item_id}')]/../..//span[contains(@class, 'qa_date_time_start')]@data-period-date-start
@@ -2724,7 +2725,7 @@ Login
     log to console  ^%^%^%^%^%^%^%^%
     prom.Пошук тендера по ідентифікатору    ${username}  ${tender_uaid}
     sleep  1
-    CLICK ELEMENT    css=.qa_lot_button
+    Run keyword if   '${KeyIslot}' == 'True'   CLICK ELEMENT    css=.qa_lot_button
     sleep  5
     Capture Page Screenshot  filename=auction_2.png
     ${return_value}=   Get Text   xpath=(//a[contains(@href, 'https://auction-staging.prozorro.gov.ua')])[2]
@@ -2804,13 +2805,44 @@ Login
 
 Додати лот у belowThreshold singl
     [Arguments]   ${bid}    ${lots_ids}
+    log to console  Додати лот у belowThreshold singl
     log to console  @@@@
     log to console  ${bid}
     log to console  @@@@
-    Додати lot ставку    ${bid}    ${lots_ids}
+    ${amount}=                                  Get From Dictionary             ${bid.data.value}                      amount
+    prom.Додати lot ставку singleitem     ${amount}    ${lots_ids}
+
+Додати lot ставку singleitem
+    [Arguments]   ${amount}    ${lots_ids}
+    log to console  Додати lot ставку singleitem
+    log to console  @***#*#*#*#*#*
+    log to console   ${amount}
+    log to console  @***#*#*#*#*#*
+
+
+    Click Element       xpath=(//a[contains(@class, 'qa_add_new_offer')]//span)[last()]
+    Wait Until Page Contains Element     css=[data-qa="add_file"]    10
+
+    Wait Until Page Contains Element     css=[data-qa="lot_price"]    10
+    ${amount}=   convert to string    ${amount}
+    input Text          xpath=//input[@data-qa="lot_price"]    ${amount}
+    capture page screenshot
+    Click Element       css=[data-qa="submit_payment"]
+    sleep  3
+    capture page screenshot
+    ${pop_up}=  Run Keyword And Return Status    Element Should Be Visible     xpath=//button[@data-qa="ok"]
+    Run Keyword If    '${pop_up}' == 'True'    Click Element       xpath=//button[@data-qa="ok"]
+    Sleep   90
+    reload page
 
 Додати lot ставку
     [Arguments]   ${lots}    ${lots_ids}
+    log to console  Додати lot ставку
+    log to console  @***#*#*#*#*#*
+    log to console   ${lots}
+    log to console  @***#*#*#*#*#*
+    log to console  ${lots_ids}
+    log to console  @***#*#*#*#*#*
     ${amount}=                                  Get From Dictionary             ${lots.value}                      amount
     ${valueAddedTaxIncluded}=                   Get From Dictionary             ${lots.value}                      valueAddedTaxIncluded
 
@@ -3882,6 +3914,11 @@ Login
     reload page
     sleep  5
     capture page screenshot
+    ${complaint}=     Run Keyword And Return Status    Element Should Be Visible    xpath=//p[text()='${complaintID}']//..//a[@data-qa="title"]
+    Run Keyword If    '${complaint}' == 'False'      Run Keywords
+    ...     click element   xpath=//span[contains(text(), 'Скарги')]
+    ...     AND     sleep   5
+
     ${return_value}=    Run Keyword If     '${field_name}' == 'status'                  get text    xpath=//p[text()='${complaintID}']//..//..//../td[@data-qa="status"]
     ...     ELSE IF     '${field_name}' == 'description'                                Отримати інформацію із вимоги           ${complaintID}    ${field_name}
     ...     ELSE IF     '${field_name}' == 'title'                                      Отримати інформацію із вимоги           ${complaintID}    ${field_name}

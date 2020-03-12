@@ -2525,7 +2525,10 @@ Login
     [Arguments]   ${field_name}
     sleep  3
     click element   css=.qa_donor_popup
-    sleep  2
+    sleep  3
+    click element   css=.qa_donor_popup
+    sleep  3
+
     ${return_value}=   Run Keyword If     '${field_name}' == 'funders[0].address.countryName'      Get Text    xpath=(//span[@class='qa_donor_address_country'])[2]
     ...  ELSE IF     '${field_name}' == 'funders[0].address.locality'           Get Text    xpath=(//span[contains(@class, 'qa_donor_locality')])[2]
     ...  ELSE IF     '${field_name}' == 'funders[0].address.postalCode'         Get Text    xpath=(//span[contains(@class, 'qa_donor_postal_code')])[2]
@@ -2582,8 +2585,8 @@ Login
     ...  ELSE IF    '${field_name}' == 'quantity'                               convert to number                        ${return_value.replace(',', '.')}
     ...  ELSE        convert_prom_string_to_common_string       ${return_value}
     sleep  3
-    CLICK ELEMENT    xpath=(//a[contains(@href, "state_purchase/view")])[2]
-    Wait Until Element Is Visible   css=.qa_lot_button     10
+    Run keyword if   '${KeyIslot}' == 'True'   CLICK ELEMENT    xpath=(//a[contains(@href, "state_purchase/view")])[2]
+    Run keyword if   '${KeyIslot}' == 'True'   Wait Until Element Is Visible   css=.qa_lot_button     10
     [Return]  ${return_value}
 
 Отримати інформацію із лоту
@@ -2705,8 +2708,8 @@ Login
     log to console  ${tender_uaid}
     log to console  ~~~~~~+++~~~
     prom.Пошук тендера по ідентифікатору    ${username}  ${tender_uaid}
-    sleep  1
-    CLICK ELEMENT    css=.qa_lot_button
+    sleep  2
+    Run keyword if   '${KeyIslot}' == 'True'    CLICK ELEMENT    css=.qa_lot_button
     sleep  5
     Capture Page Screenshot  filename=auction.png
     ${return_value}=    Get Text     xpath=(//a[contains(@href, 'https://auction-staging.prozorro.gov.ua')])[2]
@@ -2724,7 +2727,7 @@ Login
     log to console  ${tender_uaid}
     log to console  ^%^%^%^%^%^%^%^%
     prom.Пошук тендера по ідентифікатору    ${username}  ${tender_uaid}
-    sleep  1
+    sleep  2
     Run keyword if   '${KeyIslot}' == 'True'   CLICK ELEMENT    css=.qa_lot_button
     sleep  5
     Capture Page Screenshot  filename=auction_2.png
@@ -2919,7 +2922,7 @@ Login
 Отримати інформацію із пропозиції
     [Arguments]   ${username}   ${tender_uaid}   ${field}
     log to console  ***Отримати інформацію із пропозиції***
-    capture page screenshot
+    capture page screenshot     filename=ananas2.png
     Wait Until Page Contains Element      xpath=(//span[@class="qa_offer_amount"])[1]     10
     ${return_value}=        Run Keyword If    '${field}' == 'lotValues[0].value.amount'       Get Text   xpath=(//span[@class="qa_offer_amount"])[1]
     ...  ELSE IF    '${field}' == 'status'                                 Get Text   css=.qa_state_offer_status
@@ -4085,7 +4088,6 @@ Login
     Run Keyword If  '${procurement_method_type}' in ['aboveThresholdUA', 'aboveThresholdUA.defense', 'competitiveDialogueUA.stage2']                                                    Завантажити документ рішення кваліфікаційної комісії для aboveThresholdUA             ${document}
     ...  ELSE    Run Keyword If  '${procurement_method_type}' not in ['aboveThresholdUA', 'aboveThresholdUA.defense', 'competitiveDialogueUA.stage2', 'closeFrameworkAgreementUA']      Завантажити документ рішення кваліфікаційної комісії для інших процедур               ${document}
     prom.Пошук тендера по ідентифікатору    ${username}  ${tender_uaid}
-
 
 Скасування рішення кваліфікаційної комісії
     [Arguments]  ${username}   ${tender_uaid}  ${award_num}

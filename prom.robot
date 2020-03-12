@@ -2566,7 +2566,7 @@ Login
     [Arguments]   ${username}   ${tender_uaid}   ${item_id}   ${field_name}
     sleep  4
     Run keyword if   '${KeyIslot}' == 'True'   CLICK ELEMENT    css=.qa_lot_button
-    Wait Until Element Is Visible   css=.qa_lot_title     10
+    Run keyword if   '${KeyIslot}' == 'True'   Wait Until Element Is Visible   css=.qa_lot_title     10
     ${return_value}=     Run Keyword If                 '${field_name}' == 'description'             Get Text   xpath=//div[contains(text(), '${item_id}')][contains(@class, 'qa_item_description')]
     ...  ELSE IF    '${field_name}' == 'deliveryDate.startDate'                    Get Element Attribute   xpath=//div[contains(text(), '${item_id}')]/../..//span[contains(@class, 'qa_date_time_start')]@data-period-date-start
     ...  ELSE IF    '${field_name}' == 'deliveryDate.endDate'                      Get Element Attribute   xpath=//div[contains(text(), '${item_id}')]/../..//span[contains(@class, 'qa_date_time_end')]@data-period-date-end
@@ -2946,7 +2946,7 @@ Login
     Sleep   5
     Click Element       css=.qa_edit_offer
     sleep   2
-    Click Element       xpath=(//span[@data-qa="skip_unskip"])[1]
+    Run keyword if   '${KeyIslot}' == 'True'     Click Element       xpath=(//span[@data-qa="skip_unskip"])[1]
     Sleep   3
     Wait Until Page Contains Element     css=[data-qa="add_file"]
     Choose File         css=[data-qa="add_file"]   ${path}

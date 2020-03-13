@@ -2926,9 +2926,11 @@ Login
     Wait Until Page Contains Element      xpath=(//span[@class="qa_offer_amount"])[1]     10
     ${return_value}=        Run Keyword If    '${field}' == 'lotValues[0].value.amount'       Get Text   xpath=(//span[@class="qa_offer_amount"])[1]
     ...  ELSE IF    '${field}' == 'status'                                 Get Text   css=.qa_state_offer_status
+    ...  ELSE IF    '${field}' == 'value.amount'                           Get Text   xpath=//span[@class="qa_offer_amount"]
 
     ${return_value}=        Run Keyword If    '${field}' == 'lotValues[0].value.amount'       convert to number         ${return_value.replace(" ", "").replace(',', '.')}
-    ...  ELSE IF    '${field}' == 'status'         convert_tender_status                           ${return_value}
+    ...  ELSE IF    '${field}' == 'status'              convert_tender_status                           ${return_value}
+    ...  ELSE IF    '${field}' == 'value.amount'        convert to number         ${return_value.replace(" ", "").replace(',', '.')}
     ...  ELSE        convert_prom_string_to_common_string       ${return_value}
     sleep  3
     reload page
@@ -2972,7 +2974,7 @@ Login
     Sleep   5
     Click Element       css=.qa_edit_offer
     sleep   2
-    Click Element       xpath=(//span[@data-qa="skip_unskip"])[1]
+    Run Keyword If     '${KeyIslot}' == 'True'    Click Element       xpath=(//span[@data-qa="skip_unskip"])[1]
     Sleep   3
     Wait Until Page Contains Element     css=[data-qa="add_file"]
     Choose File         xpath=//span[contains(text(), '${docid}')]/../../../..//input[@name="files"]   ${path}
@@ -2980,14 +2982,6 @@ Login
     Click Element       css=[data-qa="submit_payment"]
     sleep  4
     reload page
-
-Змінити документацію в ставці
-    [Arguments]  ${username}  ${tender_uaid}  ${doc_data}  ${docid}
-    log to console  $!$!$!$!$!$!$!$!
-    log to console  ${doc_data}
-    log to console  $!$!$!$!$!$!$!$!
-    log to console  ${docid}
-    log to console  $!$!$!$!$!$!$!$!
 
 Змінити цінову пропозицію
     [Arguments]  ${username}  ${tender_uaid}  ${field}   ${value}

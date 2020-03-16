@@ -160,7 +160,7 @@ def convert_tender_status(string):
 def convert_founders(string):
     return {
         "District Columbia": "DC",
-        u"Сполучені Штати Америки": "USA"
+        "USA": u"Сполучені Штати Америки",
     }.get(string, string)
 
 
@@ -279,7 +279,8 @@ def convert_complaints_status(string):
         u"відхилена": u"declined",
         u"розглянута": u"resolved",
         u"недійсна": u"invalid",
-        u"залишилася без відповіді": u"ignored"
+        u"залишилася без відповіді": u"ignored",
+        u"Відкликання скарги": u"stopping"
     }.get(string, string)
 
 
@@ -311,6 +312,7 @@ def convert_procurementmethodtype(string):
         u"Допорогова закупівля": u"belowThreshold",
         u"Переговорна процедура для потреб оборони": u"aboveThresholdUA.defense",
         u"Укладення рамкової угоди": u"closeFrameworkAgreementUA",
+        u"Відбір по закупівлі в рамковій угоді": u"selective",
         u"Конкурентний діалог з публікацією англійською мовою": u"competitiveDialogueEU",
         u"Переговорна процедура": u"negotiation",
         u"Звіт про укладений договір": u"reporting",

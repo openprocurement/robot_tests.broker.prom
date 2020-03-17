@@ -2301,6 +2301,7 @@ Login
 
 Отримати інформацію із лота тендер belowThreshold
     [Arguments]      ${field_name}
+    log to console  ***Отримати інформацію із лота тендер belowThreshold***
     Run Keyword If  '${KeyIslot}' == 'True'     CLICK ELEMENT    css=.qa_lot_button
     Run Keyword If  '${KeyIslot}' == 'True'     Wait Until Element Is Visible   css=.qa_lot_title     10
     ${return_value}=     Run Keyword If                 '${field_name}' == 'milestones[0].code'             Get Text   xpath=(//span[contains(@class, 'qa_payment_type')])[1]
@@ -2324,13 +2325,13 @@ Login
     ...  ELSE IF    '${field_name}' == 'awards[0].status'                                       Get Text   xpath=(//td[contains(@class, 'qa_status_award')])[1]
     ...  ELSE IF    '${field_name}' == 'contracts[0].value.amountNet'                           Get Element Attribute   xpath=//div[@data-qa="award_amount"]@data-qa-value
     ...  ELSE IF    '${field_name}' == 'contracts[0].value.amount'                              Get Element Attribute   xpath=(//div[@data-qa="award_amount"])[1]@data-qa-value
-    ...  ELSE IF    '${field_name}' == 'contracts[0].status'                                    Get Text   xpath=(//td[contains(@class, 'qa_status_award')])[1]
+    ...  ELSE IF    '${field_name}' == 'contracts[0].status'                                    Отримати contracts.status
     ...  ELSE IF    '${field_name}' == 'contracts[1].status'                                    Get Text   xpath=(//td[contains(@class, 'qa_status_award')])[2]
     ...  ELSE IF    '${field_name}' == 'contracts[1].value.amountNet'                           Get Element Attribute    xpath=(//div[@data-qa="qa_user_award"])[2]@data-qa-value
     ...  ELSE IF    '${field_name}' == 'contracts[1].value.amount'                              Get Element Attribute    xpath=(//div[@data-qa="qa_user_award"])[2]@data-qa-value
     ...  ELSE IF    '${field_name}' == 'auctionPeriod.startDate'                                Get Element Attribute    xpath=//dd[contains(@class, 'qa_date_time_auction')]//span[@class="qa_date_time_start"]@data-period-date-start
     ...  ELSE IF    '${field_name}' == 'lots[0].title'                                          get text   xpath=//span[contains(@class, 'qa_lot_title')]
-    ...  ELSE IF    '${field_name}' == 'awards[0].complaintPeriod.endDate'                      Get Element Attribute   xpath=//div[contains(@class, 'qa_qualification_end_date')]@data-qualification-date-end
+    ...  ELSE IF    '${field_name}' == 'awards[0].complaintPeriod.endDate'                      Отримати awards.complaintPeriod.endDate
     ...  ELSE IF    '${field_name}' == 'awards[1].complaintPeriod.endDate'                      Get Element Attribute   xpath=//div[contains(@class, 'qa_qualification_end_date')]@data-qualification-date-end
     ...  ELSE IF    '${field_name}' == 'awards[2].complaintPeriod.endDate'                      Get Element Attribute   xpath=//div[contains(@class, 'qa_qualification_end_date')]@data-qualification-date-end
     ...  ELSE IF    '${field_name}' == 'contracts[0].dateSigned'                                get element attribute  xpath=//span[contains(@class, 'qa_date_tender_terms')]@data-qa-date
@@ -2338,7 +2339,18 @@ Login
     sleep  2
     Run Keyword If  '${KeyIslot}' == 'True'     CLICK ELEMENT    xpath=(//a[contains(@href, "state_purchase/view")])[2]
     Run Keyword If  '${KeyIslot}' == 'True'     Wait Until Element Is Visible   css=.qa_lot_button     10
+    [Return]  ${return_value}
 
+Отримати awards.complaintPeriod.endDate
+    log to console  ***Отримати awards.complaintPeriod.endDate***
+    Wait Until Keyword Succeeds     400      15          Run Keywords
+    ...   Sleep  2
+    ...   AND     Reload Page
+    ...   AND     Sleep  2
+    ...   AND     Wait Until Element Is Visible      xpath=//div[contains(@class, 'qa_qualification_end_date')]
+    ${return_value}=      Get Element Attribute      xpath=//div[contains(@class, 'qa_qualification_end_date')]@data-qualification-date-end
+    capture page screenshot
+    log to console  ${return_value}
     [Return]  ${return_value}
 
 Отримати інформацію із тендера
@@ -2547,7 +2559,6 @@ Login
     ...  ELSE IF     '${field_name}' == 'funders[0].identifier.id'              Get Text    xpath=(//span[@class='qa_donor_id'])[2]
     ...  ELSE IF     '${field_name}' == 'funders[0].identifier.legalName'       Get Text    xpath=(//span[@class='qa_donor_legal_name'])[2]
     ...  ELSE IF     '${field_name}' == 'funders[0].identifier.scheme'          Get Text    xpath=(//span[@class='qa_donor_scheme'])[2]
-    log to console  ${return_value}
     [Return]  ${return_value}
 
 Видалити донора

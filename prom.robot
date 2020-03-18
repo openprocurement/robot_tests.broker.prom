@@ -4150,13 +4150,14 @@ Login
 Завантажити документ рішення кваліфікаційної комісії
     [Arguments]  ${username}  ${document}  ${tender_uaid}  ${award_num}
     prom.Пошук тендера по ідентифікатору    ${username}  ${tender_uaid}
+    sleep  2
     log to console   ***Завантажити документ рішення кваліфікаційної комісії***
     log to console   ${username}
     log to console   ${document}
     log to console   ${tender_uaid}
     log to console   ${award_num}
-    CLICK ELEMENT    css=.qa_lot_button
-    Wait Until Element Is Visible   css=.qa_lot_title     10
+    Run Keyword If  '${KeyIslot}' == 'True'     CLICK ELEMENT    css=.qa_lot_button
+    Run Keyword If  '${KeyIslot}' == 'True'     Wait Until Element Is Visible   css=.qa_lot_title     10
     Run Keyword If  '${procurement_method_type}' == 'closeFrameworkAgreementUA'                                                                                                         Завантажити документ рішення кваліфікаційної комісії для closeFrameworkAgreementUA    ${document}    ${award_num}
     Run Keyword If  '${procurement_method_type}' in ['aboveThresholdUA', 'aboveThresholdUA.defense', 'competitiveDialogueUA.stage2']                                                    Завантажити документ рішення кваліфікаційної комісії для aboveThresholdUA             ${document}
     ...  ELSE    Run Keyword If  '${procurement_method_type}' not in ['aboveThresholdUA', 'aboveThresholdUA.defense', 'competitiveDialogueUA.stage2', 'closeFrameworkAgreementUA']      Завантажити документ рішення кваліфікаційної комісії для інших процедур               ${document}
@@ -4191,8 +4192,11 @@ Login
 Підтвердити постачальника для інших процедур
     [Arguments]  ${username}  ${tender_uaid}  ${award_num}
     log to console  ***Підтвердити постачальника для інших процедур***
-    CLICK ELEMENT    css=.qa_lot_button
-    Wait Until Element Is Visible   css=.qa_lot_title     10
+    prom.Пошук тендера по ідентифікатору    ${username}  ${tender_uaid}
+    sleep  2
+
+    Run Keyword If  '${KeyIslot}' == 'True'       CLICK ELEMENT    css=.qa_lot_button
+    Run Keyword If  '${KeyIslot}' == 'True'       Wait Until Element Is Visible   css=.qa_lot_title     10
     Wait Until Keyword Succeeds     300      10          Run Keywords
     ...   Sleep  3
     ...   AND     Reload Page
